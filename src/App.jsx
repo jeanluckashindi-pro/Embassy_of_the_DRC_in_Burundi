@@ -636,42 +636,54 @@ function HomePage() {
 
       <motion.section className="communiques ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects />
         <div className="container">
-          <div className="section-title">
-            <span className="eyebrow">Informations officielles</span>
-            <h2>Communiques</h2>
-            <p>Avis, annonces et informations publies par l'Ambassade.</p>
+          <div className="communiques-header">
+            <div className="section-title left-title">
+              <span className="eyebrow">Informations officielles</span>
+              <h2>Communiques</h2>
+              <p>Avis, annonces et informations publies par l'Ambassade.</p>
+            </div>
+            <a className="communiques-header-link" href="#actualites">Tous les communiques <ArrowRight size={16} /></a>
           </div>
-          <div className="communique-featured">
-            <motion.article className="communique-hero-card" variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
-              <div className="communique-hero-image" />
-              <div className="communique-hero-body">
-                <span className="communique-date-badge">{communiques[0].date}</span>
+          <motion.article className="communique-hero-wide" variants={cardReveal} whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
+            <div className="communique-hero-wide-image" />
+            <div className="communique-hero-wide-body">
+              <div className="communique-hero-wide-meta">
                 <span className="communique-category">{communiques[0].category}</span>
-                <h3>{communiques[0].title}</h3>
-                <p>{communiques[0].excerpt}</p>
-                <a href="#actualites">Lire le communique</a>
+                <span className="communique-date-badge">{communiques[0].date}</span>
               </div>
-            </motion.article>
-            <motion.div className="communique-stack" variants={staggerReveal}>
-              {communiques.slice(1).map((item) => (
-                <motion.article className="communique-card" key={item.title} variants={cardReveal} whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}>
-                  <div className="communique-card-indicator" />
-                  <div className="communique-card-body">
-                    <div className="communique-card-meta">
-                      <span className="communique-card-date">{item.date}</span>
-                      <span className="communique-card-cat">{item.category}</span>
-                    </div>
-                    <h4>{item.title}</h4>
-                    <p>{item.excerpt}</p>
-                    <span className="communique-link">Lire la suite</span>
+              <h3>{communiques[0].title}</h3>
+              <p>{communiques[0].excerpt}</p>
+              <a href="#actualites">Lire le communique</a>
+            </div>
+          </motion.article>
+          <motion.div className="communiques-grid" variants={staggerReveal}>
+            {communiques.slice(1, 4).map((item, index) => (
+              <motion.article className="communique-tile" key={item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
+                <div className="communique-tile-accent" style={{ background: index % 2 === 0 ? "var(--blue)" : "var(--red)" }} />
+                <div className="communique-tile-body">
+                  <div className="communique-tile-top">
+                    <span className="communique-tile-cat" style={{ color: index % 2 === 0 ? "var(--blue)" : "var(--red)", background: index % 2 === 0 ? "color-mix(in srgb, var(--blue) 10%, transparent)" : "color-mix(in srgb, var(--red) 10%, transparent)" }}>{item.category}</span>
+                    <span className="communique-tile-date">{item.date}</span>
                   </div>
-                </motion.article>
-              ))}
-            </motion.div>
-          </div>
-          <div className="communiques-cta">
-            <a href="#actualites">Voir tous les communiques</a>
-          </div>
+                  <h4>{item.title}</h4>
+                  <p>{item.excerpt}</p>
+                  <span className="communique-tile-link">Lire la suite</span>
+                </div>
+              </motion.article>
+            ))}
+          </motion.div>
+          <motion.div className="communiques-bottom-row" variants={staggerReveal}>
+            {communiques.slice(4).map((item, index) => (
+              <motion.article className="communique-compact" key={item.title} variants={cardReveal} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}>
+                <div className="communique-compact-bar" style={{ background: index % 2 === 0 ? "var(--yellow)" : "var(--blue)" }} />
+                <div className="communique-compact-body">
+                  <span className="communique-compact-cat">{item.category}</span>
+                  <h5>{item.title}</h5>
+                  <span className="communique-compact-date">{item.date}</span>
+                </div>
+              </motion.article>
+            ))}
+          </motion.div>
         </div>
       </motion.section>
 
