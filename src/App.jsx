@@ -14,7 +14,7 @@ import presidentImage from "./assets/President.webp";
 import presidentTwo from "./assets/president_2.jpg";
 import firstLadyImage from "./assets/premiere_dame_2.jpg";
 import firstLadyTwo from "./assets/premiere_dame_2.jpg";
-import { API_BASE_URL, apiFetch, fetchTypeDemandeChamps, fetchTypeDemandeDocuments, fetchTypeDemandes, submitDemande } from "./api.js";
+import { API_BASE_URL, apiFetch, fetchActualites, fetchCommuniques, fetchTypeDemandeChamps, fetchTypeDemandeDocuments, fetchTypeDemandes, submitDemande } from "./api.js";
 import { ThemeToggle } from "./ThemeToggle.jsx";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -147,6 +147,79 @@ const communiques = [
   { title: "LISTE DES DOCUMENTS DISPONIBLES", excerpt: "Les documents produits par l'Ambassade sont remis uniquement au titulaire ou a une personne dument mandatee avec procuration valide.", date: "28 Avr 2026", category: "Information" },
 ];
 
+
+function getApiList(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.results)) return data.results;
+  return [];
+}
+
+function getApiFileUrl(file) {
+  if (!file) return "";
+  try {
+    return new URL(file, API_BASE_URL).href;
+  } catch {
+    return file;
+  }
+}
+
+function stripHtml(value) {
+  return String(value ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function formatCommuniqueDate(value) {
+  if (!value) return "Date a confirmer";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" }).format(date);
+}
+
+
+function getActualiteDateParts(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return { day: "--", month: "Date" };
+  return {
+    day: new Intl.DateTimeFormat("fr-FR", { day: "2-digit" }).format(date),
+    month: new Intl.DateTimeFormat("fr-FR", { month: "short" }).format(date),
+  };
+}
+
+function mapApiActualites(data) {
+  return getApiList(data)
+    .filter((item) => item.actif !== false)
+    .map((item) => {
+      const dateParts = getActualiteDateParts(item.date_publication || item.created_at);
+      return {
+        id: item.id ?? item.article_id,
+        title: item.titre || "Actualite de la RDC",
+        description: stripHtml(item.description || item.contenu || "Information publiee par une source d'actualite."),
+        image: item.image_url || presidentTwo,
+        url: item.url || "#actualites",
+        source: item.source_name || "Actualite RDC",
+        day: dateParts.day,
+        month: dateParts.month,
+      };
+    });
+}
+function mapApiCommuniques(data) {
+  return getApiList(data)
+    .filter((item) => item.est_publie !== false)
+    .map((item) => {
+      const files = Array.isArray(item.fichiers) ? item.fichiers : [];
+      const imageFile = files.find((file) => String(file.type_mime ?? "").startsWith("image/"))?.fichier || item.fichier || files[0]?.fichier;
+      const category = typeof item.categorie_id === "object"
+        ? item.categorie_id?.nom || item.categorie_id?.libelle || item.categorie_id?.titre
+        : null;
+      return {
+        id: item.id,
+        title: item.titre || "Communique officiel",
+        excerpt: stripHtml(item.resume || item.contenu || "Information officielle publiee par l'Ambassade."),
+        date: formatCommuniqueDate(item.created_at || item.updated_at),
+        category: category || "Communique officiel",
+        image: getApiFileUrl(imageFile),
+      };
+    });
+}
 const publicServiceCards = [
   { title: "Delivrance de visas", description: "Informations pour l'entree en Republique Democratique du Congo, pieces a fournir et orientation vers le depot de dossier.", href: "/demandes?type=visa" },
   { title: "Production de passeports", description: "Preparation de la demande, verification des pieces, rendez-vous consulaire et suivi du dossier a Bujumbura.", href: "/demandes?type=passeport" },
@@ -558,6 +631,22 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   });
   const embassyDocuments = embassyDocumentsQuery.data?.length ? embassyDocumentsQuery.data : fallbackEmbassyDocuments;
+  const communiquesQuery = useQuery({
+    queryKey: ["home-communiques"],
+    queryFn: ({ signal }) => fetchCommuniques(signal),
+    staleTime: 5 * 60 * 1000,
+  });
+  const apiCommuniques = React.useMemo(() => mapApiCommuniques(communiquesQuery.data), [communiquesQuery.data]);
+  const displayedCommuniques = apiCommuniques.length ? apiCommuniques : communiques;
+  const featuredCommunique = displayedCommuniques[0];
+  const actualitesQuery = useQuery({
+    queryKey: ["home-actualites"],
+    queryFn: ({ signal }) => fetchActualites(signal),
+    staleTime: 5 * 60 * 1000,
+  });
+  const apiActualites = React.useMemo(() => mapApiActualites(actualitesQuery.data), [actualitesQuery.data]);
+  const displayedActualites = apiActualites.length ? apiActualites : news.map((item) => ({ ...item, description: "Ambassade RDC au Burundi - Bujumbura", source: "Ambassade RDC au Burundi", url: "#actualites" }));
+  const featuredActualite = displayedActualites[0];
 
   return (
     <main className="site-shell">
@@ -631,8 +720,7 @@ function HomePage() {
       <motion.section className="leaders ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={staggerReveal}><AmbientSectionEffects /><div className="container leader-grid">{leaders.map((leader) => <motion.article className="leader" key={leader.name} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}><div className="leader-photo" style={{ backgroundImage: `url("${leader.image}")` }} /><h3>{leader.name}</h3><p>{leader.role}</p></motion.article>)}</div></motion.section>
 
       <motion.section className="documents-section ambient-section" id="documents" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><a className="section-title documents-title-link" href="/documents"><span className="eyebrow">Grand public</span><h2>Documents de l'Ambassade</h2><p>Retrouvez les principales categories de documents et pieces a preparer avant votre rendez-vous consulaire a Bujumbura.</p></a><div className="documents-grid"><EmbassyDocumentCards documents={embassyDocuments} isLoading={embassyDocumentsQuery.isLoading} isError={embassyDocumentsQuery.isError} /></div></div></motion.section>
-
-      <motion.section className="news-section ambient-section" id="actualites" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><div className="news-heading-row"><div className="section-title left-title"><span className="eyebrow">Informations officielles</span><h2>Actualites</h2><p>Suivez les dernieres informations de l'Ambassade a Bujumbura.</p></div><a className="news-all-link" href="/demandes?type=passeport#rendez-vous">Prendre rendez-vous</a></div><div className="news-modern-layout"><motion.article className="news-feature-card" variants={cardReveal}><div className="news-feature-photo" style={{ backgroundImage: `url("${presidentTwo}")` }} /><div className="news-feature-copy"><span className="news-label">A la une</span><h3>Accueil consulaire et rendez-vous a Bujumbura</h3><p>Les services consulaires accompagnent les ressortissants dans la preparation des dossiers, la verification des pieces et la planification des rendez-vous.</p><ul><li>Verification des pieces avant depot</li><li>Rendez-vous obligatoire pour les captures et signatures</li><li>Suivi depuis l'espace personnel</li></ul></div></motion.article><motion.div className="news-modern-list" variants={staggerReveal}>{news.map((item) => <motion.article className="news-card" key={item.title} variants={cardReveal}><div className="news-thumb" style={{ backgroundImage: `url("${item.image}")` }} /><div className="date-box"><strong>{item.day}</strong><span>{item.month}</span></div><div><h3>{item.title}</h3><p>Ambassade RDC au Burundi - Bujumbura</p><a href="#actualites">Lire l'actualite</a></div></motion.article>)}</motion.div></div></div></motion.section>
+      <motion.section className="news-section ambient-section" id="actualites" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><div className="news-heading-row"><div className="section-title left-title"><span className="eyebrow">Informations officielles</span><h2>Actualites</h2><p>Suivez les dernieres informations de l'Ambassade a Bujumbura.</p></div><a className="news-all-link" href="/demandes?type=passeport#rendez-vous">Prendre rendez-vous</a></div><div className="news-modern-layout"><motion.article className="news-feature-card" variants={cardReveal}><div className="news-feature-photo" style={{ backgroundImage: `url("${featuredActualite.image}")` }} /><div className="news-feature-copy"><span className="news-label">{featuredActualite.source}</span><h3>{featuredActualite.title}</h3><p>{featuredActualite.description}</p><a href={featuredActualite.url} target={featuredActualite.url?.startsWith("http") ? "_blank" : undefined} rel={featuredActualite.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article><motion.div className="news-modern-list" variants={staggerReveal}>{displayedActualites.slice(1, 4).map((item) => <motion.article className="news-card" key={item.id ?? item.title} variants={cardReveal}><div className="news-thumb" style={{ backgroundImage: `url("${item.image}")` }} /><div className="date-box"><strong>{item.day}</strong><span>{item.month}</span></div><div><h3>{item.title}</h3><p>{item.source}</p><a href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article>)}</motion.div></div></div></motion.section>
 
       <motion.section className="communiques ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects />
         <div className="container">
@@ -645,20 +733,20 @@ function HomePage() {
             <a className="communiques-header-link" href="#actualites">Tous les communiques <ArrowRight size={16} /></a>
           </div>
           <motion.article className="communique-hero-wide" variants={cardReveal} whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
-            <div className="communique-hero-wide-image" />
+            <div className="communique-hero-wide-image" style={featuredCommunique.image ? { backgroundImage: `url("${featuredCommunique.image}")` } : undefined} />
             <div className="communique-hero-wide-body">
               <div className="communique-hero-wide-meta">
-                <span className="communique-category">{communiques[0].category}</span>
-                <span className="communique-date-badge">{communiques[0].date}</span>
+                <span className="communique-category">{featuredCommunique.category}</span>
+                <span className="communique-date-badge">{featuredCommunique.date}</span>
               </div>
-              <h3>{communiques[0].title}</h3>
-              <p>{communiques[0].excerpt}</p>
+              <h3>{featuredCommunique.title}</h3>
+              <p>{featuredCommunique.excerpt}</p>
               <a href="#actualites">Lire le communique</a>
             </div>
           </motion.article>
           <motion.div className="communiques-grid" variants={staggerReveal}>
-            {communiques.slice(1, 4).map((item, index) => (
-              <motion.article className="communique-tile" key={item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
+            {displayedCommuniques.slice(1, 4).map((item, index) => (
+              <motion.article className="communique-tile" key={item.id ?? item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
                 <div className="communique-tile-accent" style={{ background: index % 2 === 0 ? "var(--blue)" : "var(--red)" }} />
                 <div className="communique-tile-body">
                   <div className="communique-tile-top">
@@ -673,8 +761,8 @@ function HomePage() {
             ))}
           </motion.div>
           <motion.div className="communiques-bottom-row" variants={staggerReveal}>
-            {communiques.slice(4).map((item, index) => (
-              <motion.article className="communique-compact" key={item.title} variants={cardReveal} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}>
+            {displayedCommuniques.slice(4, 7).map((item, index) => (
+              <motion.article className="communique-compact" key={item.id ?? item.title} variants={cardReveal} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}>
                 <div className="communique-compact-bar" style={{ background: index % 2 === 0 ? "var(--yellow)" : "var(--blue)" }} />
                 <div className="communique-compact-body">
                   <span className="communique-compact-cat">{item.category}</span>
@@ -687,7 +775,7 @@ function HomePage() {
         </div>
       </motion.section>
 
-      <motion.section className="discover-section ambient-section" id="rdc" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container discover-layout"><motion.div className="discover-intro" variants={cardReveal}><span className="eyebrow">Republique democratique du Congo</span><h2>Venez decouvrir notre merveilleux pays</h2><p>La RDC est un pays continent au coeur de l'Afrique, marque par la force du fleuve Congo, la richesse de ses cultures, la diversite de ses provinces et l'energie de sa population.</p><p>Cette rubrique met en avant les lieux, les opportunites et les reperes utiles pour mieux connaitre le pays avant un voyage, une cooperation ou un projet d'investissement.</p><div className="discover-media-row"><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/kinshasa-1024x683.jpg" alt="Ville de Kinshasa" /><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/IMG_8234_DxO.jpg" alt="Paysage naturel de la RDC" /><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/Musee-National-de-la-Republique-Democratique-du-Congo.jpg" alt="Patrimoine culturel congolais" /></div><div className="discover-stats"><span><strong>26</strong> Provinces</span><span><strong>9</strong> Pays voisins</span><span><strong>80M+</strong> Hectares de terres arables</span></div></motion.div><motion.article className="discover-feature" variants={cardReveal}><div className="discover-feature-photo" style={{ backgroundImage: `url("${discover[0].image}")` }} /><div className="discover-feature-copy"><span>Destination RDC</span><h3>Un pays continent au coeur de l'Afrique</h3><p>Entre le fleuve Congo, les parcs nationaux, la creation musicale, les villes et les sites naturels, la RDC offre un champ immense de decouverte.</p></div></motion.article><motion.div className="discover-grid" variants={staggerReveal}>{discover.map((item) => <motion.article className="discover-card" key={item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}><div className="discover-photo" style={{ backgroundImage: `url("${item.image}")` }} /><div className="discover-card-copy"><h3>{item.title}</h3><p>{item.description}</p></div></motion.article>)}</motion.div><div className="discover-topics"><span>Tourisme</span><span>Culture</span><span>Investissement</span><span>Cooperation</span><span>Diaspora</span></div><a className="discover-button" href="#documents">Preparer mon voyage</a></div></motion.section>
+      <motion.section className="discover-section ambient-section" id="rdc" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container discover-layout"><motion.div className="discover-intro" variants={cardReveal}><span className="eyebrow">Republique democratique du Congo</span><h2>Venez decouvrir notre merveilleux pays</h2><p>La RDC est un pays continent au coeur de l'Afrique, marque par la force du fleuve Congo, la richesse de ses cultures, la diversite de ses provinces et l'energie de sa population.</p><p>Cette rubrique met en avant les lieux, les opportunites et les reperes utiles pour mieux connaitre le pays avant un voyage, une cooperation ou un projet d'investissement.</p><div className="discover-media-row"><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/kinshasa-1024x683.jpg" alt="Ville de Kinshasa" /><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/IMG_8234_DxO.jpg" alt="Paysage naturel de la RDC" /><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/Musee-National-de-la-Republique-Democratique-du-Congo.jpg" alt="Patrimoine culturel congolais" /></div><div className="discover-stats"><span><strong>26</strong> Provinces</span><span><strong>9</strong> Pays voisins</span><span><strong>80M+</strong> Hectares de terres arables</span></div></motion.div><motion.article className="discover-feature" variants={cardReveal}><div className="discover-feature-photo" style={{ backgroundImage: `url("${discover[0].image}")` }} /><div className="discover-feature-copy"><span>Destination RDC</span><h3>Un pays continent au coeur de l'Afrique</h3><p>Entre le fleuve Congo, les parcs nationaux, la creation musicale, les villes et les sites naturels, la RDC offre un champ immense de decouverte.</p></div></motion.article><motion.div className="discover-grid" variants={staggerReveal}>{discover.map((item) => <motion.article className="discover-card" key={item.id ?? item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}><div className="discover-photo" style={{ backgroundImage: `url("${item.image}")` }} /><div className="discover-card-copy"><h3>{item.title}</h3><p>{item.description}</p></div></motion.article>)}</motion.div><div className="discover-topics"><span>Tourisme</span><span>Culture</span><span>Investissement</span><span>Cooperation</span><span>Diaspora</span></div><a className="discover-button" href="#documents">Preparer mon voyage</a></div></motion.section>
 
       <SiteFooter />
     </main>
@@ -959,6 +1047,7 @@ function DocumentsPage() {
   });
   const embassyDocuments = embassyDocumentsQuery.data?.length ? embassyDocumentsQuery.data : fallbackEmbassyDocuments;
 
+
   return (
     <main className="site-shell documents-page-shell"><SiteHeader />
       <section className="documents-page-hero ambient-section"><AmbientSectionEffects />
@@ -1182,6 +1271,10 @@ export default function App() {
   if (path.startsWith("/login")) return <LoginPage />;
   return <HomePage />;
 }
+
+
+
+
 
 
 

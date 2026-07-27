@@ -30,6 +30,25 @@ export async function apiFetch(path, { params, signal } = {}) {
   return response.json();
 }
 
+
+
+export function fetchActualites(signal) {
+  return apiFetch("actualites/actualites/", {
+    params: {
+      ordering: "-date_publication",
+    },
+    signal,
+  });
+}
+export function fetchCommuniques(signal) {
+  return apiFetch("communiques/communiques/", {
+    params: {
+      ordering: "-created_at",
+      expand: "fichiers,categorie_id",
+    },
+    signal,
+  });
+}
 export function fetchTypeDemandeDocuments(typeDemandeId, signal) {
   return apiFetch("documents/type-demande-documents/", {
     params: {
@@ -95,3 +114,5 @@ export async function submitDemande(payload, { signal } = {}) {
 
   return data;
 }
+
+
