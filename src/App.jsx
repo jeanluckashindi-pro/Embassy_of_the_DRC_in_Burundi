@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Dropdown } from "primereact/dropdown";
+import { Calendar } from "primereact/calendar";
 import { ArrowRight, CalendarDays, CheckCircle2, ClipboardCheck, Clock, FileText, Globe, Mail, MapPin, Phone, UploadCloud } from "lucide-react";
 import logoAmbassade from "./assets/logo_ambassade.png";
 import logoAmbassadeLight from "./assets/logo_ambassade_light.png";
@@ -779,6 +781,24 @@ function FormFieldsSkeleton({ count = 6 }) {
     </div>
   );
 }
+function parseDateValue(val) {
+  if (!val) return null;
+  if (val instanceof Date) return val;
+  if (typeof val === "string" && /^\d{4}-\d{2}-\d{2}/.test(val)) {
+    const [y, m, d] = val.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+  return null;
+}
+
+function formatDateValue(date) {
+  if (!date) return "";
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function CommonRequerantFields({ values, onChange }) {
   return (
     <div className="requerant-groups-grid">
@@ -790,10 +810,26 @@ function CommonRequerantFields({ values, onChange }) {
               <label className={field.wide ? "full-field" : ""} key={field.name}>
                 {field.label}{field.required ? <span className="required-star"> *</span> : null}
                 {field.type === "select" ? (
-                  <select value={values[field.name] ?? ""} onChange={(event) => onChange(field.name, event.target.value)} required={field.required}>
-                    <option value="">Selectionner</option>
-                    {field.options.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}
-                  </select>
+                  <Dropdown
+                    value={values[field.name] || null}
+                    options={field.options}
+                    onChange={(e) => onChange(field.name, e.value)}
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Selectionner"
+                    required={field.required}
+                    className="w-full"
+                  />
+                ) : field.type === "date" ? (
+                  <Calendar
+                    value={parseDateValue(values[field.name])}
+                    onChange={(e) => onChange(field.name, formatDateValue(e.value))}
+                    dateFormat="dd/mm/yy"
+                    placeholder="jj/mm/aaaa"
+                    showIcon
+                    required={field.required}
+                    className="w-full"
+                  />
                 ) : (
                   <input type={field.type ?? "text"} placeholder={field.placeholder || field.label} value={values[field.name] ?? ""} onChange={(event) => onChange(field.name, event.target.value)} required={field.required} />
                 )}
@@ -863,14 +899,19 @@ function DynamicDemandeFields({ champs, values, onChange }) {
             {champ.type_champ === "textarea" ? (
               <textarea placeholder={champ.placeholder || ""} value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps} />
             ) : champ.type_champ === "select" ? (
-              <select value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps}>
-                <option value="">{champ.placeholder || "Selectionner"}</option>
-                {options.map((option) => {
-                  const optionValue = typeof option === "string" ? option : option.value;
-                  const optionLabel = typeof option === "string" ? option : option.label || option.value;
-                  return <option value={optionValue} key={optionValue}>{optionLabel}</option>;
-                })}
-              </select>
+              <Dropdown
+                value={value || null}
+                options={options.map((option) => ({
+                  label: typeof option === "string" ? option : option.label || option.value,
+                  value: typeof option === "string" ? option : option.value,
+                }))}
+                onChange={(e) => onChange(champ.code, e.value)}
+                optionLabel="label"
+                optionValue="value"
+                placeholder={champ.placeholder || "Selectionner"}
+                {...commonProps}
+                className="w-full"
+              />
             ) : champ.type_champ === "checkbox" || champ.type_champ === "switch" ? (
               <span className="dynamic-checkline"><input type="checkbox" checked={Boolean(value)} onChange={(event) => onChange(champ.code, event.target.checked)} disabled={champ.lecture_seule} /> Oui</span>
             ) : champ.type_champ === "radio" ? (
@@ -881,10 +922,31 @@ function DynamicDemandeFields({ champs, values, onChange }) {
                   return <label key={optionValue}><input type="radio" name={champ.code} value={optionValue} checked={value === optionValue} onChange={() => onChange(champ.code, optionValue)} disabled={champ.lecture_seule} /> {optionLabel}</label>;
                 })}
               </div>
+            ) : champ.type_champ === "date" ? (
+              <Calendar
+                value={parseDateValue(value)}
+                onChange={(e) => onChange(champ.code, formatDateValue(e.value))}
+                dateFormat="dd/mm/yy"
+                placeholder="jj/mm/aaaa"
+                showIcon
+                {...commonProps}
+                className="w-full"
+              />
+            ) : champ.type_champ === "datetime" ? (
+              <Calendar
+                value={parseDateValue(value)}
+                onChange={(e) => onChange(champ.code, formatDateValue(e.value))}
+                dateFormat="dd/mm/yy"
+                showTime
+                placeholder="jj/mm/aaaa hh:mm"
+                showIcon
+                {...commonProps}
+                className="w-full"
+              />
             ) : champ.type_champ === "file" || champ.type_champ === "image" ? (
               <input type="file" accept={champ.type_champ === "image" ? "image/*" : undefined} onChange={(event) => onChange(champ.code, event.target.files?.[0]?.name ?? "")} disabled={champ.lecture_seule} />
             ) : (
-              <input type={champ.type_champ === "number" ? "number" : champ.type_champ === "date" ? "date" : champ.type_champ === "datetime" ? "datetime-local" : champ.type_champ === "email" ? "email" : champ.type_champ === "phone" ? "tel" : "text"} placeholder={champ.placeholder || ""} value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps} />
+              <input type={champ.type_champ === "number" ? "number" : champ.type_champ === "email" ? "email" : champ.type_champ === "phone" ? "tel" : "text"} placeholder={champ.placeholder || ""} value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps} />
             )}
             {champ.description ? <small>{champ.description}</small> : null}
           </label>
