@@ -940,6 +940,7 @@ function RequestsPage() {
   const [dynamicValues, setDynamicValues] = React.useState({});
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [submitState, setSubmitState] = React.useState({ status: "idle", message: "" });
+  const [currentStep, setCurrentStep] = React.useState(0);
 
   const typeDemandesQuery = useQuery({
     queryKey: ["request-type-demandes"],
@@ -975,9 +976,55 @@ function RequestsPage() {
   });
   const requiredDocuments = documentsQuery.data?.length ? documentsQuery.data : fallbackRequiredDocuments;
   const dynamicChamps = champsQuery.data ?? [];
+  const activeDynamicChamps = React.useMemo(() => [...dynamicChamps].filter((champ) => champ.actif).sort((a, b) => a.ordre - b.ordre), [dynamicChamps]);
+  const requestSteps = [
+    { title: "Identite du requerant", detail: "Donnees communes" },
+    { title: "Champs de la demande", detail: activeDynamicChamps.length ? `${activeDynamicChamps.length} champ${activeDynamicChamps.length > 1 ? "s" : ""}` : "Selon le type" },
+    { title: "Pieces et validation", detail: `${requiredDocuments.length} piece${requiredDocuments.length > 1 ? "s" : ""}` },
+  ];
 
   const updateRequerant = (name, value) => setRequerantValues((current) => ({ ...current, [name]: value }));
   const updateDynamic = (name, value) => setDynamicValues((current) => ({ ...current, [name]: value }));
+
+  const validateCurrentStep = () => {
+    if (currentStep === 0) {
+      const missingRequiredField = requerantFieldGroups
+        .flatMap((group) => group.fields)
+        .find((field) => field.required && !String(requerantValues[field.name] ?? "").trim());
+
+      if (missingRequiredField) {
+        setSubmitState({ status: "error", message: `Veuillez remplir le champ: ${missingRequiredField.label}.` });
+        return false;
+      }
+    }
+
+    if (currentStep === 1) {
+      if (champsQuery.isLoading || typeDemandesQuery.isLoading) {
+        setSubmitState({ status: "loading", message: "Chargement des champs de la demande..." });
+        return false;
+      }
+
+      const missingDynamicField = activeDynamicChamps.find((champ) => champ.obligatoire && !String(dynamicValues[champ.code] ?? "").trim());
+      if (missingDynamicField) {
+        setSubmitState({ status: "error", message: `Veuillez remplir le champ: ${missingDynamicField.libelle || missingDynamicField.code}.` });
+        return false;
+      }
+    }
+
+    setSubmitState({ status: "idle", message: "" });
+    return true;
+  };
+
+  const goToNextStep = () => {
+    if (validateCurrentStep()) {
+      setCurrentStep((step) => Math.min(step + 1, requestSteps.length - 1));
+    }
+  };
+
+  const goToPreviousStep = () => {
+    setSubmitState({ status: "idle", message: "" });
+    setCurrentStep((step) => Math.max(step - 1, 0));
+  };
 
   const buildDemandePayload = () => {
     const requerantKeys = [
@@ -1057,14 +1104,22 @@ function RequestsPage() {
       </section><section className="container single-request-panel modern-request-panel clean-request-panel ambient-section request-ambient-panel" id="rendez-vous"><AmbientSectionEffects />
         <article className="request-workspace">
           <motion.form className="consular-form passport-form-card" onSubmit={handleSubmitDemande} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.08, ease: "easeOut" }}>
-            <div className="form-section-heading form-heading-row"><div><span>Etape 1</span><h2>Informations du demandeur</h2></div><p>Remplissez les donnees communes du requerant, puis les champs specifiques a cette demande.</p></div>
-            <CommonRequerantFields values={requerantValues} onChange={updateRequerant} />
-            <div className="form-block"><h3>Informations specifiques a la demande</h3>{champsQuery.isLoading || typeDemandesQuery.isLoading ? <FormFieldsSkeleton count={6} /> : <DynamicDemandeFields champs={dynamicChamps} values={dynamicValues} onChange={updateDynamic} />}</div>
-            <div className="form-block upload-section"><div className="form-block-title"><div><h3>Pieces jointes</h3><p>Ajoutez chaque fichier au bon emplacement pour faciliter la verification du dossier.</p></div><span>{requiredDocuments.length} piece{requiredDocuments.length > 1 ? "s" : ""}</span></div><DocumentUploadList documents={requiredDocuments} isLoading={documentsQuery.isLoading} /></div>
-            <div className="form-block"><label className="full-field">Observations pour l'agent consulaire<textarea placeholder="Ajoutez une precision utile : urgence, perte, changement d'adresse, correction a signaler..." /></label></div>
-            <div className="form-confirmation"><label><input type="checkbox" checked={isConfirmed} onChange={(event) => setIsConfirmed(event.target.checked)} required /><span>Je certifie que les informations fournies sont exactes et que les pieces jointes sont lisibles.</span></label></div>
+            <div className="form-section-heading form-heading-row"><div><span>Etape {currentStep + 1}</span><h2>{requestSteps[currentStep].title}</h2></div><p>Avancez en trois parties courtes pour completer la demande consulaire.</p></div>
+            <ol className="request-stepper compact-request-stepper" aria-label="Etapes de la demande">
+              {requestSteps.map((step, index) => <li className={index === currentStep ? "active" : index < currentStep ? "done" : ""} key={step.title}><strong>{index + 1}</strong><div><span>{step.title}</span><small>{step.detail}</small></div></li>)}
+            </ol>
+            {currentStep === 0 ? <CommonRequerantFields values={requerantValues} onChange={updateRequerant} /> : null}
+            {currentStep === 1 ? <div className="form-block"><h3>Informations specifiques a la demande</h3>{champsQuery.isLoading || typeDemandesQuery.isLoading ? <FormFieldsSkeleton count={6} /> : <DynamicDemandeFields champs={dynamicChamps} values={dynamicValues} onChange={updateDynamic} />}</div> : null}
+            {currentStep === 2 ? <>
+              <div className="form-block upload-section"><div className="form-block-title"><div><h3>Pieces jointes</h3><p>Ajoutez chaque fichier au bon emplacement pour faciliter la verification du dossier.</p></div><span>{requiredDocuments.length} piece{requiredDocuments.length > 1 ? "s" : ""}</span></div><DocumentUploadList documents={requiredDocuments} isLoading={documentsQuery.isLoading} /></div>
+              <div className="form-block"><label className="full-field">Observations pour l'agent consulaire<textarea placeholder="Ajoutez une precision utile : urgence, perte, changement d'adresse, correction a signaler..." /></label></div>
+              <div className="form-confirmation"><label><input type="checkbox" checked={isConfirmed} onChange={(event) => setIsConfirmed(event.target.checked)} required /><span>Je certifie que les informations fournies sont exactes et que les pieces jointes sont lisibles.</span></label></div>
+            </> : null}
             {submitState.message ? <div className={`form-submit-alert ${submitState.status}`} role="status">{submitState.message}</div> : null}
-            <div className="form-actions refined-actions"><button type="button">Enregistrer le brouillon</button><button type="submit" className="primary-action" disabled={submitState.status === "loading" || !isConfirmed}>{submitState.status === "loading" ? "Envoi..." : "Soumettre la demande"}</button></div>
+            <div className="form-actions refined-actions compact-step-actions">
+              {currentStep > 0 ? <button type="button" onClick={goToPreviousStep}>Precedent</button> : <button type="button">Enregistrer le brouillon</button>}
+              {currentStep < requestSteps.length - 1 ? <button type="button" className="primary-action" onClick={goToNextStep}>Continuer</button> : <button type="submit" className="primary-action" disabled={submitState.status === "loading" || !isConfirmed}>{submitState.status === "loading" ? "Envoi..." : "Soumettre la demande"}</button>}
+            </div>
           </motion.form>
         </article>
       </section>
@@ -1094,6 +1149,9 @@ export default function App() {
   if (path.startsWith("/login")) return <LoginPage />;
   return <HomePage />;
 }
+
+
+
 
 
 
