@@ -7507,10 +7507,10 @@ body {
 .p-dropdown {
   width: 100%;
   min-height: 40px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--bg-2);
-  color: var(--color);
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background: var(--bg-2) !important;
+  color: var(--color) !important;
   font: inherit;
   font-size: 13px;
   font-weight: 850;
@@ -7518,12 +7518,12 @@ body {
 }
 
 .p-dropdown:hover {
-  border-color: var(--blue);
+  border-color: var(--blue) !important;
 }
 
 .p-dropdown.p-focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--blue) 18%, transparent);
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--blue) 18%, transparent) !important;
 }
 
 .p-dropdown .p-dropdown-label {
@@ -7531,73 +7531,357 @@ body {
   min-height: 40px;
   display: flex;
   align-items: center;
+  color: var(--color) !important;
+}
+
+.p-dropdown .p-dropdown-label.p-placeholder {
+  color: var(--color-icone) !important;
+  opacity: 0.7;
 }
 
 .p-dropdown .p-dropdown-trigger {
   width: 36px;
-  color: var(--color-icone);
+  color: var(--color-icone) !important;
 }
 
 .p-dropdown-panel {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--bg-1);
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background: var(--bg-1) !important;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
   margin-top: 4px;
 }
 
 .p-dropdown-items {
-  padding: 4px;
+  padding: 4px !important;
+  background: var(--bg-1) !important;
 }
 
 .p-dropdown-item {
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: var(--color);
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  color: var(--color) !important;
+  background: transparent !important;
   font-size: 13px;
   font-weight: 800;
   transition: background-color 120ms ease;
 }
 
 .p-dropdown-item.p-highlight {
-  background: color-mix(in srgb, var(--blue) 10%, transparent);
-  color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 10%, transparent) !important;
+  color: var(--blue) !important;
 }
 
 .p-dropdown-item:hover {
-  background: var(--bg-2);
+  background: var(--bg-2) !important;
+  color: var(--color) !important;
 }
 
 .p-dropdown-empty-message {
-  padding: 10px 12px;
-  color: var(--color-icone);
+  padding: 10px 12px !important;
+  color: var(--color-icone) !important;
+  background: var(--bg-1) !important;
   font-size: 13px;
 }
 
-/* Dark mode PrimeReact overrides */
+/* Dark mode PrimeReact Dropdown overrides */
 [data-theme="dark"] .p-dropdown {
-  background: var(--bg-2);
-  border-color: var(--line);
-  color: var(--color);
+  background: var(--bg-2) !important;
+  border-color: var(--line) !important;
+  color: var(--color) !important;
+}
+
+[data-theme="dark"] .p-dropdown .p-dropdown-label {
+  color: var(--color) !important;
 }
 
 [data-theme="dark"] .p-dropdown-panel {
-  background: var(--bg-1);
-  border-color: var(--line);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  background: var(--bg-1) !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .p-dropdown-items {
+  background: var(--bg-1) !important;
 }
 
 [data-theme="dark"] .p-dropdown-item {
-  color: var(--color);
+  color: var(--color) !important;
+  background: transparent !important;
 }
 
 [data-theme="dark"] .p-dropdown-item.p-highlight {
-  background: color-mix(in srgb, var(--blue) 14%, transparent);
-  color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 14%, transparent) !important;
+  color: var(--blue) !important;
 }
 
 [data-theme="dark"] .p-dropdown-item:hover {
-  background: var(--bg-2);
+  background: var(--bg-2) !important;
+  color: var(--color) !important;
+}
+
+[data-theme="dark"] .p-dropdown-empty-message {
+  color: var(--color-icone) !important;
+  background: var(--bg-1) !important;
+}
+
+/* PrimeReact Calendar overrides */
+.p-calendar {
+  width: 100%;
+}
+
+.p-calendar .p-inputtext {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-2) !important;
+  color: var(--color) !important;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 850;
+  transition: border-color 160ms ease;
+}
+
+.p-calendar .p-inputtext:hover {
+  border-color: var(--blue);
+}
+
+.p-calendar .p-inputtext:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--blue) 18%, transparent);
+  outline: none;
+}
+
+.p-calendar .p-calendar-button {
+  width: 36px;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-left: 0;
+  border-radius: 0 8px 8px 0;
+  background: var(--bg-3) !important;
+  color: var(--color-icone) !important;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.p-calendar .p-calendar-button:hover {
+  background: var(--blue) !important;
+  color: #fff !important;
+}
+
+.p-calendar-panel,
+.p-datepicker {
+  background: var(--bg-1) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important;
+  color: var(--color);
+  font-family: inherit;
+}
+
+.p-datepicker {
+  padding: 10px !important;
+}
+
+.p-datepicker-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  padding: 8px 0 !important;
+  margin-bottom: 4px !important;
+  color: var(--color);
+}
+
+.p-datepicker-header .p-datepicker-title {
+  font-weight: 800;
+  color: var(--color) !important;
+  font-size: 14px;
+}
+
+.p-datepicker-header .p-datepicker-title span {
+  color: var(--color) !important;
+}
+
+.p-datepicker-header .p-datepicker-select-month,
+.p-datepicker-header .p-datepicker-select-year {
+  background: var(--bg-2) !important;
+  color: var(--color) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.p-datepicker-header button {
+  color: var(--color-icone) !important;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none !important;
+  background: transparent !important;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.p-datepicker-header button:hover {
+  background: var(--bg-2) !important;
+  color: var(--blue) !important;
+}
+
+.p-datepicker-header button .pi {
+  color: inherit !important;
+}
+
+.p-datepicker table {
+  border-collapse: collapse;
+}
+
+.p-datepicker table th {
+  padding: 6px 8px;
+  color: var(--color-icone) !important;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background: transparent !important;
+  border: none !important;
+}
+
+.p-datepicker table td {
+  background: transparent !important;
+  border: none !important;
+}
+
+.p-datepicker table td span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--color) !important;
+  background: transparent !important;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.p-datepicker table td span:hover {
+  background: var(--bg-2) !important;
+  color: var(--blue) !important;
+}
+
+.p-datepicker table td span.p-highlight {
+  background: var(--blue) !important;
+  color: #fff !important;
+  font-weight: 800;
+}
+
+.p-datepicker table td span.p-datepicker-today {
+  border: 1px solid var(--blue) !important;
+  background: transparent !important;
+}
+
+.p-datepicker table td span.p-disabled {
+  color: var(--color-icone) !important;
+  opacity: 0.4;
+  cursor: default;
+  background: transparent !important;
+}
+
+.p-datepicker table td span:not(.p-disabled):not(.p-highlight):hover {
+  background: color-mix(in srgb, var(--blue) 8%, transparent) !important;
+}
+
+.p-timepicker {
+  border-top: 1px solid var(--line) !important;
+  background: transparent !important;
+}
+
+.p-timepicker button {
+  color: var(--color-icone) !important;
+}
+
+.p-timepicker button:hover {
+  color: var(--blue) !important;
+}
+
+.p-timepicker .p-hour-hand,
+.p-timepicker .p-minute-hand,
+.p-timepicker .p-second-hand {
+  background: var(--blue) !important;
+}
+
+.p-timepicker span.p-highlight {
+  color: var(--blue) !important;
+}
+
+.p-monthpicker button {
+  color: var(--color) !important;
+  background: transparent !important;
+  border-radius: 8px;
+}
+
+.p-monthpicker button:hover {
+  background: var(--bg-2) !important;
+}
+
+.p-monthpicker button.p-highlight {
+  background: var(--blue) !important;
+  color: #fff !important;
+}
+
+.p-yearpicker button {
+  color: var(--color) !important;
+  background: transparent !important;
+  border-radius: 8px;
+}
+
+.p-yearpicker button:hover {
+  background: var(--bg-2) !important;
+}
+
+.p-yearpicker button.p-highlight {
+  background: var(--blue) !important;
+  color: #fff !important;
+}
+
+/* Dark mode PrimeReact Calendar overrides */
+[data-theme="dark"] .p-calendar .p-inputtext {
+  background: var(--bg-2) !important;
+  border-color: var(--line) !important;
+  color: var(--color) !important;
+}
+
+[data-theme="dark"] .p-calendar .p-calendar-button {
+  background: var(--bg-3) !important;
+  border-color: var(--line) !important;
+  color: var(--color-icone) !important;
+}
+
+[data-theme="dark"] .p-calendar-panel,
+[data-theme="dark"] .p-datepicker {
+  background: var(--bg-1) !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .p-datepicker table td span {
+  color: var(--color) !important;
+}
+
+[data-theme="dark"] .p-datepicker table td span.p-highlight {
+  background: var(--blue) !important;
+  color: #fff !important;
+}
+
+[data-theme="dark"] .p-datepicker table td span:not(.p-disabled):not(.p-highlight):hover {
+  background: color-mix(in srgb, var(--blue) 14%, transparent) !important;
+}
+
+.w-full {
+  width: 100%;
 }
 
 /* Request info card */
@@ -9413,7 +9697,7 @@ body {
 }
 
 @media (max-width: 780px) {
-  .topbar .socials {
+  .topbar {
     display: none;
   }
 }
@@ -9531,3 +9815,4 @@ body {
 .compact-request-stepper li::after {
   display: none;
 }
+

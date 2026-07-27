@@ -568,13 +568,7 @@ function HomePage() {
         </div>
       </section>
 
-      <header className="main-header">
-        <div className="container nav-wrap">
-          <a className="brand logo-brand" href="/" aria-label="Ambassade RDC au Burundi"><><img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" /><img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" /></></a>
-          <nav className="desktop-nav" aria-label="Navigation principale">{menu.map((item) => <a key={item.label} href={item.href}>{item.label}</a>)}</nav>
-          <div className="nav-actions"><a className="online-link" href="/espace-personnel"><span className="bi-kanban" aria-hidden="true" />Espace personnel</a></div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section className="hero embassy-classic-hero embassy-official-hero ambient-section hero-particle-section" aria-label="Accueil"><AmbientSectionEffects />
         <div className="hero-slide hero-invest">
@@ -1211,6 +1205,7 @@ export default function App() {
   if (path.startsWith("/login")) return <LoginPage />;
   return <HomePage />;
 }
+
 
 
 
