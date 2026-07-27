@@ -9816,3 +9816,16 @@ body {
   display: none;
 }
 
+
+/* Let compact request step text wrap freely */
+.compact-request-stepper span,
+.compact-request-stepper small {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.compact-request-stepper li {
+  align-items: flex-start;
+  height: auto;
+}

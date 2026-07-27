@@ -579,27 +579,6 @@ function HomePage() {
               <p>Informations officielles, services consulaires, communiques et accompagnement des ressortissants congolais a Bujumbura.</p>
               <div className="classic-hero-actions"><a href="/demandes?type=passeport">Demander un document</a><a href="#actualites">Communiques officiels</a></div>
             </motion.div>
-            <motion.aside className="hero-consular-panel" aria-label="Informations consulaires" initial={{ opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.65, delay: 0.18, ease: "easeOut" }}>
-              <div className="hero-consular-heading">
-                <span>Chancellerie</span>
-                <h2>Services consulaires</h2>
-              </div>
-              <div className="hero-consular-list">
-                <article className="hero-consular-item">
-                  <span className="hero-consular-icon"><Clock size={20} strokeWidth={2.4} aria-hidden="true" /></span>
-                  <div><strong>Accueil du public</strong><small>Lundi - Vendredi, 09:00 - 15:30</small></div>
-                </article>
-                <article className="hero-consular-item">
-                  <span className="hero-consular-icon"><CalendarDays size={20} strokeWidth={2.4} aria-hidden="true" /></span>
-                  <div><strong>Rendez-vous</strong><small>Depot, verification et suivi des dossiers</small></div>
-                </article>
-                <article className="hero-consular-item">
-                  <span className="hero-consular-icon"><MapPin size={20} strokeWidth={2.4} aria-hidden="true" /></span>
-                  <div><strong>Contact</strong><small>Bujumbura, Burundi</small></div>
-                </article>
-              </div>
-              <a className="hero-consular-action" href="#documents"><ClipboardCheck size={18} strokeWidth={2.4} aria-hidden="true" />Voir les procedures<ArrowRight size={16} strokeWidth={2.6} aria-hidden="true" /></a>
-            </motion.aside>
           </div>
         </div>
         <div className="hero-ribbon"><span /><span /><span /></div>
@@ -793,6 +772,13 @@ function formatDateValue(date) {
   return `${y}-${m}-${d}`;
 }
 
+function getYesterday() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
 function CommonRequerantFields({ values, onChange }) {
   return (
     <div className="requerant-groups-grid">
@@ -821,6 +807,7 @@ function CommonRequerantFields({ values, onChange }) {
                     dateFormat="dd/mm/yy"
                     placeholder="jj/mm/aaaa"
                     showIcon
+                    maxDate={getYesterday()}
                     required={field.required}
                     className="w-full"
                   />
@@ -923,6 +910,7 @@ function DynamicDemandeFields({ champs, values, onChange }) {
                 dateFormat="dd/mm/yy"
                 placeholder="jj/mm/aaaa"
                 showIcon
+                maxDate={getYesterday()}
                 {...commonProps}
                 className="w-full"
               />
@@ -934,6 +922,7 @@ function DynamicDemandeFields({ champs, values, onChange }) {
                 showTime
                 placeholder="jj/mm/aaaa hh:mm"
                 showIcon
+                maxDate={getYesterday()}
                 {...commonProps}
                 className="w-full"
               />
@@ -1133,31 +1122,7 @@ function RequestsPage() {
 
   return (
     <main className="requests-shell single-request-shell"><SiteHeader />
-      <motion.section className="requests-hero single-request-hero clean-request-hero ambient-section request-ambient-hero" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: "easeOut" }}><AmbientSectionEffects /><div className="request-motion-web" aria-hidden="true" /><div className="container single-request-hero-grid"><div><span className="eyebrow">Service consulaire</span><h1>{requestTitle}</h1><p>{requestDescription}</p></div></div></motion.section>
-      <section className="container request-info-card" aria-label="Informations pratiques">
-        <div className="request-info-header">
-          <strong>Chancellerie</strong>
-          <span>Ambassade de la Republique Democratique du Congo au Burundi</span>
-        </div>
-        <div className="request-info-grid">
-          <div className="request-info-item">
-            <span className="request-info-label">Services consulaires</span>
-            <p>Passeports, legalisations, attestations, visas et actes d'etat civil.</p>
-          </div>
-          <div className="request-info-item">
-            <span className="request-info-label">Accueil du public</span>
-            <p>Lundi - Vendredi, 09:00 - 15:30</p>
-          </div>
-          <div className="request-info-item">
-            <span className="request-info-label">Rendez-vous</span>
-            <p>Depot, verification et suivi des dossiers.</p>
-          </div>
-          <div className="request-info-item">
-            <span className="request-info-label">Contact</span>
-            <p>Bujumbura, Burundi</p>
-          </div>
-        </div>
-      </section><section className="container single-request-panel modern-request-panel clean-request-panel ambient-section request-ambient-panel" id="rendez-vous"><AmbientSectionEffects />
+      <motion.section className="requests-hero single-request-hero clean-request-hero ambient-section request-ambient-hero" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: "easeOut" }}><AmbientSectionEffects /><div className="request-motion-web" aria-hidden="true" /><div className="container single-request-hero-grid"><div><span className="eyebrow">Service consulaire</span><h1>{requestTitle}</h1><p>{requestDescription}</p></div></div></motion.section><section className="container single-request-panel modern-request-panel clean-request-panel ambient-section request-ambient-panel" id="rendez-vous"><AmbientSectionEffects />
         <article className="request-workspace">
           <motion.form className="consular-form passport-form-card" onSubmit={handleSubmitDemande} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.08, ease: "easeOut" }}>
             <div className="form-section-heading form-heading-row"><div><span>Etape {currentStep + 1}</span><h2>{requestSteps[currentStep].title}</h2></div><p>Avancez en trois parties courtes pour completer la demande consulaire.</p></div>
@@ -1205,6 +1170,8 @@ export default function App() {
   if (path.startsWith("/login")) return <LoginPage />;
   return <HomePage />;
 }
+
+
 
 
 
