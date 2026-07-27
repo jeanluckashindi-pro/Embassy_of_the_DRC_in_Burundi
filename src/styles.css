@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kaushan+Script&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playball&family=Story+Script&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kaushan+Script&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playball&family=Story+Script&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
 :root {
   --bg-1: #ffffff;
@@ -972,7 +972,156 @@ a {
   font-size: 13px;
 }
 
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-2);
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.mobile-menu-toggle:hover {
+  background: var(--bg-3);
+}
+
+.mobile-menu-toggle .bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  margin: 0 auto;
+  border-radius: 2px;
+  background: var(--color);
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+
+.mobile-menu-toggle .bar.open:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.mobile-menu-toggle .bar.open:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle .bar.open:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile nav overlay */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.mobile-nav-overlay.open {
+  display: block;
+  opacity: 1;
+}
+
+/* Mobile nav panel */
+.mobile-nav {
+  display: none;
+}
+
 @media (max-width: 1040px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    width: min(320px, 85vw);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    border-left: 1px solid var(--line);
+    background: var(--bg-1);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
+    transform: translateX(100%);
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .mobile-nav.open {
+    transform: translateX(0);
+  }
+
+  .mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mobile-nav-header span {
+    color: var(--color);
+    font-size: 16px;
+    font-weight: 920;
+  }
+
+  .mobile-menu-close {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-2);
+    color: var(--color);
+    font-size: 22px;
+    cursor: pointer;
+    transition: background-color 160ms ease;
+  }
+
+  .mobile-menu-close:hover {
+    background: var(--bg-3);
+  }
+
+  .mobile-nav a {
+    display: block;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+    color: var(--color);
+    font-size: 15px;
+    font-weight: 800;
+    transition: background-color 140ms ease, color 140ms ease;
+  }
+
+  .mobile-nav a:hover {
+    background: color-mix(in srgb, var(--blue) 8%, transparent);
+    color: var(--blue);
+  }
+
+  .mobile-nav-cta {
+    margin: 16px 20px;
+    padding: 14px 20px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    background: var(--blue) !important;
+    color: #fff !important;
+    text-align: center;
+    font-weight: 900 !important;
+  }
+
   .desktop-nav {
   font-family: var(--font-ui);
     display: none;
@@ -4123,50 +4272,55 @@ body {
   }
 }
 
-/* Header without embassy logo */
+/* Header: nav-wrap layout */
 .main-header .nav-wrap {
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: grid;
+  grid-template-columns: minmax(150px, 190px) minmax(420px, 1fr) auto auto;
+  align-items: center;
 }
 
 .main-header .desktop-nav {
   justify-content: flex-start;
 }
 
-@media (max-width: 1160px) {
-  .main-header .nav-wrap {
-    grid-template-columns: 1fr;
-    grid-template-areas: none;
-  }
-
-  .main-header .desktop-nav,
-  .main-header .nav-actions {
-    grid-area: auto;
-  }
+.main-header .nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-/* Restore header logo layout */
-.main-header .nav-wrap {
-  grid-template-columns: minmax(150px, 190px) minmax(520px, 1fr) auto;
-}
-
-@media (max-width: 1160px) {
+@media (max-width: 1040px) {
   .main-header .nav-wrap {
-    grid-template-columns: minmax(220px, 260px) 1fr;
-    grid-template-areas:
-      "brand actions"
-      "nav nav";
-  }
-
-  .main-header .logo-brand {
-    grid-area: brand;
+    display: grid;
+    grid-template-columns: 1fr auto;
   }
 
   .main-header .desktop-nav {
-    grid-area: nav;
+    display: none;
   }
 
   .main-header .nav-actions {
-    grid-area: actions;
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-header .nav-wrap {
+    min-height: 64px;
+    grid-template-columns: 1fr auto;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 18px;
+  }
+
+  .brand small {
+    font-size: 9px;
   }
 }
 
@@ -9046,5 +9200,214 @@ body {
 
   .hero-consular-panel .hero-consular-action {
     margin: 0 18px 20px;
+  }
+}
+/* Palette restraint: keep project bg-1/bg-2 surfaces and preserve DRC accents where meaningful */
+.site-shell {
+  background:
+    linear-gradient(90deg, var(--blue-dark) 0 33.33%, var(--yellow) 33.33% 66.66%, var(--red) 66.66% 100%) top / 100% 4px no-repeat,
+    var(--bg-1);
+}
+
+.embassy-official-hero {
+  background: var(--bg-1);
+}
+
+.embassy-official-hero .hero-slide {
+  background-image:
+    linear-gradient(90deg, rgba(0, 22, 48, .78) 0%, rgba(0, 38, 74, .55) 46%, rgba(0, 38, 74, .22) 100%),
+    url("https://ambardcbujumbura.cd/wp-content/uploads/2025/05/Ambassade-RDC.jpg");
+}
+
+.embassy-official-hero .hero-slide::after {
+  height: 22px;
+  background: linear-gradient(90deg, var(--blue-dark) 0 33.33%, var(--yellow) 33.33% 66.66%, var(--red) 66.66% 100%);
+  opacity: .82;
+}
+
+.hero-particle-section::after {
+  background: linear-gradient(180deg, rgba(0, 18, 46, .02), rgba(0, 18, 46, .12));
+}
+
+.quick-panel {
+  margin-top: -38px;
+}
+
+.quick-panel-heading {
+  border-left-color: var(--yellow);
+  background: var(--bg-1);
+  box-shadow: 0 16px 34px color-mix(in srgb, #000 9%, transparent);
+}
+
+.quick-panel-heading .eyebrow {
+  color: var(--red);
+}
+
+.quick-panel-heading h2 {
+  color: var(--color);
+}
+
+.quick-panel-heading::after,
+.communiques .section-title::after {
+  background: linear-gradient(90deg, var(--blue-dark), var(--yellow), var(--red));
+}
+
+.quick-panel .quick-card {
+  background: var(--bg-1);
+}
+
+.quick-panel .quick-card::before {
+  width: 5px;
+}
+
+.quick-panel .quick-card.invest::before {
+  background: var(--yellow);
+}
+
+.quick-panel .quick-card.notice::before {
+  background: var(--red);
+}
+
+.quick-panel .quick-card.discover::before {
+  background: var(--blue-dark);
+}
+
+.public-services-section,
+.documents-section,
+.communiques,
+.discover-section {
+  background: var(--bg-1);
+}
+
+.public-services-heading,
+.leaders,
+.communiques .section-title {
+  background: var(--bg-2);
+}
+
+.documents-section {
+  border-top: 4px solid var(--blue-dark);
+}
+
+.documents-section .container {
+  background: transparent;
+}
+
+.public-service-card,
+.public-service-card:nth-child(2),
+.public-service-card:nth-child(3) {
+  background: var(--bg-1);
+}
+
+.public-service-card {
+  border-top-color: var(--red);
+}
+
+.public-service-card:nth-child(2) {
+  border-top-color: var(--yellow);
+}
+
+.public-service-card:nth-child(3) {
+  border-top-color: var(--blue-dark);
+}
+
+.mission-message .embassy-photo {
+  box-shadow: -14px 14px 0 var(--blue-dark), 14px -14px 0 var(--yellow);
+}
+
+.hero-consular-panel {
+  border-left-color: var(--yellow);
+  background: color-mix(in srgb, var(--bg-1) 96%, transparent);
+}
+
+.hero-consular-heading {
+  background: var(--blue-dark);
+}
+
+.hero-consular-heading span {
+  border-bottom-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.hero-consular-item:nth-child(2) .hero-consular-icon {
+  background: color-mix(in srgb, var(--yellow) 26%, var(--bg-1));
+  color: #6a5700;
+}
+
+.hero-consular-item:nth-child(3) .hero-consular-icon {
+  background: color-mix(in srgb, var(--red) 10%, var(--bg-1));
+  color: var(--red);
+}
+
+.hero-consular-panel .hero-consular-action {
+  background: var(--red);
+}
+
+.hero-consular-panel .hero-consular-action:hover {
+  background: color-mix(in srgb, var(--red) 86%, #000);
+}
+
+/* Global responsive fixes */
+@media (max-width: 780px) {
+  .request-info-card {
+    border-radius: 8px;
+  }
+
+  .request-info-header {
+    padding: 14px 16px;
+  }
+
+  .request-info-item {
+    padding: 12px 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dynamic-fields-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dynamic-field {
+    grid-column: 1 / -1 !important;
+  }
+
+  .requerant-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .single-request-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .single-request-hero-grid > div {
+    text-align: left;
+  }
+
+  .single-request-hero-grid h1 {
+    font-size: clamp(22px, 6vw, 32px);
+  }
+
+  .single-request-panel {
+    padding: 16px;
+  }
+
+  .passport-form-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .form-block-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .request-stepper {
+    gap: 8px;
+  }
+
+  .dynamic-request-stepper {
+    grid-template-columns: 1fr;
   }
 }

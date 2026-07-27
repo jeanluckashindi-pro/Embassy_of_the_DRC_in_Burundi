@@ -29,13 +29,33 @@ const menu = [
 ];
 
 function SiteHeader() {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   return (
     <header className="main-header">
       <div className="container nav-wrap">
         <a className="brand logo-brand" href="/" aria-label="Ambassade RDC au Burundi"><><img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" /><img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" /></></a>
         <nav className="desktop-nav" aria-label="Navigation principale">{menu.map((item) => <a key={item.label} href={item.href}>{item.label}</a>)}</nav>
         <div className="nav-actions"><a className="online-link" href="/espace-personnel"><span className="bi-kanban" aria-hidden="true" />Espace personnel</a></div>
+        <button className="mobile-menu-toggle" type="button" aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"} onClick={() => setMobileOpen((prev) => !prev)}>
+          <span className={mobileOpen ? "bar open" : "bar"} /><span className={mobileOpen ? "bar open" : "bar"} /><span className={mobileOpen ? "bar open" : "bar"} />
+        </button>
       </div>
+      <div className={"mobile-nav-overlay" + (mobileOpen ? " open" : "")} onClick={() => setMobileOpen(false)} />
+      <nav className={"mobile-nav" + (mobileOpen ? " open" : "")} aria-label="Navigation mobile">
+        <div className="mobile-nav-header"><span>Menu</span><button className="mobile-menu-close" type="button" aria-label="Fermer le menu" onClick={() => setMobileOpen(false)}>&times;</button></div>
+        {menu.map((item) => <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}>{item.label}</a>)}
+        <a className="mobile-nav-cta" href="/espace-personnel" onClick={() => setMobileOpen(false)}>Espace personnel</a>
+      </nav>
     </header>
   );
 }
@@ -951,26 +971,6 @@ function RequestsPage() {
   });
   const requiredDocuments = documentsQuery.data?.length ? documentsQuery.data : fallbackRequiredDocuments;
   const dynamicChamps = champsQuery.data ?? [];
-  const activeDynamicChamps = React.useMemo(() => [...dynamicChamps].filter((champ) => champ.actif).sort((a, b) => a.ordre - b.ordre), [dynamicChamps]);
-  const formSteps = React.useMemo(() => {
-    const commonSteps = requerantFieldGroups.map((group) => ({
-      title: group.title.replace(" du requerant", ""),
-      detail: `${group.fields.length} champ${group.fields.length > 1 ? "s" : ""}`,
-    }));
-    const specificSteps = champsQuery.isLoading || typeDemandesQuery.isLoading
-      ? [{ title: "Champs specifiques", detail: "Chargement" }]
-      : activeDynamicChamps.map((champ) => ({
-        title: champ.libelle || champ.code,
-        detail: champ.obligatoire ? "Obligatoire" : "Optionnel",
-      }));
-
-    return [
-      ...commonSteps,
-      ...specificSteps,
-      { title: "Pieces jointes", detail: `${requiredDocuments.length} piece${requiredDocuments.length > 1 ? "s" : ""}` },
-      { title: "Validation", detail: "Controle final" },
-    ];
-  }, [activeDynamicChamps, champsQuery.isLoading, requiredDocuments.length, typeDemandesQuery.isLoading]);
 
   const updateRequerant = (name, value) => setRequerantValues((current) => ({ ...current, [name]: value }));
   const updateDynamic = (name, value) => setDynamicValues((current) => ({ ...current, [name]: value }));
@@ -1002,7 +1002,6 @@ function RequestsPage() {
           </div>
         </div>
       </section><section className="container single-request-panel modern-request-panel clean-request-panel ambient-section request-ambient-panel" id="rendez-vous"><AmbientSectionEffects />
-        <motion.ol className="request-stepper polished-stepper dynamic-request-stepper" initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.035 } } }}>{formSteps.map((step, index) => <motion.li className={index === 0 ? "active" : ""} key={`${step.title}-${index}`} variants={{ hidden: { opacity: 0, x: -8 }, show: { opacity: 1, x: 0 } }}><strong>{index + 1}</strong><div><span>{step.title}</span><small>{step.detail}</small></div></motion.li>)}</motion.ol>
         <article className="request-workspace">
           <motion.form className="consular-form passport-form-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.08, ease: "easeOut" }}>
             <div className="form-section-heading form-heading-row"><div><span>Etape 1</span><h2>Informations du demandeur</h2></div><p>Remplissez les donnees communes du requerant, puis les champs specifiques a cette demande.</p></div>
@@ -1041,6 +1040,7 @@ export default function App() {
   if (path.startsWith("/login")) return <LoginPage />;
   return <HomePage />;
 }
+
 
 
 
