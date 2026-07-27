@@ -1,0 +1,32 @@
+[
+  {
+    "id": "invest",
+    "label": "Investissement",
+    "title": "Investir en Republique Democratique du Congo",
+    "description": "Orientations pratiques pour comprendre les opportunites, les secteurs porteurs et les premieres demarches d'investissement en RDC.",
+    "action": "Comment investir ?",
+    "href": "#documents",
+    "className": "invest",
+    "image": "/images/president_2.jpg"
+  },
+  {
+    "id": "notice",
+    "label": "Information officielle",
+    "title": "Communiques",
+    "description": "Retrouvez les avis, annonces publiques et informations importantes publies par l'Ambassade a Bujumbura.",
+    "action": "Voir plus",
+    "href": "#actualites",
+    "className": "notice",
+    "image": "/images/premiere_dame_2.jpg"
+  },
+  {
+    "id": "documents",
+    "label": "Services consulaires",
+    "title": "Documents consulaires",
+    "description": "Consultez les pieces a preparer et demarrez vos demandes de passeport, carte consulaire, visa, legalisation ou procuration.",
+    "action": "Voir les documents",
+    "href": "/documents",
+    "className": "discover",
+    "image": "/images/passport_1.jpg"
+  }
+]
