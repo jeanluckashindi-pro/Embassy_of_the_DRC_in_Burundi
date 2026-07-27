@@ -12,7 +12,7 @@ import presidentImage from "./assets/President.webp";
 import presidentTwo from "./assets/president_2.jpg";
 import firstLadyImage from "./assets/premiere_dame_2.jpg";
 import firstLadyTwo from "./assets/premiere_dame_2.jpg";
-import { API_BASE_URL, apiFetch, fetchTypeDemandeChamps, fetchTypeDemandeDocuments, fetchTypeDemandes } from "./api.js";
+import { API_BASE_URL, apiFetch, fetchTypeDemandeChamps, fetchTypeDemandeDocuments, fetchTypeDemandes, submitDemande } from "./api.js";
 import { ThemeToggle } from "./ThemeToggle.jsx";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -99,6 +99,7 @@ function SiteFooter() {
           <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
           <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg></a>
           <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
         </div>
       </div>
     </footer>
@@ -713,6 +714,7 @@ const requerantFieldGroups = [
       { name: "post_nom", label: "Post-nom", placeholder: "Ex. MUKENDI", required: true },
       { name: "prenom", label: "Prenom", placeholder: "Ex. Jean", required: true },
       { name: "sexe", label: "Sexe", type: "select", required: true, options: [{ label: "Masculin", value: "M" }, { label: "Feminin", value: "F" }] },
+      { name: "nationalite", label: "Nationalite", placeholder: "Ex. Congolaise", required: true },
       { name: "lieu_naissance", label: "Lieu de naissance", placeholder: "Ex. Kinshasa", required: true },
       { name: "date_naissance", label: "Date de naissance", type: "date", required: true },
     ],
@@ -936,6 +938,8 @@ function RequestsPage() {
   const fallbackRequest = requestTypes.find((item) => item.id === selectedType) ?? requestTypes[0];
   const [requerantValues, setRequerantValues] = React.useState({});
   const [dynamicValues, setDynamicValues] = React.useState({});
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const [submitState, setSubmitState] = React.useState({ status: "idle", message: "" });
 
   const typeDemandesQuery = useQuery({
     queryKey: ["request-type-demandes"],
@@ -975,6 +979,55 @@ function RequestsPage() {
   const updateRequerant = (name, value) => setRequerantValues((current) => ({ ...current, [name]: value }));
   const updateDynamic = (name, value) => setDynamicValues((current) => ({ ...current, [name]: value }));
 
+  const buildDemandePayload = () => {
+    const requerantKeys = [
+      "nom", "post_nom", "prenom", "sexe", "nationalite", "lieu_naissance", "date_naissance", "profession", "etat_civil",
+      "nom_conjoint", "post_nom_conjoint", "prenom_conjoint", "nationalite_conjoint", "adresse_residence", "code_postal", "telephone", "email", "adresse_rdc",
+      "nom_pere", "post_nom_pere", "prenom_pere", "nationalite_pere", "nom_mere", "post_nom_mere", "prenom_mere", "nationalite_mere", "nationalite_d_origine", "nationalite_actuelle",
+    ];
+
+    const requerant = requerantKeys.reduce((payload, key) => {
+      payload[key] = String(requerantValues[key] ?? "").trim();
+      return payload;
+    }, {});
+
+    const champsValeurs = [...dynamicChamps]
+      .filter((champ) => champ.actif && champ.id && champ.code)
+      .map((champ) => {
+        const rawValue = dynamicValues[champ.code];
+        const valeur = Array.isArray(rawValue) ? rawValue.join(", ") : String(rawValue ?? "").trim();
+        return {
+          type_demande_champ_id: champ.id,
+          code: champ.code,
+          valeur,
+        };
+      })
+      .filter((item) => item.valeur !== "");
+
+    return {
+      type_demande_id: selectedTypeId,
+      document_uploaded: true,
+      requerant,
+      champs_valeurs: champsValeurs,
+    };
+  };
+
+  const handleSubmitDemande = async (event) => {
+    event.preventDefault();
+    setSubmitState({ status: "loading", message: "Envoi de la demande en cours..." });
+
+    try {
+      const data = await submitDemande(buildDemandePayload());
+      const reference = data?.numero || data?.reference || data?.id;
+      setSubmitState({
+        status: "success",
+        message: reference ? `Demande envoyee avec succes. Reference: ${reference}` : "Demande envoyee avec succes.",
+      });
+    } catch (error) {
+      setSubmitState({ status: "error", message: error.message || "Impossible d'envoyer la demande pour le moment." });
+    }
+  };
+
   return (
     <main className="requests-shell single-request-shell"><SiteHeader />
       <motion.section className="requests-hero single-request-hero clean-request-hero ambient-section request-ambient-hero" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: "easeOut" }}><AmbientSectionEffects /><div className="request-motion-web" aria-hidden="true" /><div className="container single-request-hero-grid"><div><span className="eyebrow">Service consulaire</span><h1>{requestTitle}</h1><p>{requestDescription}</p></div></div></motion.section>
@@ -1003,14 +1056,15 @@ function RequestsPage() {
         </div>
       </section><section className="container single-request-panel modern-request-panel clean-request-panel ambient-section request-ambient-panel" id="rendez-vous"><AmbientSectionEffects />
         <article className="request-workspace">
-          <motion.form className="consular-form passport-form-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.08, ease: "easeOut" }}>
+          <motion.form className="consular-form passport-form-card" onSubmit={handleSubmitDemande} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.08, ease: "easeOut" }}>
             <div className="form-section-heading form-heading-row"><div><span>Etape 1</span><h2>Informations du demandeur</h2></div><p>Remplissez les donnees communes du requerant, puis les champs specifiques a cette demande.</p></div>
             <CommonRequerantFields values={requerantValues} onChange={updateRequerant} />
             <div className="form-block"><h3>Informations specifiques a la demande</h3>{champsQuery.isLoading || typeDemandesQuery.isLoading ? <FormFieldsSkeleton count={6} /> : <DynamicDemandeFields champs={dynamicChamps} values={dynamicValues} onChange={updateDynamic} />}</div>
             <div className="form-block upload-section"><div className="form-block-title"><div><h3>Pieces jointes</h3><p>Ajoutez chaque fichier au bon emplacement pour faciliter la verification du dossier.</p></div><span>{requiredDocuments.length} piece{requiredDocuments.length > 1 ? "s" : ""}</span></div><DocumentUploadList documents={requiredDocuments} isLoading={documentsQuery.isLoading} /></div>
             <div className="form-block"><label className="full-field">Observations pour l'agent consulaire<textarea placeholder="Ajoutez une precision utile : urgence, perte, changement d'adresse, correction a signaler..." /></label></div>
-            <div className="form-confirmation"><label><input type="checkbox" /><span>Je certifie que les informations fournies sont exactes et que les pieces jointes sont lisibles.</span></label></div>
-            <div className="form-actions refined-actions"><button type="button">Enregistrer le brouillon</button><button type="button" className="primary-action">Continuer vers les pieces</button></div>
+            <div className="form-confirmation"><label><input type="checkbox" checked={isConfirmed} onChange={(event) => setIsConfirmed(event.target.checked)} required /><span>Je certifie que les informations fournies sont exactes et que les pieces jointes sont lisibles.</span></label></div>
+            {submitState.message ? <div className={`form-submit-alert ${submitState.status}`} role="status">{submitState.message}</div> : null}
+            <div className="form-actions refined-actions"><button type="button">Enregistrer le brouillon</button><button type="submit" className="primary-action" disabled={submitState.status === "loading" || !isConfirmed}>{submitState.status === "loading" ? "Envoi..." : "Soumettre la demande"}</button></div>
           </motion.form>
         </article>
       </section>
@@ -1040,6 +1094,9 @@ export default function App() {
   if (path.startsWith("/login")) return <LoginPage />;
   return <HomePage />;
 }
+
+
+
 
 
 

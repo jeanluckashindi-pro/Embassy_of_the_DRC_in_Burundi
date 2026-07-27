@@ -9411,3 +9411,38 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 780px) {
+  .topbar .socials {
+    display: none;
+  }
+}
+
+.form-submit-alert {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.form-submit-alert.loading {
+  background: color-mix(in srgb, var(--blue-dark) 8%, var(--bg-1));
+  color: var(--blue-dark);
+}
+
+.form-submit-alert.success {
+  background: color-mix(in srgb, #168345 10%, var(--bg-1));
+  color: #168345;
+}
+
+.form-submit-alert.error {
+  background: color-mix(in srgb, var(--red) 10%, var(--bg-1));
+  color: var(--red);
+}
+
+.form-actions button:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+}
