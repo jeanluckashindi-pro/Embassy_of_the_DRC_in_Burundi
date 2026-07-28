@@ -175,6 +175,10 @@ function formatCommuniqueDate(value) {
 }
 
 
+function shuffleDisplayItems(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
 function getActualiteDateParts(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return { day: "--", month: "Date" };
@@ -637,7 +641,7 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   });
   const apiCommuniques = React.useMemo(() => mapApiCommuniques(communiquesQuery.data), [communiquesQuery.data]);
-  const displayedCommuniques = apiCommuniques.length ? apiCommuniques : communiques;
+  const displayedCommuniques = React.useMemo(() => shuffleDisplayItems(apiCommuniques.length ? apiCommuniques : communiques), [apiCommuniques]);
   const featuredCommunique = displayedCommuniques[0];
   const actualitesQuery = useQuery({
     queryKey: ["home-actualites"],
@@ -645,7 +649,7 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   });
   const apiActualites = React.useMemo(() => mapApiActualites(actualitesQuery.data), [actualitesQuery.data]);
-  const displayedActualites = apiActualites.length ? apiActualites : news.map((item) => ({ ...item, description: "Ambassade RDC au Burundi - Bujumbura", source: "Ambassade RDC au Burundi", url: "#actualites" }));
+  const displayedActualites = React.useMemo(() => shuffleDisplayItems(apiActualites.length ? apiActualites : news.map((item) => ({ ...item, description: "Ambassade RDC au Burundi - Bujumbura", source: "Ambassade RDC au Burundi", url: "#actualites" }))), [apiActualites]);
   const featuredActualite = displayedActualites[0];
 
   return (
@@ -720,12 +724,12 @@ function HomePage() {
       <motion.section className="leaders ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={staggerReveal}><AmbientSectionEffects /><div className="container leader-grid">{leaders.map((leader) => <motion.article className="leader" key={leader.name} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}><div className="leader-photo" style={{ backgroundImage: `url("${leader.image}")` }} /><h3>{leader.name}</h3><p>{leader.role}</p></motion.article>)}</div></motion.section>
 
       <motion.section className="documents-section ambient-section" id="documents" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><a className="section-title documents-title-link" href="/documents"><span className="eyebrow">Grand public</span><h2>Documents de l'Ambassade</h2><p>Retrouvez les principales categories de documents et pieces a preparer avant votre rendez-vous consulaire a Bujumbura.</p></a><div className="documents-grid"><EmbassyDocumentCards documents={embassyDocuments} isLoading={embassyDocumentsQuery.isLoading} isError={embassyDocumentsQuery.isError} /></div></div></motion.section>
-      <motion.section className="news-section ambient-section" id="actualites" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><div className="news-heading-row"><div className="section-title left-title"><span className="eyebrow">Informations officielles</span><h2>Actualites</h2><p>Suivez les dernieres informations de l'Ambassade a Bujumbura.</p></div><a className="news-all-link" href="/demandes?type=passeport#rendez-vous">Prendre rendez-vous</a></div><div className="news-modern-layout"><motion.article className="news-feature-card" variants={cardReveal}><div className="news-feature-photo" style={{ backgroundImage: `url("${featuredActualite.image}")` }} /><div className="news-feature-copy"><span className="news-label">{featuredActualite.source}</span><h3>{featuredActualite.title}</h3><p>{featuredActualite.description}</p><a href={featuredActualite.url} target={featuredActualite.url?.startsWith("http") ? "_blank" : undefined} rel={featuredActualite.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article><motion.div className="news-modern-list" variants={staggerReveal}>{displayedActualites.slice(1, 4).map((item) => <motion.article className="news-card" key={item.id ?? item.title} variants={cardReveal}><div className="news-thumb" style={{ backgroundImage: `url("${item.image}")` }} /><div className="date-box"><strong>{item.day}</strong><span>{item.month}</span></div><div><h3>{item.title}</h3><p>{item.source}</p><a href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article>)}</motion.div></div></div></motion.section>
+      <motion.section className="news-section ambient-section" id="actualites" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><div className="news-heading-row official-heading-row"><div className="section-title left-title official-section-title"><span className="eyebrow">Informations officielles</span><h2>Actualites</h2><p>Suivez les dernieres informations de l'Ambassade a Bujumbura.</p></div><a className="news-all-link" href="/demandes?type=passeport#rendez-vous">Prendre rendez-vous</a></div><div className="news-modern-layout"><motion.article className="news-feature-card" variants={cardReveal}><div className="news-feature-photo" style={{ backgroundImage: `url("${featuredActualite.image}")` }} /><div className="news-feature-copy"><span className="news-label">{featuredActualite.source}</span><h3>{featuredActualite.title}</h3><p>{featuredActualite.description}</p><a href={featuredActualite.url} target={featuredActualite.url?.startsWith("http") ? "_blank" : undefined} rel={featuredActualite.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article><motion.div className="news-modern-list" variants={staggerReveal}>{displayedActualites.slice(1, 4).map((item) => <motion.article className="news-card" key={item.id ?? item.title} variants={cardReveal}><div className="news-thumb" style={{ backgroundImage: `url("${item.image}")` }} /><div className="date-box"><strong>{item.day}</strong><span>{item.month}</span></div><div><h3>{item.title}</h3><p>{item.source}</p><a href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article>)}</motion.div></div></div></motion.section>
 
       <motion.section className="communiques ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects />
         <div className="container">
-          <div className="communiques-header">
-            <div className="section-title left-title">
+          <div className="communiques-header official-heading-row">
+            <div className="section-title left-title official-section-title">
               <span className="eyebrow">Informations officielles</span>
               <h2>Communiques</h2>
               <p>Avis, annonces et informations publies par l'Ambassade.</p>
@@ -1271,6 +1275,7 @@ export default function App() {
   if (path.startsWith("/login")) return <LoginPage />;
   return <HomePage />;
 }
+
 
 
 
