@@ -15,6 +15,36 @@ export function buildApiUrl(path, params = {}) {
   return url;
 }
 
+function formatFieldName(value) {
+  return String(value ?? "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function collectApiErrors(value, path = []) {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => collectApiErrors(item, path));
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value).flatMap(([key, nestedValue]) => collectApiErrors(nestedValue, [...path, key]));
+  }
+
+  const label = path.map(formatFieldName).join(" - ");
+  return [label ? `${label}: ${value}` : String(value)];
+}
+
+export function formatApiError(data, fallback) {
+  if (data?.detail || data?.message) {
+    return data.detail || data.message;
+  }
+
+  const errors = collectApiErrors(data);
+  return errors.length ? errors.join("\n") : fallback;
+}
+
 export async function apiFetch(path, { params, signal } = {}) {
   const response = await fetch(buildApiUrl(path, params), {
     headers: {
@@ -108,7 +138,7 @@ export async function submitDemande(payload, { signal } = {}) {
   }
 
   if (!response.ok) {
-    const detail = data?.detail || data?.message || `Erreur API ${response.status}`;
+    const detail = formatApiError(data, `Erreur API ${response.status}`);
     throw new Error(detail);
   }
 

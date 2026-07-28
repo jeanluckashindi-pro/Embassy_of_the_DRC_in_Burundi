@@ -5,6 +5,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
+import { toast } from "sonner";
 import { ArrowRight, CalendarDays, CheckCircle2, ClipboardCheck, Clock, FileText, Globe, Mail, MapPin, Phone, UploadCloud } from "lucide-react";
 import logoAmbassade from "./assets/logo_ambassade.png";
 import logoAmbassadeLight from "./assets/logo_ambassade_light.png";
@@ -1216,12 +1217,18 @@ function RequestsPage() {
     try {
       const data = await submitDemande(buildDemandePayload());
       const reference = data?.numero || data?.reference || data?.id;
+      const message = reference ? `Demande envoyee avec succes. Reference: ${reference}` : "Demande envoyee avec succes.";
       setSubmitState({
         status: "success",
-        message: reference ? `Demande envoyee avec succes. Reference: ${reference}` : "Demande envoyee avec succes.",
+        message,
       });
+      toast.success(message);
     } catch (error) {
-      setSubmitState({ status: "error", message: error.message || "Impossible d'envoyer la demande pour le moment." });
+      const message = error.message || "Impossible d'envoyer la demande pour le moment.";
+      setSubmitState({ status: "error", message });
+      toast.error("Impossible d'envoyer la demande", {
+        description: message,
+      });
     }
   };
 
