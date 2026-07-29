@@ -3,6 +3,7 @@ import { Badge } from "../components/ui/badge.jsx";
 import { Card, CardContent } from "../components/ui/card.jsx";
 import { Button } from "../components/ui/button.jsx";
 import { MapPin, Mail, Phone, Globe, Clock, ShieldCheck, ArrowRight, UserCheck, Landmark, Building2, Award } from "lucide-react";
+import { TopBar } from "../App.jsx";
 
 const presidentImage = "/images/president.webp";
 const presidentTwo = "/images/president_2.jpg";
@@ -19,15 +20,7 @@ const diplomaticLeaders = [
 export function AmbassadePage({ SiteHeader, SiteFooter }) {
   return (
     <main className="site-shell bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] min-h-screen">
-      <section className="topbar border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
-        <div className="container topbar-inner">
-          <div className="contact-line">
-            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
-            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
-          </div>
-        </div>
-      </section>
-
+      <TopBar />
       <SiteHeader />
 
       {/* Hero Header */}

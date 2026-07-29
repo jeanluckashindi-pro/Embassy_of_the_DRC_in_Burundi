@@ -1,37 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
-import logoAmbassade from "../assets/logo_ambassade.png";
-import logoAmbassadeLight from "../assets/logo_ambassade_light.png";
 
 export function SplashScreen() {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return (
-      document.documentElement.classList.contains("dark") ||
-      document.documentElement.dataset.theme === "dark" ||
-      window.localStorage.getItem("ambardc-theme") === "dark"
-    );
-  });
-
-  useEffect(() => {
-    const checkDark = () => {
-      const darkActive =
-        document.documentElement.classList.contains("dark") ||
-        document.documentElement.dataset.theme === "dark";
-      setIsDark(darkActive);
-    };
-
-    checkDark();
-
-    const observer = new MutationObserver(checkDark);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class", "data-theme"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -45,14 +15,13 @@ export function SplashScreen() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="flex flex-col items-center gap-6 text-center max-w-md"
       >
-        {/* Logo with soft halo adaptative */}
+        {/* Favicon Logo with soft halo accent */}
         <div className="relative flex items-center justify-center">
           <div className="absolute -inset-4 rounded-full bg-blue-50 dark:bg-blue-950/40 animate-pulse opacity-80" />
-          
           <img
-            src={isDark ? logoAmbassadeLight : logoAmbassade}
+            src="/favicon.png"
             alt="Ambassade RDC au Burundi"
-            className="h-28 sm:h-36 w-auto object-contain relative z-10 drop-shadow-md transition-all duration-300"
+            className="h-20 w-20 sm:h-24 sm:w-24 object-contain relative z-10 drop-shadow-md rounded-2xl"
           />
         </div>
 
@@ -66,7 +35,7 @@ export function SplashScreen() {
           </p>
         </div>
 
-        {/* Loading Spinner & Animated National Color Dots */}
+        {/* Animated National Color Dots */}
         <div className="flex items-center gap-2 mt-2">
           <span className="h-2.5 w-2.5 rounded-full bg-[#0054a6] animate-bounce" style={{ animationDelay: "0ms" }} />
           <span className="h-2.5 w-2.5 rounded-full bg-[#f7d117] animate-bounce" style={{ animationDelay: "150ms" }} />

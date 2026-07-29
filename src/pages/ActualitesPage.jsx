@@ -8,7 +8,7 @@ import { Input } from "../components/ui/input.jsx";
 import { CalendarDays, Newspaper, Search, ArrowRight, ExternalLink, MapPin, Mail, Tag, RefreshCw } from "lucide-react";
 
 import { fetchActualites, fetchCommuniques } from "../api.js";
-import { mapApiActualites } from "../App.jsx";
+import { mapApiActualites, TopBar } from "../App.jsx";
 import { ActualiteDetailDialog } from "../components/ActualiteDetailDialog.jsx";
 
 const presidentTwo = "/images/president_2.jpg";
@@ -77,15 +77,7 @@ export function ActualitesPage({ SiteHeader, SiteFooter }) {
 
   return (
     <main className="site-shell bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] min-h-screen">
-      <section className="topbar border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
-        <div className="container topbar-inner">
-          <div className="contact-line">
-            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
-            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
-          </div>
-        </div>
-      </section>
-
+      <TopBar />
       <SiteHeader />
 
       {/* Header Banner */}

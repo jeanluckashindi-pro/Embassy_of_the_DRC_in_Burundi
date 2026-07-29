@@ -213,12 +213,101 @@ html.dark .btn-secondary * {
   color: #fafad6 !important;
 }
 
+/* Dual Logo Theme Toggle - Light Default */
+.logo-dark-artwork {
+  display: block !important;
+}
+.logo-light-artwork {
+  display: none !important;
+}
+
+html.dark .logo-dark-artwork,
+html[data-theme="dark"] .logo-dark-artwork {
+  display: none !important;
+}
+html.dark .logo-light-artwork,
+html[data-theme="dark"] .logo-light-artwork {
+  display: block !important;
+}
+
+html[data-theme="light"] .logo-dark-artwork {
+  display: block !important;
+}
+html[data-theme="light"] .logo-light-artwork {
+  display: none !important;
+}
+
+/* Support system OS theme changes when theme is set to 'system' or auto */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .logo-dark-artwork {
+    display: none !important;
+  }
+  html:not([data-theme="light"]) .logo-light-artwork {
+    display: block !important;
+  }
+}
+
+/* Header Social Media Icons Color adaptation */
+.socials a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+html:not(.dark) .socials a {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e0dc !important;
+  color: #0054a6 !important;
+}
+
+html:not(.dark) .socials a svg {
+  color: #0054a6 !important;
+  fill: currentColor !important;
+}
+
+html:not(.dark) .socials a:hover {
+  background-color: #0054a6 !important;
+  border-color: #0054a6 !important;
+  color: #ffffff !important;
+}
+
+html:not(.dark) .socials a:hover svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+}
+
+html.dark .socials a {
+  background-color: #2d2e2e !important;
+  border: 1px solid #3d3e3e !important;
+  color: #38bdf8 !important;
+}
+
+html.dark .socials a svg {
+  color: #38bdf8 !important;
+  fill: currentColor !important;
+}
+
+html.dark .socials a:hover {
+  background-color: #0054a6 !important;
+  border-color: #0054a6 !important;
+  color: #ffffff !important;
+}
+
+html.dark .socials a:hover svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+}
+
 .mobile-menu-toggle,
 .mobile-menu-close {
   background-color: #0054a6 !important;
   color: #ffffff !important;
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 8px 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

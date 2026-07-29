@@ -84,6 +84,65 @@ const menu = [
   { label: "Contact", href: "/contact", icon: Mail },
 ];
 
+export function TopBar() {
+  return (
+    <section className="topbar bg-[#f7f5f3] dark:bg-[#1d1f1f] border-b border-[#e2e0dc] dark:border-[#2d2e2e] transition-colors">
+      <div className="container topbar-inner flex items-center justify-between py-2 text-xs">
+        <div className="contact-line flex items-center gap-3 sm:gap-6">
+          <span className="flex items-center gap-1.5 text-slate-800 dark:text-[#fafad6] font-semibold text-[11px] sm:text-xs">
+            <MapPin size={15} className="text-[#0054a6] dark:text-amber-400 shrink-0" strokeWidth={2.4} aria-hidden="true" />
+            <span>Bujumbura, Burundi</span>
+          </span>
+          <span className="flex items-center gap-1.5 text-slate-800 dark:text-[#fafad6] font-semibold text-[11px] sm:text-xs">
+            <Mail size={15} className="text-[#0054a6] dark:text-amber-400 shrink-0" strokeWidth={2.4} aria-hidden="true" />
+            <span className="hidden sm:inline">contact@ambardcbujumbura.cd</span>
+            <span className="inline sm:hidden">contact@ambardcbujumbura.cd</span>
+          </span>
+        </div>
+
+        <div className="socials flex items-center gap-1.5 sm:gap-2" aria-label="Réseaux sociaux">
+          <a
+            href="https://facebook.com/ambardcbujumbura"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            title="Facebook Ambassade RDC"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a
+            href="https://twitter.com/ambardcbujumbura"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X (Twitter)"
+            title="X Ambassade RDC"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg>
+          </a>
+          <a
+            href="https://youtube.com/@ambardcbujumbura"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+            title="YouTube Ambassade RDC"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg>
+          </a>
+          <a
+            href="https://instagram.com/ambardcbujumbura"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            title="Instagram Ambassade RDC"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function SiteHeader() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -99,18 +158,18 @@ function SiteHeader() {
   }, [mobileOpen]);
 
   return (
-    <header className="main-header">
-      <div className="container nav-wrap flex items-center justify-between">
-        <a className="brand logo-brand shrink-0" href="/" aria-label="Ambassade RDC au Burundi">
-          <img className="theme-logo logo-dark-artwork h-12 sm:h-14 w-auto object-contain" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
-          <img className="theme-logo logo-light-artwork h-12 sm:h-14 w-auto object-contain" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+    <header className="main-header bg-white/95 dark:bg-[#161717]/95 border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
+      <div className="container nav-wrap flex items-center justify-between py-2 sm:py-3">
+        <a className="brand logo-brand shrink-0 flex items-center gap-2" href="/" aria-label="Ambassade RDC au Burundi">
+          <img className="theme-logo logo-dark-artwork h-10 sm:h-14 w-auto object-contain" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
+          <img className="theme-logo logo-light-artwork h-10 sm:h-14 w-auto object-contain" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
         </a>
 
-        <nav className="desktop-nav hidden md:flex" aria-label="Navigation principale">
+        <nav className="desktop-nav hidden md:flex items-center gap-6" aria-label="Navigation principale">
           {menu.map((item) => {
             const Icon = item.icon;
             return (
-              <a key={item.label} href={item.href} className="inline-flex items-center gap-1.5 transition-colors hover:text-blue-600 dark:hover:text-blue-400">
+              <a key={item.label} href={item.href} className="inline-flex items-center gap-1.5 transition-colors hover:text-blue-600 dark:hover:text-blue-400 font-medium text-xs sm:text-sm">
                 <Icon size={16} strokeWidth={2} aria-hidden="true" />
                 <span>{item.label}</span>
               </a>
@@ -118,20 +177,21 @@ function SiteHeader() {
           })}
         </nav>
 
-        <div className="nav-actions flex items-center gap-3 shrink-0">
-          <a href="/espace-personnel">
-            <Button variant="outline" size="sm" className="hidden md:inline-flex gap-1.5 font-medium border-slate-300 dark:border-slate-700">
+        <div className="nav-actions flex items-center gap-2 sm:gap-3 shrink-0">
+          <ThemeToggle />
+          <a href="/espace-personnel" className="hidden md:inline-flex">
+            <Button variant="outline" size="sm" className="gap-1.5 font-medium border-slate-300 dark:border-slate-700">
               <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               <span>Espace personnel</span>
             </Button>
           </a>
           <button
-            className="mobile-menu-toggle flex md:hidden items-center justify-center p-2 rounded-xl bg-[#0054a6] text-white hover:bg-blue-900 transition-all cursor-pointer shrink-0 shadow-md"
+            className="mobile-menu-toggle flex md:hidden items-center justify-center p-2 rounded-xl bg-[#0054a6] text-white hover:bg-blue-900 transition-all cursor-pointer shrink-0 shadow-md border-0"
             type="button"
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
             onClick={() => setMobileOpen((prev) => !prev)}
           >
-            {mobileOpen ? <X size={24} className="!text-white" /> : <Menu size={24} className="!text-white" />}
+            {mobileOpen ? <X size={22} className="!text-white" /> : <Menu size={22} className="!text-white" />}
           </button>
         </div>
       </div>
@@ -183,8 +243,12 @@ function SiteHeader() {
                 })}
               </div>
 
-              <div className="p-4 border-t border-slate-200 dark:border-slate-800">
-                <a href="/espace-personnel" onClick={() => setMobileOpen(false)}>
+              <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Thème d'affichage</span>
+                  <ThemeToggle />
+                </div>
+                <a href="/espace-personnel" onClick={() => setMobileOpen(false)} className="block">
                   <Button variant="default" className="w-full justify-center gap-2">
                     <User size={16} />
                     <span>Espace personnel</span>
@@ -685,21 +749,7 @@ function HomePage() {
 
   return (
     <main className="site-shell">
-      <section className="topbar">
-        <div className="container topbar-inner">
-          <div className="contact-line">
-            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
-            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
-          </div>
-          <div className="socials" aria-label="Social media">
-            <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-            <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
-            <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
-            <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-          </div>
-        </div>
-      </section>
-
+      <TopBar />
       <SiteHeader />
 
       {/* Hero Section */}
@@ -1237,19 +1287,7 @@ function DocumentsPage() {
 
   return (
     <main className="site-shell documents-page-shell">
-      <section className="topbar">
-        <div className="container topbar-inner">
-          <div className="contact-line">
-            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
-            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
-          </div>
-          <div className="socials" aria-label="Social media">
-            <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-            <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
-          </div>
-        </div>
-      </section>
-
+      <TopBar />
       <SiteHeader />
 
       <section className="py-12 bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
@@ -1699,15 +1737,7 @@ function PersonalSpacePage() {
 function ContactPage() {
   return (
     <main className="site-shell bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] min-h-screen">
-      <section className="topbar bg-[#f7f5f3] dark:bg-[#1d1f1f] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
-        <div className="container topbar-inner">
-          <div className="contact-line">
-            <span><MapPin size={16} className="text-blue-700 dark:text-amber-400" />Bujumbura, Burundi</span>
-            <span><Mail size={16} className="text-blue-700 dark:text-amber-400" />contact@ambardcbujumbura.cd</span>
-          </div>
-        </div>
-      </section>
-
+      <TopBar />
       <SiteHeader />
 
       <section className="py-12 bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
@@ -1781,15 +1811,7 @@ function PaymentPage() {
 
   return (
     <main className="site-shell bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] min-h-screen">
-      <section className="topbar bg-[#f7f5f3] dark:bg-[#1d1f1f] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
-        <div className="container topbar-inner">
-          <div className="contact-line">
-            <span><MapPin size={16} className="text-blue-700 dark:text-amber-400" />Bujumbura, Burundi</span>
-            <span><Mail size={16} className="text-blue-700 dark:text-amber-400" />contact@ambardcbujumbura.cd</span>
-          </div>
-        </div>
-      </section>
-
+      <TopBar />
       <SiteHeader />
       <section className="py-12 bg-[#f7f5f3] dark:bg-[#1d1f1f] min-h-[60vh]">
         <div className="container max-w-2xl">
