@@ -1,35 +1,86 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { toast } from "sonner";
-import { ArrowRight, CalendarDays, CheckCircle2, ClipboardCheck, Clock, FileText, Globe, Home, Info, Mail, MapPin, Phone, FileBadge, FileEdit, Newspaper, TrendingUp, UploadCloud } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  ClipboardCheck,
+  Clock,
+  FileText,
+  Globe,
+  Home,
+  Info,
+  Mail,
+  MapPin,
+  Phone,
+  FileBadge,
+  FileEdit,
+  Newspaper,
+  TrendingUp,
+  UploadCloud,
+  Search,
+  ShieldCheck,
+  User,
+  CreditCard,
+  ChevronRight,
+  Building,
+  Sparkles,
+  Check,
+  Copy,
+  ExternalLink,
+  Menu,
+  X
+} from "lucide-react";
+
 import logoAmbassade from "./assets/logo_ambassade.png";
 import logoAmbassadeLight from "./assets/logo_ambassade_light.png";
-import passportOne from "./assets/passport_1.jpg";
-import passportTwo from "./assets/passport_2.jpg";
-import presidentImage from "./assets/President.webp";
-import presidentTwo from "./assets/president_2.jpg";
-import firstLadyImage from "./assets/premiere_dame_2.jpg";
-import firstLadyTwo from "./assets/premiere_dame_2.jpg";
-import { API_BASE_URL, apiFetch, fetchActualites, fetchCommuniques, fetchTypeDemandeChamps, fetchTypeDemandeDocuments, fetchTypeDemandes, submitDemande } from "./api.js";
+
+import {
+  API_BASE_URL,
+  apiFetch,
+  fetchActualites,
+  fetchCommuniques,
+  fetchTypeDemandeChamps,
+  fetchTypeDemandeDocuments,
+  fetchTypeDemandes,
+  submitDemande
+} from "./api.js";
 import { ThemeToggle } from "./ThemeToggle.jsx";
+import { NiandaChatbot } from "./components/NiandaChatbot.jsx";
+import { DocumentCard, DEFAULT_DOCUMENTS } from "./components/DocumentCard.jsx";
+import { AmbassadePage } from "./pages/AmbassadePage.jsx";
+import { ActualitesPage } from "./pages/ActualitesPage.jsx";
+
+// shadcn UI imports
+import { Button } from "./components/ui/button.jsx";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./components/ui/card.jsx";
+import { Badge } from "./components/ui/badge.jsx";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs.jsx";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "./components/ui/dialog.jsx";
+import { Input } from "./components/ui/input.jsx";
+
 import "swiper/css";
 import "swiper/css/pagination";
 
-const menu = [
-  { label: "Accueil", href: "/", icon: "Home" },
-  { label: "Ambassade", href: "/#ambassade", icon: "Info" },
-  { label: "Nos services", href: "/documents", icon: "FileBadge" },
-  { label: "Demandes", href: "/demandes", icon: "FileEdit" },
-  { label: "Actualites", href: "/#actualites", icon: "Newspaper" },
-  { label: "Contact nous", href: "/contact", icon: "Mail" },
-];
+const passportOne = "/images/passport_1.jpg";
+const passportTwo = "/images/passport_2.jpg";
+const presidentImage = "/images/president.webp";
+const presidentTwo = "/images/president_2.jpg";
+const firstLadyImage = "/images/premiere_dame_2.jpg";
+const firstLadyTwo = "/images/premiere_dame_2.jpg";
 
-const iconMap = {
-  Home, Info, FileBadge, FileEdit, Newspaper, Mail
-};
+const menu = [
+  { label: "Accueil", href: "/", icon: Home },
+  { label: "Ambassade", href: "/ambassade", icon: Info },
+  { label: "Nos services", href: "/documents", icon: FileBadge },
+  { label: "Demandes", href: "/demandes", icon: FileEdit },
+  { label: "Actualités", href: "/actualites", icon: Newspaper },
+  { label: "Contact", href: "/contact", icon: Mail },
+];
 
 function SiteHeader() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -40,73 +91,260 @@ function SiteHeader() {
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   return (
     <header className="main-header">
       <div className="container nav-wrap">
-        <a className="brand logo-brand" href="/" aria-label="Ambassade RDC au Burundi"><><img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" /><img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" /></></a>
-        <nav className="desktop-nav" aria-label="Navigation principale">{menu.map((item) => { const Icon = iconMap[item.icon]; return <a key={item.label} href={item.href}>{Icon ? <Icon size={16} strokeWidth={2.2} aria-hidden="true" /> : null}{item.label}</a>; })}</nav>
-        <div className="nav-actions">{/* <a className="online-link" href="/espace-personnel"><span className="bi-kanban" aria-hidden="true" />Espace personnel</a> */}</div>
-        <button className="mobile-menu-toggle" type="button" aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"} onClick={() => setMobileOpen((prev) => !prev)}>
-          <span className={mobileOpen ? "bar open" : "bar"} /><span className={mobileOpen ? "bar open" : "bar"} /><span className={mobileOpen ? "bar open" : "bar"} />
-        </button>
+        <a className="brand logo-brand" href="/" aria-label="Ambassade RDC au Burundi">
+          <img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
+          <img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+        </a>
+
+        <nav className="desktop-nav" aria-label="Navigation principale">
+          {menu.map((item) => {
+            const Icon = item.icon;
+            return (
+              <a key={item.label} href={item.href} className="inline-flex items-center gap-1.5 transition-colors hover:text-blue-600 dark:hover:text-blue-400">
+                <Icon size={16} strokeWidth={2} aria-hidden="true" />
+                <span>{item.label}</span>
+              </a>
+            );
+          })}
+        </nav>
+
+        <div className="nav-actions flex items-center gap-3">
+          <a href="/espace-personnel">
+            <Button variant="outline" size="sm" className="hidden md:inline-flex gap-1.5 font-medium border-slate-300 dark:border-slate-700">
+              <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span>Espace personnel</span>
+            </Button>
+          </a>
+          <button
+            className="mobile-menu-toggle md:hidden"
+            type="button"
+            aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            onClick={() => setMobileOpen((prev) => !prev)}
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
-      <div className={"mobile-nav-overlay" + (mobileOpen ? " open" : "")} onClick={() => setMobileOpen(false)} />
-      <nav className={"mobile-nav" + (mobileOpen ? " open" : "")} aria-label="Navigation mobile">
-        <div className="mobile-nav-header"><span>Menu</span><button className="mobile-menu-close" type="button" aria-label="Fermer le menu" onClick={() => setMobileOpen(false)}>&times;</button></div>
-        {menu.map((item) => { const Icon = iconMap[item.icon]; return <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}>{Icon ? <Icon size={16} strokeWidth={2.2} aria-hidden="true" /> : null}{item.label}</a>; })}
-        {/* <a className="mobile-nav-cta" href="/espace-personnel" onClick={() => setMobileOpen(false)}>Espace personnel</a> */}
-      </nav>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mobile-nav-overlay open"
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.nav
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="mobile-nav open"
+              aria-label="Navigation mobile"
+            >
+              <div className="mobile-nav-header">
+                <span className="font-semibold text-base">Menu Ambassade</span>
+                <button
+                  className="mobile-menu-close p-1"
+                  type="button"
+                  aria-label="Fermer le menu"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-1 py-4">
+                {menu.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      <Icon size={18} className="text-blue-600 dark:text-blue-400" />
+                      <span>{item.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
+
+              <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+                <a href="/espace-personnel" onClick={() => setMobileOpen(false)}>
+                  <Button variant="default" className="w-full justify-center gap-2">
+                    <User size={16} />
+                    <span>Espace personnel</span>
+                  </Button>
+                </a>
+              </div>
+            </motion.nav>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
 
 function SiteFooter() {
   return (
-    <footer className="site-footer" id="contact">
-      <div className="container footer-main">
-        <div className="footer-identity">
-          <><img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" /><img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" /></>
-          <p>Representation diplomatique de la Republique Democratique du Congo aupres de la Republique du Burundi.</p>
-          <div className="footer-theme"><span>Theme du site</span><ThemeToggle /></div>
-        </div>
-        <div className="footer-column">
-          <h3>Ambassade</h3>
-          <a href="/#ambassade">Mission diplomatique</a>
-          <a href="/#actualites">Actualites</a>
-          <a href="/contact">Contact</a>
-        </div>
-        <div className="footer-column">
-          <h3>Services consulaires</h3>
-          <a href="/documents">Documents de l'Ambassade</a>
-          <a href="/demandes">Formulaires de demande</a>
-          <a href="/demandes#rendez-vous">Prendre rendez-vous</a>
-          <a href="/espace-personnel">Espace personnel</a>
-        </div>
-        <div className="footer-column footer-contact-card">
-          <h3>Contacts</h3>
-          <div className="footer-contact-item"><MapPin size={16} strokeWidth={2.2} aria-hidden="true" /><span>Bujumbura, Burundi</span></div>
-          <div className="footer-contact-item"><Phone size={16} strokeWidth={2.2} aria-hidden="true" /><span>+257 00 00 00 00</span></div>
-          <div className="footer-contact-item"><Mail size={16} strokeWidth={2.2} aria-hidden="true" /><span>contact@ambardcbujumbura.cd</span></div>
-          <div className="footer-contact-item"><Globe size={16} strokeWidth={2.2} aria-hidden="true" /><span>www.ambardcbujumbura.cd</span></div>
-          <div className="footer-hours"><strong>Horaires</strong><span>Lundi - Vendredi</span><span>09:00 - 15:30</span></div>
-        </div>
+    <footer className="bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-slate-100 border-t border-blue-900 relative overflow-hidden" id="contact">
+      {/* Flag Accent Ribbon Top */}
+      <div className="h-1.5 w-full flex">
+        <div className="w-1/3 bg-sky-500" />
+        <div className="w-1/3 bg-amber-400" />
+        <div className="w-1/3 bg-red-600" />
       </div>
-      <div className="container footer-bottom">
-        <span>(c) 2026 Ambassade de la RD Congo au Burundi - Tous droits reserves.</span>
-        <div className="footer-socials">
-          <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-          <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-          <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg></a>
-          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+
+      <div className="container py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800/80">
+          
+          {/* Col 1: Brand & Identity (lg:col-span-4) */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 via-amber-400 to-red-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                <div className="h-full w-full rounded-full bg-blue-950 flex items-center justify-center font-extrabold text-amber-300 text-xs tracking-wider">
+                  RDC
+                </div>
+              </div>
+              <div>
+                <h3 className="font-extrabold text-base text-white tracking-tight uppercase leading-snug">
+                  Ambassade de la RDC
+                </h3>
+                <p className="text-xs text-amber-300 font-medium">République du Burundi — Bujumbura</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed pt-1">
+              Représentation diplomatique officielle de la République Démocratique du Congo auprès de la République du Burundi. Chancellerie, affaires consulaires et protection de la communauté congolaise.
+            </p>
+
+            {/* Emergency Hotline Banner */}
+            <div className="p-3.5 rounded-xl bg-blue-900/60 border border-blue-800/80 flex items-center justify-between text-xs shadow-inner">
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-lg bg-red-600/90 text-white flex items-center justify-center shrink-0 font-bold">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <div>
+                  <span className="block text-[10px] text-slate-300 font-semibold uppercase tracking-wider">Urgence Consulaire 24/7</span>
+                  <span className="block font-bold text-white text-xs">+257 22 22 23 24</span>
+                </div>
+              </div>
+              <Badge variant="gold" className="text-[10px] py-0.5">Assistance</Badge>
+            </div>
+
+            <div className="flex items-center gap-3 pt-1">
+              <span className="text-xs text-slate-400 font-medium">Thème du site :</span>
+              <ThemeToggle />
+            </div>
+          </div>
+
+          {/* Col 2: Mission & Actualités (lg:col-span-2) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+              <Building className="h-4 w-4 text-amber-400" />
+              <span>Ambassade</span>
+            </h4>
+            <ul className="space-y-2 text-xs text-slate-300 font-medium">
+              <li><a href="/#ambassade" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Mission diplomatique</a></li>
+              <li><a href="/#actualites" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Actualités & Communiqués</a></li>
+              <li><a href="/#rdc" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Découvrir la RDC</a></li>
+              <li><a href="/contact" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Demande d'audience</a></li>
+              <li><a href="/payment" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Coordonnées bancaires</a></li>
+            </ul>
+          </div>
+
+          {/* Col 3: Consular Services (lg:col-span-3) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-amber-400" />
+              <span>Services Consulaires</span>
+            </h4>
+            <ul className="space-y-2 text-xs text-slate-300 font-medium">
+              <li><a href="/demandes?type=passeport" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Passeport Biométrique</a></li>
+              <li><a href="/demandes?type=visa" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Demande de Visa d'Entrée</a></li>
+              <li><a href="/demandes?type=carte-consulaire" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Carte d'Immatriculation</a></li>
+              <li><a href="/documents" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Catalogue des documents</a></li>
+              <li><a href="/espace-personnel" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Suivi de dossier citoyen</a></li>
+            </ul>
+          </div>
+
+          {/* Col 4: Contacts & Hours (lg:col-span-3) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-amber-400" />
+              <span>Chancellerie</span>
+            </h4>
+            <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                <span>Avenue de la Révolution, Bujumbura, Burundi</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Phone className="h-4 w-4 text-amber-400 shrink-0" />
+                <span>+257 22 22 23 24</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Mail className="h-4 w-4 text-amber-400 shrink-0" />
+                <span>contact@ambardcbujumbura.cd</span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Globe className="h-4 w-4 text-amber-400 shrink-0" />
+                <span>www.ambardcbujumbura.cd</span>
+              </div>
+
+              <div className="mt-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs space-y-1">
+                <div className="flex items-center gap-1.5 text-amber-300 font-bold">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>Guichet Consulaire</span>
+                </div>
+                <p className="text-slate-200 text-[11px] font-medium">Lundi – Vendredi : 09h00 – 15h30</p>
+                <p className="text-slate-400 text-[10px]">Fermé les week-ends et jours fériés légaux RDC / Burundi.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom copyright bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+            <span>© 2026 Ambassade de la République Démocratique du Congo au Burundi.</span>
+            <span className="hidden sm:inline text-slate-700">•</span>
+            <span>Tous droits réservés.</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-blue-800 text-slate-300 hover:text-white transition-colors" aria-label="Facebook">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-blue-800 text-slate-300 hover:text-white transition-colors" aria-label="X (Twitter)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-red-700 text-slate-300 hover:text-white transition-colors" aria-label="YouTube">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg>
+            </a>
+            <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-pink-700 text-slate-300 hover:text-white transition-colors" aria-label="Instagram">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
+
 async function fetchQuickLinks() {
   const response = await fetch("/api/quick-links.json");
   if (!response.ok) {
@@ -118,35 +356,34 @@ async function fetchQuickLinks() {
 const PASSPORT_TYPE_DEMANDE_ID = "2822f0ec-0b3c-4529-b82d-1e5e279f4c28";
 
 const quickLinksFallback = [
-  { id: "invest", icon: "TrendingUp", label: "Investissement", title: "Investir en Republique Democratique du Congo", description: "Orientations pratiques pour comprendre les opportunites et les premieres demarches d'investissement en RDC.", action: "Comment investir ?", href: "#documents", className: "invest", image: "/images/president_2.jpg" },
-  { id: "notice", icon: "Newspaper", label: "Information officielle", title: "Communiques", description: "Avis, annonces publiques et informations importantes publies par l'Ambassade a Bujumbura.", action: "Voir plus", href: "#actualites", className: "notice", image: "/images/premiere_dame_2.jpg" },
-  { id: "documents", icon: "FileBadge", label: "Services consulaires", title: "Documents consulaires", description: "Pieces a preparer et demandes consulaires disponibles en ligne.", action: "Voir les documents", href: "/documents", className: "discover", image: "/images/passport_1.jpg" },
+  { id: "invest", icon: "TrendingUp", label: "Investissement", title: "Investir en République Démocratique du Congo", description: "Orientations pratiques pour comprendre les opportunités et les premières démarches d'investissement en RDC.", action: "Comment investir ?", href: "#documents", className: "invest", image: "/images/president_2.jpg" },
+  { id: "notice", icon: "Newspaper", label: "Information officielle", title: "Communiqués", description: "Avis, annonces publiques et informations importantes publiés par l'Ambassade à Bujumbura.", action: "Voir plus", href: "#actualites", className: "notice", image: "/images/premiere_dame_2.jpg" },
+  { id: "documents", icon: "FileBadge", label: "Services consulaires", title: "Documents consulaires", description: "Pièces à préparer et demandes consulaires disponibles en ligne.", action: "Voir les documents", href: "/documents", className: "discover", image: "/images/passport_1.jpg" },
 ];
 
 const leaders = [
-  { name: "S.E.M. Felix Antoine TSHISEKEDI TSHILOMBO", role: "President de la Republique Democratique du Congo, Chef de l'Etat", image: presidentImage },
-  { name: "S.E. Judith SUMINWA TULUKA", role: "Premiere ministre de la Republique Democratique du Congo", image: firstLadyImage },
-  { name: "S.E. Therese KAYIKWAMBA WAGNER", role: "Ministre d'Etat, Ministre des Affaires Etrangeres, Cooperation Internationale et Francophonie", image: firstLadyTwo },
-  { name: "S.E. Crispin MBADU PHANZU", role: "Ministre delegue en charge de la Francophonie et de la Diaspora congolaise", image: presidentTwo },
-  { name: "S.E. Noella AYEGANAGATO NAKWIPONE", role: "Vice-Ministre des Affaires etrangeres, Cooperation Internationale, Francophonie et Diaspora.", image: firstLadyImage },
-  { name: "S.E. Ambassadeur de la RDC au Burundi", role: "Ambassadeur de la Republique Democratique du Congo au Burundi", image: presidentImage },
+  { name: "S.E.M. Félix Antoine TSHISEKEDI TSHILOMBO", role: "Président de la République Démocratique du Congo, Chef de l'État", image: presidentImage },
+  { name: "S.E. Judith SUMINWA TULUKA", role: "Première ministre de la République Démocratique du Congo", image: firstLadyImage },
+  { name: "S.E. Thérèse KAYIKWAMBA WAGNER", role: "Ministre d'État, Ministre des Affaires Étrangères, Coopération Internationale et Francophonie", image: firstLadyTwo },
+  { name: "S.E. Crispin MBADU PHANZU", role: "Ministre délégué en charge de la Francophonie et de la Diaspora congolaise", image: presidentTwo },
+  { name: "S.E. Noëlla AYEGANAGATO NAKWIPONE", role: "Vice-Ministre des Affaires étrangères, Coopération Internationale, Francophonie et Diaspora.", image: firstLadyImage },
+  { name: "S.E. Ambassadeur de la RDC au Burundi", role: "Ambassadeur de la République Démocratique du Congo au Burundi", image: presidentImage },
 ];
 
 const news = [
-  { day: "30", month: "Juin", title: "Reception de la communaute congolaise a Bujumbura pour la fete nationale", image: presidentTwo },
-  { day: "14", month: "Mai", title: "Renforcement de la cooperation RDC - Burundi", image: firstLadyTwo },
-  { day: "22", month: "Avr", title: "Information au public sur les demarches consulaires a Bujumbura", image: passportOne },
+  { day: "30", month: "Juin", title: "Réception de la communauté congolaise à Bujumbura pour la fête nationale", image: presidentTwo },
+  { day: "14", month: "Mai", title: "Renforcement de la coopération RDC - Burundi", image: firstLadyTwo },
+  { day: "22", month: "Avr", title: "Information au public sur les démarches consulaires à Bujumbura", image: passportOne },
 ];
 
 const communiques = [
-  { title: "AVIS AU PUBLIC DU 30 JUIN 2026", excerpt: "L'Ambassade informe le public qu'elle sera fermee le mardi 30 juin 2026, a l'occasion de la fete nationale. Tous les services consulaires seront suspendus pour cette journee.", date: "30 Juin 2026", category: "Avis public" },
-  { title: "COMMUNIQUE OFFICIEL", excerpt: "L'Ambassade de la Republique Democratique du Congo au Burundi informe les ressortissants congolais des nouvelles dispositions consulaires applicables a compter de juillet 2026.", date: "25 Juin 2026", category: "Communique officiel" },
-  { title: "AVIS AU PUBLIC DU 18 MAI 2026", excerpt: "L'Ambassade informe qu'elle sera fermee au public le lundi 18 mai 2026. Les rendez-vous seront reprogrammes automatiquement.", date: "18 Mai 2026", category: "Avis public" },
-  { title: "DEMARCHES CONSULAIRES EN LIGNE", excerpt: "Les demandes de rendez-vous, les suivis de dossiers et les formulaires peuvent etre prepares depuis l'espace personnel en ligne.", date: "12 Mai 2026", category: "Information" },
-  { title: "DEMANDE DE PASSEPORT", excerpt: "Les requerants doivent presenter les pieces requises, effectuer la prise de rendez-vous et se presenter a Bujumbura avec tous les documents originaux.", date: "05 Mai 2026", category: "Information" },
-  { title: "LISTE DES DOCUMENTS DISPONIBLES", excerpt: "Les documents produits par l'Ambassade sont remis uniquement au titulaire ou a une personne dument mandatee avec procuration valide.", date: "28 Avr 2026", category: "Information" },
+  { title: "AVIS AU PUBLIC DU 30 JUIN 2026", excerpt: "L'Ambassade informe le public qu'elle sera fermée le mardi 30 juin 2026, à l'occasion de la fête nationale. Tous les services consulaires seront suspendus pour cette journée.", date: "30 Juin 2026", category: "Avis public" },
+  { title: "COMMUNIQUÉ OFFICIEL", excerpt: "L'Ambassade de la République Démocratique du Congo au Burundi informe les ressortissants congolais des nouvelles dispositions consulaires applicables à compter de juillet 2026.", date: "25 Juin 2026", category: "Communiqué officiel" },
+  { title: "AVIS AU PUBLIC DU 18 MAI 2026", excerpt: "L'Ambassade informe qu'elle sera fermée au public le lundi 18 mai 2026. Les rendez-vous seront reprogrammés automatiquement.", date: "18 Mai 2026", category: "Avis public" },
+  { title: "DÉMARCHES CONSULAIRES EN LIGNE", excerpt: "Les demandes de rendez-vous, les suivis de dossiers et les formulaires peuvent être préparés depuis l'espace personnel en ligne.", date: "12 Mai 2026", category: "Information" },
+  { title: "DEMANDE DE PASSEPORT", excerpt: "Les requérants doivent présenter les pièces requises, effectuer la prise de rendez-vous et se présenter à Bujumbura avec tous les documents originaux.", date: "05 Mai 2026", category: "Information" },
+  { title: "LISTE DES DOCUMENTS DISPONIBLES", excerpt: "Les documents produits par l'Ambassade sont remis uniquement au titulaire ou à une personne dûment mandatée avec procuration valide.", date: "28 Avr 2026", category: "Information" },
 ];
-
 
 function getApiList(data) {
   if (Array.isArray(data)) return data;
@@ -168,12 +405,11 @@ function stripHtml(value) {
 }
 
 function formatCommuniqueDate(value) {
-  if (!value) return "Date a confirmer";
+  if (!value) return "Date à confirmer";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
   return new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" }).format(date);
 }
-
 
 function shuffleDisplayItems(items) {
   return [...items].sort(() => Math.random() - 0.5);
@@ -188,23 +424,28 @@ function getActualiteDateParts(value) {
   };
 }
 
-function mapApiActualites(data) {
+export function mapApiActualites(data) {
   return getApiList(data)
     .filter((item) => item.actif !== false)
     .map((item) => {
       const dateParts = getActualiteDateParts(item.date_publication || item.created_at);
+      const formattedDate = formatCommuniqueDate(item.date_publication || item.created_at);
       return {
-        id: item.id ?? item.article_id,
-        title: item.titre || "Actualite de la RDC",
-        description: stripHtml(item.description || item.contenu || "Information publiee par une source d'actualite."),
+        id: item.id ?? item.article_id ?? String(Math.random()),
+        title: item.titre || "Actualité de la RDC",
+        description: stripHtml(item.description || item.contenu || "Information publiée par une source d'actualité."),
+        content: stripHtml(item.contenu || item.description || "Aucun contenu supplémentaire disponible pour cette actualité."),
         image: item.image_url || presidentTwo,
         url: item.url || "#actualites",
-        source: item.source_name || "Actualite RDC",
+        source: item.source_name || item.source || "Chancellerie RDC",
+        category: item.categorie || item.category || "Actualité",
+        date: formattedDate !== "Date à confirmer" ? formattedDate : `${dateParts.day} ${dateParts.month}`,
         day: dateParts.day,
         month: dateParts.month,
       };
     });
 }
+
 function mapApiCommuniques(data) {
   return getApiList(data)
     .filter((item) => item.est_publie !== false)
@@ -216,66 +457,52 @@ function mapApiCommuniques(data) {
         : null;
       return {
         id: item.id,
-        title: item.titre || "Communique officiel",
-        excerpt: stripHtml(item.resume || item.contenu || "Information officielle publiee par l'Ambassade."),
+        title: item.titre || "Communiqué officiel",
+        excerpt: stripHtml(item.resume || item.contenu || "Information officielle publiée par l'Ambassade."),
         date: formatCommuniqueDate(item.created_at || item.updated_at),
-        category: category || "Communique officiel",
+        category: category || "Communiqué officiel",
         image: getApiFileUrl(imageFile),
       };
     });
 }
+
 const publicServiceCards = [
-  { title: "Delivrance de visas", description: "Informations pour l'entree en Republique Democratique du Congo, pieces a fournir et orientation vers le depot de dossier.", href: "/demandes?type=visa" },
-  { title: "Production de passeports", description: "Preparation de la demande, verification des pieces, rendez-vous consulaire et suivi du dossier a Bujumbura.", href: "/demandes?type=passeport" },
-  { title: "Communiques officiels", description: "Avis au public, annonces de fermeture, nouvelles dispositions consulaires et informations de la chancellerie.", href: "#actualites" },
+  { title: "Délivrance de visas", description: "Informations pour l'entrée en République Démocratique du Congo, pièces à fournir et orientation vers le dépôt de dossier.", href: "/demandes?type=visa" },
+  { title: "Production de passeports", description: "Préparation de la demande, vérification des pièces, rendez-vous consulaire et suivi du dossier à Bujumbura.", href: "/demandes?type=passeport" },
+  { title: "Communiqués officiels", description: "Avis au public, annonces de fermeture, nouvelles dispositions consulaires et informations de la chancellerie.", href: "#actualites" },
 ];
 
-const revealViewport = { once: true, amount: 0.18 };
-const sectionReveal = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.58, ease: "easeOut" } },
-};
-const staggerReveal = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.08 } },
-};
-const cardReveal = {
-  hidden: { opacity: 0, y: 22 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.48, ease: "easeOut" } },
-};
-
 const documents = [
-  { id: "passeport", title: "Passeport biometrique", image: passportOne, items: ["Formulaire de demande", "Ancien passeport ou piece d'identite", "Preuve de nationalite", "Rendez-vous de capture"] },
-  { id: "laissez-passer", title: "Laissez-passer consulaire", image: passportTwo, items: ["Declaration de perte si necessaire", "Photo d'identite", "Justificatif de voyage", "Preuve d'identite congolaise"] },
-  { id: "carte-consulaire", title: "Carte consulaire", image: passportOne, items: ["Copie du passeport", "Adresse au Burundi", "Photo recente", "Formulaire d'inscription"] },
-  { id: "visa", title: "Visa et entree en RDC", image: passportTwo, items: ["Passeport valide", "Invitation ou reservation", "Photo d'identite", "Motif du voyage"] },
-  { id: "legalisation", title: "Legalisation et certification", image: passportOne, items: ["Document original", "Copie simple", "Piece d'identite", "Preuve de paiement si applicable"] },
-  { id: "procuration", title: "Procuration et attestation", image: passportTwo, items: ["Identite du mandant", "Identite du mandataire", "Objet de la procuration", "Signature devant l'agent consulaire"] },
-  { id: "etat-civil", title: "Naissance, mariage, deces", image: passportOne, items: ["Acte local", "Pieces d'identite", "Livret ou justificatifs", "Demande de transcription"] },
-  { id: "nationalite", title: "Nationalite et etat civil", image: passportTwo, items: ["Preuve de filiation", "Actes originaux", "Copies certifiees", "Contact du demandeur"] },
+  { id: "passeport", title: "Passeport biométrique", image: passportOne, items: ["Formulaire de demande", "Ancien passeport ou pièce d'identité", "Preuve de nationalité", "Rendez-vous de capture"] },
+  { id: "laissez-passer", title: "Laissez-passer consulaire", image: passportTwo, items: ["Déclaration de perte si nécessaire", "Photo d'identité", "Justificatif de voyage", "Preuve d'identité congolaise"] },
+  { id: "carte-consulaire", title: "Carte consulaire", image: passportOne, items: ["Copie du passeport", "Adresse au Burundi", "Photo récente", "Formulaire d'inscription"] },
+  { id: "visa", title: "Visa et entrée en RDC", image: passportTwo, items: ["Passeport valide", "Invitation ou réservation", "Photo d'identité", "Motif du voyage"] },
+  { id: "legalisation", title: "Légalisation et certification", image: passportOne, items: ["Document original", "Copie simple", "Pièce d'identité", "Preuve de paiement si applicable"] },
+  { id: "procuration", title: "Procuration et attestation", image: passportTwo, items: ["Identité du mandant", "Identité du mandataire", "Objet de la procuration", "Signature devant l'agent consulaire"] },
+  { id: "etat-civil", title: "Naissance, mariage, décès", image: passportOne, items: ["Acte local", "Pièces d'identité", "Livret ou justificatifs", "Demande de transcription"] },
+  { id: "nationalite", title: "Nationalité et état civil", image: passportTwo, items: ["Preuve de filiation", "Actes originaux", "Copies certifiées", "Contact du demandeur"] },
 ];
 
 const discover = [
-  { title: "Villes", description: "Kinshasa, Lubumbashi, Goma et les grands centres urbains portent l'energie economique et culturelle du pays.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/kinshasa-1024x683.jpg" },
+  { title: "Villes", description: "Kinshasa, Lubumbashi, Goma et les grands centres urbains portent l'énergie économique et culturelle du pays.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/kinshasa-1024x683.jpg" },
   { title: "Gastronomie", description: "Des saveurs familiales, des produits locaux et une cuisine conviviale racontent les terroirs congolais.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/186899.jpg" },
-  { title: "Parcs nationaux", description: "Virunga, Garamba, Salonga et d'autres reserves protegent une biodiversite exceptionnelle.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/71e37602-23e3-4af2-aa46-be67acbc05c1.jpg" },
-  { title: "Les lieux culturels", description: "Musees, arts, musique et patrimoine immateriel donnent a voir la profondeur de l'identite congolaise.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/Musee-National-de-la-Republique-Democratique-du-Congo.jpg" },
-  { title: "Sites historiques", description: "Des lieux de memoire et des itineraires historiques pour comprendre les grandes etapes du pays.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/site_1511_0011-1200-630-20170904150559.jpg" },
-  { title: "Sites naturels", description: "Fleuve Congo, volcans, forets et paysages majestueux offrent une destination rare en Afrique centrale.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/IMG_8234_DxO.jpg" },
+  { title: "Parcs nationaux", description: "Virunga, Garamba, Salonga et d'autres réserves protègent une biodiversité exceptionnelle.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/71e37602-23e3-4af2-aa46-be67acbc05c1.jpg" },
+  { title: "Les lieux culturels", description: "Musées, arts, musique et patrimoine immatériel donnent à voir la profondeur de l'identité congolaise.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/Musee-National-de-la-Republique-Democratique-du-Congo.jpg" },
+  { title: "Sites historiques", description: "Des lieux de mémoire et des itinéraires historiques pour comprendre les grandes étapes du pays.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/site_1511_0011-1200-630-20170904150559.jpg" },
+  { title: "Sites naturels", description: "Fleuve Congo, volcans, forêts et paysages majestueux offrent une destination rare en Afrique centrale.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/IMG_8234_DxO.jpg" },
 ];
 
 const requestTypes = documents.map((doc) => ({
   id: doc.id,
   apiId: doc.id === "passeport" ? PASSPORT_TYPE_DEMANDE_ID : null,
-  title: doc.title === "Passeport biometrique" ? "Demande de passeport biometrique" : doc.title,
+  title: doc.title === "Passeport biométrique" ? "Demande de passeport biométrique" : doc.title,
   shortTitle: doc.title,
-  description: `Procedure consulaire pour ${doc.title.toLowerCase()} aupres de l'Ambassade de la RDC au Burundi.`,
-  estimate: "Traitement initial sous 72h ouvrables apres verification du dossier.",
-  fee: "Frais consulaires communiques apres validation du dossier.",
-  fields: ["Nom complet", "Lieu et date de naissance", "Adresse au Burundi", "Telephone", "Email", "Motif de la demande"],
+  description: `Procédure consulaire pour ${doc.title.toLowerCase()} auprès de l'Ambassade de la RDC au Burundi.`,
+  estimate: "Traitement initial sous 72h ouvrables après vérification du dossier.",
+  fee: "Frais consulaires communiqués après validation du dossier.",
+  fields: ["Nom complet", "Lieu et date de naissance", "Adresse au Burundi", "Téléphone", "Email", "Motif de la demande"],
   pieces: doc.items,
 }));
-
 
 function getFallbackEmbassyDocuments() {
   return documents.map((document) => ({
@@ -304,12 +531,10 @@ function mapLocalPieces(pieces) {
   }));
 }
 
-
 function getDocumentImage(item, index) {
   if (!item.fichier) {
     return index % 2 === 0 ? passportOne : passportTwo;
   }
-
   try {
     return new URL(item.fichier, API_BASE_URL).href;
   } catch {
@@ -320,333 +545,99 @@ function getDocumentImage(item, index) {
 function DocumentSkeletonCarousel() {
   return (
     <div className="documents-swiper-wrap" aria-label="Chargement des documents">
-      <div className="documents-skeleton-grid">
+      <div className="documents-skeleton-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <article className="document-card document-skeleton-card" key={index}>
-            <div className="skeleton-media" />
-            <div className="skeleton-body">
-              <div className="skeleton-row short" />
-              <div className="skeleton-row title" />
-              <div className="skeleton-row" />
-              <div className="skeleton-row medium" />
-              <div className="skeleton-button" />
-            </div>
-          </article>
+          <Card key={index} className="overflow-hidden animate-pulse">
+            <div className="h-44 bg-slate-200 dark:bg-slate-800" />
+            <CardContent className="p-4 space-y-3">
+              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/3" />
+              <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-2/3" />
+              <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-full" />
+              <div className="h-9 bg-slate-200 dark:bg-slate-800 rounded-xl" />
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
   );
 }
+
 function EmbassyDocumentCards({ documents: embassyDocuments, isLoading, isError }) {
   if (isLoading) {
     return <DocumentSkeletonCarousel />;
   }
 
   if (!embassyDocuments.length) {
-    return <article className="document-card document-state-card"><h3>Aucun document disponible</h3><p>Les services consulaires seront affiches des leur publication.</p></article>;
+    return (
+      <Card className="p-8 text-center">
+        <h3 className="text-lg font-semibold">Aucun document disponible</h3>
+        <p className="text-sm text-slate-500 mt-1">Les services consulaires seront affichés dès leur publication.</p>
+      </Card>
+    );
   }
 
   return (
-    <div className="documents-swiper-wrap" aria-label="Documents de l'Ambassade">
-      {isError ? <div className="documents-carousel-alert">Documents locaux affiches - service API momentanement indisponible.</div> : null}
-      <Swiper
-        className="documents-swiper"
-        modules={[Pagination]}
-        grabCursor
-        speed={600}
-        pagination={{ clickable: true }}
-        spaceBetween={14}
-        slidesPerView={4}
-        breakpoints={{
-          0: { slidesPerView: 1, spaceBetween: 12 },
-          560: { slidesPerView: 2, spaceBetween: 12 },
-          820: { slidesPerView: 3, spaceBetween: 12 },
-          1180: { slidesPerView: 4, spaceBetween: 14 },
-        }}
-      >
-        {embassyDocuments.map((item, index) => {
-          const image = getDocumentImage(item, index);
-          const price = Number.parseFloat(item.prix);
-          const currency = item.devise_id?.code ?? "";
-          const formattedPrice = Number.isFinite(price) ? `${price.toLocaleString("fr-FR")} ${currency}`.trim() : "Frais a confirmer";
-          return (
-            <SwiperSlide key={item.id ?? item.code}>
-              <article className="document-card api-document-card">
-                <div className="document-photo" style={{ backgroundImage: `url("${image}")` }} />
-                <div className="document-card-body">
-                  <div className="document-card-topline">
-                    <span className="document-code">{item.code}</span>
-                    <span className={item.actif ? "document-status active" : "document-status"}>{item.actif ? "Disponible" : "Indisponible"}</span>
-                  </div>
-                  <h3>{item.titre}</h3>
-                  <p>{item.description}</p>
-                  <dl className="document-facts">
-                    <div><dt>Frais</dt><dd>{formattedPrice}</dd></div>
-                    <div><dt>Delai</dt><dd>{item.delais} jour{String(item.delais) === "1" ? "" : "s"}</dd></div>
-                  </dl>
-                  <a href={`/demandes?type=${item.id}`}>Demarrer la demande</a>
-                </div>
-              </article>
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
+    <div className="documents-grid-wrap" aria-label="Documents de l'Ambassade">
+      {isError ? <div className="documents-carousel-alert mb-4">Documents locaux affichés - service API momentanément indisponible.</div> : null}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {DEFAULT_DOCUMENTS.map((doc) => (
+          <DocumentCard key={doc.id} doc={doc} />
+        ))}
+      </div>
     </div>
   );
 }
+
 function AllDocumentsGrid({ documents: embassyDocuments, isLoading, isError }) {
+  const [searchTerm, setSearchTerm] = React.useState("");
+
   if (isLoading) {
     return <DocumentSkeletonCarousel />;
   }
 
-  if (!embassyDocuments.length) {
-    return <article className="document-card document-state-card"><h3>Aucun document disponible</h3><p>Les services consulaires seront affiches des leur publication.</p></article>;
-  }
+  const allDocs = DEFAULT_DOCUMENTS;
 
-  const piecesRequises = {
-    "PASSEPORT": ["Photo d'identite recente", "Acte de naissance", "Carte d'identite", "Ancien passeport (si renouvellement)", "Preuve de residence au Burundi"],
-    "CARTE-CONSULAIRE": ["Photo d'identite", "Acte de naissance", "Preuve de residence au Burundi", "Copie du passport"],
-    "VISA": ["Passeport valide", "Photo d'identite", "Formulaire de demande", "Preuve de voyage", "Justificatif d'hébergement", "Certificat de vaccination"],
-    "LAISSEZ-PASSER": ["Photo d'identite", "Declararation de perte (si applicable)", "Billet ou preuve de voyage", "Piece d'identite"],
-    "LEGALISATION": ["Document original a legaliser", "Copie du document", "Carte d'identite du requerant"],
-    "PROCURATION": ["Carte d'identite", "Acte de naissance", "Document prouvant le motif", "Piece d'identite du mandataire (copie)"],
-  };
+  const filteredDocs = allDocs.filter((doc) => {
+    return doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.pieces.some(p => p.toLowerCase().includes(searchTerm.toLowerCase()));
+  });
 
   return (
-    <div className="all-documents-grid" aria-label="Tous les documents de l'Ambassade">
-      {isError ? <div className="documents-carousel-alert all-documents-alert">Documents locaux affiches - service API momentanement indisponible.</div> : null}
-      {embassyDocuments.map((item, index) => {
-        const image = getDocumentImage(item, index);
-        const price = Number.parseFloat(item.prix);
-        const currency = item.devise_id?.code ?? "";
-        const formattedPrice = Number.isFinite(price) ? `${price.toLocaleString("fr-FR")} ${currency}`.trim() : "Frais a confirmer";
-        const codeKey = item.code?.toUpperCase().replace(/ /g, "-");
-        const pieces = piecesRequises[codeKey] || piecesRequises[Object.keys(piecesRequises).find(k => codeKey?.includes(k))] || [];
-        return (
-          <article className="api-document-card" key={item.id ?? item.code}>
-            <div className="doc-card-image" style={{ backgroundImage: `url("${image}")` }}>
-              <span className="doc-card-badge">{item.code}</span>
-            </div>
-            <div className="doc-card-body">
-              <div className="doc-card-top">
-                <h3>{item.titre}</h3>
-                <span className={item.actif ? "doc-status available" : "doc-status"}>{item.actif ? "Disponible" : "Indisponible"}</span>
-              </div>
-              <p>{item.description}</p>
-              <div className="doc-card-facts">
-                <div className="doc-fact"><span className="doc-fact-label">Frais</span><span className="doc-fact-value">{formattedPrice}</span></div>
-                <div className="doc-fact"><span className="doc-fact-label">Delai</span><span className="doc-fact-value">{item.delais} jour{String(item.delais) === "1" ? "" : "s"}</span></div>
-              </div>
-              {pieces.length > 0 && (
-                <div className="doc-card-pieces">
-                  <span className="doc-pieces-title">Pieces requises</span>
-                  <ul>{pieces.map((p, i) => <li key={i}>{p}</li>)}</ul>
-                </div>
-              )}
-              <a className="doc-card-cta" href={`/demandes?type=${item.id}`}>Demarrer la demande</a>
-            </div>
-          </article>
-        );
-      })}
-    </div>
-  );
-}
-
-function RequiredDocumentsList({ documents: requiredDocuments, isLoading, isError }) {
-  return (
-    <div className="required-list api-required-list">
-      <div className="required-heading-row">
-        <h3>Pieces requises</h3>
-        {isLoading ? <span>Chargement API</span> : null}
-        {isError ? <span>Mode local</span> : null}
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="relative w-full sm:w-80">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Rechercher un document (ex: visa, naissance)..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 h-9 text-xs bg-slate-50 text-slate-900 border-slate-200"
+          />
+        </div>
+        <div className="text-xs text-slate-500 font-medium self-end sm:self-center">
+          {filteredDocs.length} document{filteredDocs.length > 1 ? "s" : ""} disponible{filteredDocs.length > 1 ? "s" : ""}
+        </div>
       </div>
-      <ul>
-        {requiredDocuments.map((item) => {
-          const documentType = item.type_document_id ?? {};
-          return (
-            <li className="api-required-item" key={item.id ?? documentType.code}>
-              <span className="required-order">{item.ordre_affichage}</span>
-              <div>
-                <strong>{documentType.nom}</strong>
-                {documentType.description ? <small>{documentType.description}</small> : null}
-                <div className="required-meta">
-                  <em>{item.obligatoire ? "Obligatoire" : "Optionnel"}</em>
-                  {item.commentaire ? <span>{item.commentaire}</span> : null}
-                </div>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredDocs.map((doc) => (
+          <DocumentCard key={doc.id} doc={doc} />
+        ))}
+      </div>
     </div>
   );
 }
 
-function DocumentUploadList({ documents: requiredDocuments, isLoading }) {
-  const [selectedFiles, setSelectedFiles] = React.useState({});
-
-  if (isLoading) {
-    return <FormFieldsSkeleton count={4} />;
-  }
-
-  return (
-    <div className="document-upload-list professional-upload-list">
-      {requiredDocuments.map((item) => {
-        const documentType = item.type_document_id ?? {};
-        const key = item.id ?? documentType.code;
-        const files = selectedFiles[key] ?? [];
-        const fileLabel = files.length ? files.map((file) => file.name).join(", ") : "PDF, JPG ou PNG";
-        return (
-          <motion.label className={files.length ? "document-upload-row has-file" : "document-upload-row"} key={key} whileHover={{ y: -2 }} whileTap={{ scale: 0.995 }} transition={{ type: "spring", stiffness: 420, damping: 30 }}>
-            <span className="upload-icon"><FileText size={20} strokeWidth={2.2} aria-hidden="true" /></span>
-            <div className="upload-copy">
-              <span>{documentType.nom}</span>
-              <small>{item.commentaire || documentType.description || "Ajoutez une copie lisible du document."}</small>
-              <em>{item.obligatoire ? "Obligatoire" : "Optionnel"}</em>
-            </div>
-            <div className="upload-action">
-              <span className="upload-file-name">{fileLabel}</span>
-              <strong>{files.length ? <CheckCircle2 size={17} strokeWidth={2.5} aria-hidden="true" /> : <UploadCloud size={17} strokeWidth={2.4} aria-hidden="true" />}{files.length ? "Remplacer" : "Televerser"}</strong>
-            </div>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple onChange={(event) => setSelectedFiles((current) => ({ ...current, [key]: Array.from(event.target.files ?? []) }))} />
-          </motion.label>
-        );
-      })}
-    </div>
-  );
-}
-
-function GrandPublicConstellation() {
-  const canvasRef = React.useRef(null);
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return undefined;
-
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mediaQuery.matches) return undefined;
-
-    const context = canvas.getContext("2d");
-    let frameId = 0;
-    let particles = [];
-    const pointer = { x: 0, y: 0, active: false };
-
-    const buildParticles = () => {
-      const rect = canvas.getBoundingClientRect();
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(1, Math.floor(rect.width * pixelRatio));
-      canvas.height = Math.max(1, Math.floor(rect.height * pixelRatio));
-      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-      const count = Math.max(12, Math.min(30, Math.floor((rect.width * rect.height) / 34000)));
-      particles = Array.from({ length: count }, (_, index) => ({
-        x: Math.random() * rect.width,
-        y: Math.random() * rect.height,
-        vx: (Math.random() - 0.5) * 0.12,
-        vy: (Math.random() - 0.5) * 0.12,
-        r: index % 6 === 0 ? 1.6 : 1.1,
-      }));
-    };
-
-    const draw = () => {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      const styles = window.getComputedStyle(canvas);
-      const particleColor = styles.getPropertyValue("--particle-color").trim() || "#0068c9";
-      const particleLineColor = styles.getPropertyValue("--particle-line-color").trim() || particleColor;
-      const particlePointerColor = styles.getPropertyValue("--particle-pointer-color").trim() || "#f0c400";
-      context.clearRect(0, 0, width, height);
-
-      particles.forEach((particle) => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-        if (particle.x < 0 || particle.x > width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > height) particle.vy *= -1;
-      });
-
-      for (let i = 0; i < particles.length; i += 1) {
-        const first = particles[i];
-        for (let j = i + 1; j < particles.length; j += 1) {
-          const second = particles[j];
-          const dx = first.x - second.x;
-          const dy = first.y - second.y;
-          const distance = Math.hypot(dx, dy);
-          if (distance < 90) {
-            context.globalAlpha = (1 - distance / 90) * 0.18;
-            context.strokeStyle = particleLineColor;
-            context.lineWidth = 1;
-            context.beginPath();
-            context.moveTo(first.x, first.y);
-            context.lineTo(second.x, second.y);
-            context.stroke();
-          }
-        }
-
-        if (pointer.active) {
-          const pointerDistance = Math.hypot(first.x - pointer.x, first.y - pointer.y);
-          if (pointerDistance < 150) {
-            context.globalAlpha = (1 - pointerDistance / 150) * 0.25;
-            context.strokeStyle = particlePointerColor;
-            context.beginPath();
-            context.moveTo(first.x, first.y);
-            context.lineTo(pointer.x, pointer.y);
-            context.stroke();
-          }
-        }
-      }
-
-      particles.forEach((particle) => {
-        context.globalAlpha = 0.5;
-        context.fillStyle = particleColor;
-        context.beginPath();
-        context.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
-        context.fill();
-      });
-
-      context.globalAlpha = 1;
-      frameId = window.requestAnimationFrame(draw);
-    };
-
-    const handlePointerMove = (event) => {
-      const rect = canvas.getBoundingClientRect();
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
-      pointer.active = true;
-    };
-
-    const handlePointerLeave = () => {
-      pointer.active = false;
-    };
-
-    buildParticles();
-    draw();
-    window.addEventListener("resize", buildParticles);
-    canvas.addEventListener("pointermove", handlePointerMove);
-    canvas.addEventListener("pointerleave", handlePointerLeave);
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      window.removeEventListener("resize", buildParticles);
-      canvas.removeEventListener("pointermove", handlePointerMove);
-      canvas.removeEventListener("pointerleave", handlePointerLeave);
-    };
-  }, []);
-
-  return <canvas className="grand-public-constellation" ref={canvasRef} aria-hidden="true" />;
-}
-
-function AmbientSectionEffects() {
-  return (
-    <>
-      <div className="grand-public-blobs" aria-hidden="true"><span className="blob-one" /><span className="blob-two" /><span className="blob-three" /></div>
-      <GrandPublicConstellation />
-    </>
-  );
-}
 function HomePage() {
+  const [activeCommunique, setActiveCommunique] = React.useState(null);
+
   const { data: quickLinks = quickLinksFallback, isLoading, isError } = useQuery({
     queryKey: ["home-quick-links"],
     queryFn: fetchQuickLinks,
   });
+
   const fallbackEmbassyDocuments = getFallbackEmbassyDocuments();
   const embassyDocumentsQuery = useQuery({
     queryKey: ["home-type-demandes"],
@@ -654,6 +645,7 @@ function HomePage() {
     staleTime: 5 * 60 * 1000,
   });
   const embassyDocuments = embassyDocumentsQuery.data?.length ? embassyDocumentsQuery.data : fallbackEmbassyDocuments;
+
   const communiquesQuery = useQuery({
     queryKey: ["home-communiques"],
     queryFn: ({ signal }) => fetchCommuniques(signal),
@@ -662,6 +654,7 @@ function HomePage() {
   const apiCommuniques = React.useMemo(() => mapApiCommuniques(communiquesQuery.data), [communiquesQuery.data]);
   const displayedCommuniques = React.useMemo(() => shuffleDisplayItems(apiCommuniques.length ? apiCommuniques : communiques), [apiCommuniques]);
   const featuredCommunique = displayedCommuniques[0];
+
   const actualitesQuery = useQuery({
     queryKey: ["home-actualites"],
     queryFn: ({ signal }) => fetchActualites(signal),
@@ -669,435 +662,546 @@ function HomePage() {
   });
   const apiActualites = React.useMemo(() => mapApiActualites(actualitesQuery.data), [actualitesQuery.data]);
   const displayedActualites = React.useMemo(() => shuffleDisplayItems(apiActualites.length ? apiActualites : news.map((item) => ({ ...item, description: "Ambassade RDC au Burundi - Bujumbura", source: "Ambassade RDC au Burundi", url: "#actualites" }))), [apiActualites]);
-  const featuredActualite = displayedActualites[0];
 
   return (
     <main className="site-shell">
       <section className="topbar">
         <div className="container topbar-inner">
-          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
+          <div className="contact-line">
+            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
+            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
+          </div>
           <div className="socials" aria-label="Social media">
-  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
-  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
-  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
-</div>
+            <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
+            <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
+            <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          </div>
         </div>
       </section>
 
       <SiteHeader />
 
-      <section className="hero embassy-classic-hero embassy-official-hero ambient-section hero-particle-section" aria-label="Accueil"><AmbientSectionEffects />
-        <div className="hero-slide hero-invest">
-          <div className="container classic-hero-content embassy-hero-grid">
-            <motion.div className="embassy-hero-copy" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: "easeOut" }}>
-              <h1>Ambassade de la Republique Democratique du Congo au Burundi</h1>
-              <p>Informations officielles, services consulaires, communiques et accompagnement des ressortissants congolais a Bujumbura.</p>
-              <div className="classic-hero-actions"><a href="/demandes?type=passeport" className="btn-primary"><FileText size={18} strokeWidth={2.4} aria-hidden="true" />Demander un document</a><a href="#actualites" className="btn-secondary"><Clock size={18} strokeWidth={2.4} aria-hidden="true" />Communiques officiels</a></div>
+      {/* Hero Section */}
+      <section className="relative bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] overflow-hidden py-16 lg:py-24 border-b border-[#f6f5f4] dark:border-[#2d2e2e]" aria-label="Accueil">
+        {/* Flag Ribbon Top Accent */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 flex">
+          <div className="w-1/3 bg-sky-500" />
+          <div className="w-1/3 bg-amber-400" />
+          <div className="w-1/3 bg-red-600" />
+        </div>
+
+        <div className="container relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <motion.div
+              className="lg:col-span-8 space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white tracking-tight">
+                Ambassade de la République Démocratique du Congo au Burundi
+              </h1>
+
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-normal">
+                Représentation diplomatique officielle, délivrance des passeports biométriques, visas, immatriculation consulaire et accompagnement de la communauté congolaise.
+              </p>
+
+              {/* Uniform Action Buttons */}
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <a
+                  href="/demandes"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-blue-800 hover:bg-blue-900 !text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <FileText className="h-4 w-4 !text-white shrink-0" />
+                  <span className="!text-white font-bold">Demander un document consulaire</span>
+                </a>
+
+                <a
+                  href="/actualites"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#f7f5f3] hover:bg-[#e2e0dc] dark:bg-[#2d2e2e] dark:hover:bg-[#3d3e3e] text-slate-800 dark:text-[#fafad6] border border-[#f6f5f4] dark:border-[#2d2e2e] font-semibold text-sm transition-all cursor-pointer"
+                >
+                  <Clock className="h-4 w-4 text-blue-700 dark:text-blue-400" />
+                  <span>Communiqués & Actualités</span>
+                </a>
+              </div>
+
+              {/* Information Strip */}
+              <div className="pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-600 dark:text-slate-300">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
+                  <span>Avenue de la Révolution, Bujumbura</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
+                  <span>Lun - Ven : 09h00 à 15h30</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
+                  <span>+257 22 22 23 24</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Coat of Arms Badge Visual */}
+            <motion.div
+              className="lg:col-span-4 hidden lg:flex justify-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <div className="relative p-8 rounded-3xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] shadow-md text-center max-w-sm">
+                <div className="h-28 w-28 mx-auto mb-4 p-2 bg-white dark:bg-[#161717] rounded-2xl flex items-center justify-center border border-[#f6f5f4] dark:border-[#2d2e2e]">
+                  <img src={logoAmbassade} alt="Armoiries RDC" className="h-full object-contain dark:hidden" />
+                  <img src={logoAmbassadeLight} alt="Armoiries RDC" className="h-full object-contain hidden dark:block" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-wide">République Démocratique du Congo</h3>
+                <p className="text-xs text-blue-700 dark:text-blue-400 font-semibold mt-1">Justice - Paix - Travail</p>
+                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
+                  Service public d'État & Chancellerie Générale
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
-        <div className="hero-ribbon"><span /><span /><span /></div>
       </section>
 
-      <motion.section className="quick-panel container" id="grand-public" initial="hidden" whileInView="show" viewport={revealViewport} variants={staggerReveal}><AmbientSectionEffects />
-        <motion.div className="quick-panel-heading" variants={cardReveal}>
-          <span className="eyebrow">Acces rapide</span>
-          <h2>Informations utiles pour le public</h2>
-        </motion.div>
-        <div className="quick-grid">
-          {isLoading ? <article className="quick-card quick-loading"><span>Chargement</span><h2>Preparation des raccourcis...</h2></article> : null}
-          {isError ? <article className="quick-card quick-error"><span>Hors ligne</span><h2>Les raccourcis locaux restent disponibles.</h2></article> : null}
-            {(() => {
-            const docCount = embassyDocuments?.length || 0;
-            const comCount = displayedCommuniques?.length || 0;
-            const latestCommunique = displayedCommuniques?.[0];
-            const enriched = quickLinks.map((item) => {
-              if (item.id === "notice" && comCount > 0) {
-                return { ...item, description: `${comCount} communiques recents — ${latestCommunique?.title || item.description}`, badge: comCount };
-              }
-              if (item.id === "documents" && docCount > 0) {
-                return { ...item, description: `${docCount} types de documents disponibles — Consultez les pieces a preparer avant votre rendez-vous.`, badge: docCount };
-              }
-              return item;
-            });
-            return enriched.map((item) => {
-              const QuickIcon = item.icon === "TrendingUp" ? TrendingUp : item.icon === "Newspaper" ? Newspaper : item.icon === "FileBadge" ? FileBadge : null;
-              return (
-              <motion.article className={`quick-card ${item.className}`} key={item.id ?? item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 28 }}>
-                <div className="quick-card-image" style={{ backgroundImage: `url("${item.image}")` }} />
-                <div className="quick-card-body">
-                  <span>{QuickIcon ? <QuickIcon size={14} strokeWidth={2.5} aria-hidden="true" /> : null}{item.label}{item.badge ? <span className="quick-badge">{item.badge}</span> : null}</span>
-                  <h2>{item.title}</h2>
-                  <p>{item.description}</p>
-                  <a href={item.href}>{item.action}</a>
-                </div>
-              </motion.article>
-            );
-            });
-          })()}
-        </div>
-      </motion.section>
-
-      <motion.section className="public-services-section" aria-label="Services au public" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}>
-        <div className="container public-services-wrap">
-          <motion.div className="public-services-heading" variants={cardReveal}>
-            <span className="eyebrow">Chancellerie</span>
-            <h2>Services au Public</h2>
-          </motion.div>
-          <motion.div className="public-services-grid" variants={staggerReveal}>
-            {publicServiceCards.map((service) => (
-              <motion.a className="public-service-card" href={service.href} key={service.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 28 }}>
-                <span>{service.title}</span>
-                <p>{service.description}</p>
-              </motion.a>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
-
-      <motion.section className="welcome container ambient-section mission-message" id="ambassade" initial="hidden" whileInView="show" viewport={revealViewport} variants={staggerReveal}><AmbientSectionEffects />
-        <motion.div className="embassy-photo" style={{ backgroundImage: `linear-gradient(rgba(0, 60, 120, 0.1), rgba(0, 0, 0, 0.2)), url("${presidentImage}")` }} variants={cardReveal} />
-        <motion.div className="welcome-copy" variants={cardReveal}><span className="section-mark" /><span className="eyebrow">Message du Chef de Mission</span><h2>Bienvenue sur le portail officiel de l'Ambassade</h2><h3>Representation de la Republique Democratique du Congo aupres de la Republique du Burundi</h3><p>Ce portail rapproche l'administration consulaire des ressortissants congolais, des partenaires institutionnels et du grand public au Burundi.</p><p>Vous y trouverez les informations officielles, les services de chancellerie, les communiques et les orientations utiles pour preparer vos demarches.</p><p>L'Ambassade demeure mobilisee pour proteger les interets de la Republique Democratique du Congo, accompagner sa diaspora et renforcer la cooperation avec le Burundi.</p><a className="read-more" href="#documents">Consulter les services</a></motion.div>
-      </motion.section>
-
-      <motion.section className="leaders ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={staggerReveal}><AmbientSectionEffects /><div className="container leader-grid">{leaders.map((leader) => <motion.article className="leader" key={leader.name} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}><div className="leader-photo" style={{ backgroundImage: `url("${leader.image}")` }} /><h3>{leader.name}</h3><p>{leader.role}</p></motion.article>)}</div></motion.section>
-
-      <motion.section className="documents-section ambient-section" id="documents" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><a className="section-title documents-title-link" href="/documents"><span className="eyebrow">Grand public</span><h2>Documents de l'Ambassade</h2><p>Retrouvez les principales categories de documents et pieces a preparer avant votre rendez-vous consulaire a Bujumbura.</p></a><div className="documents-grid"><EmbassyDocumentCards documents={embassyDocuments} isLoading={embassyDocumentsQuery.isLoading} isError={embassyDocumentsQuery.isError} /></div></div></motion.section>
-      <motion.section className="news-section ambient-section" id="actualites" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects />
+      {/* Quick Access Section - Uniform Section Theme Background */}
+      <section className="py-14 bg-[#f7f5f3] dark:bg-[#1d1f1f] border-y border-[#f6f5f4] dark:border-[#2d2e2e]" id="grand-public">
         <div className="container">
-          <div className="news-list">
-            {displayedActualites.map((item, i) => (
-              <motion.article className="news-item" key={item.id ?? item.title} variants={cardReveal}>
-                <div className="news-item-img" style={{ backgroundImage: `url("${item.image}")` }} />
-                <div className="news-item-body">
-                  <div className="news-item-meta">
-                    <span className="news-item-date"><CalendarDays size={13} /> {item.day} {item.month}</span>
-                    <span className="news-item-source">{item.source}</span>
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                  <a className="news-item-link" href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire la suite <ArrowRight size={13} /></a>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      <motion.section className="communiques ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects />
-        <div className="container">
-          <div className="communiques-header official-heading-row">
-            <div className="section-title left-title official-section-title">
-              <span className="eyebrow">Informations officielles</span>
-              <h2>Communiques</h2>
-              <p>Avis, annonces et informations publies par l'Ambassade.</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <Badge variant="blue" className="mb-2">Accès rapide</Badge>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Informations utiles pour le public</h2>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Accédez directement aux services officiels et orientations administratives de la Chancellerie.</p>
             </div>
-            <a className="communiques-header-link" href="#actualites">Tous les communiques <ArrowRight size={16} /></a>
           </div>
-          <motion.article className="communique-hero-wide" variants={cardReveal} whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
-            <div className="communique-hero-wide-image" style={featuredCommunique.image ? { backgroundImage: `url("${featuredCommunique.image}")` } : undefined} />
-            <div className="communique-hero-wide-body">
-              <div className="communique-hero-wide-meta">
-                <span className="communique-category">{featuredCommunique.category}</span>
-                <span className="communique-date-badge">{featuredCommunique.date}</span>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] p-6 flex flex-col justify-between shadow-xs hover:border-blue-500 hover:shadow-md transition-all group">
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 w-fit group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                  <FileBadge className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  Démarches & Pré-demandes en ligne
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Remplissez vos formulaires de passeport biométrique, visa ou carte consulaire à distance avant votre passage à l'Ambassade.
+                </p>
               </div>
-              <h3>{featuredCommunique.title}</h3>
-              <p>{featuredCommunique.excerpt}</p>
-              <a href="#actualites">Lire le communique</a>
-            </div>
-          </motion.article>
-          <motion.div className="communiques-grid" variants={staggerReveal}>
-            {displayedCommuniques.slice(1, 4).map((item, index) => (
-              <motion.article className="communique-tile" key={item.id ?? item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300, damping: 28 }}>
-                <div className="communique-tile-accent" style={{ background: index % 2 === 0 ? "var(--blue)" : "var(--red)" }} />
-                <div className="communique-tile-body">
-                  <div className="communique-tile-top">
-                    <span className="communique-tile-cat" style={{ color: index % 2 === 0 ? "var(--blue)" : "var(--red)", background: index % 2 === 0 ? "color-mix(in srgb, var(--blue) 10%, transparent)" : "color-mix(in srgb, var(--red) 10%, transparent)" }}>{item.category}</span>
-                    <span className="communique-tile-date">{item.date}</span>
-                  </div>
-                  <h4>{item.title}</h4>
-                  <p>{item.excerpt}</p>
-                  <span className="communique-tile-link">Lire la suite</span>
-                </div>
-              </motion.article>
-            ))}
-          </motion.div>
-          <motion.div className="communiques-bottom-row" variants={staggerReveal}>
-            {displayedCommuniques.slice(4, 7).map((item, index) => (
-              <motion.article className="communique-compact" key={item.id ?? item.title} variants={cardReveal} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}>
-                <div className="communique-compact-bar" style={{ background: index % 2 === 0 ? "var(--yellow)" : "var(--blue)" }} />
-                <div className="communique-compact-body">
-                  <span className="communique-compact-cat">{item.category}</span>
-                  <h5>{item.title}</h5>
-                  <span className="communique-compact-date">{item.date}</span>
-                </div>
-              </motion.article>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
+              <div className="pt-6">
+                <a
+                  href="/demandes"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-blue-800 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 hover:gap-3 transition-all"
+                >
+                  <span>Démarrer ma démarche</span>
+                  <ArrowRight size={15} />
+                </a>
+              </div>
+            </Card>
 
-      <motion.section className="discover-section ambient-section" id="rdc" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container discover-layout"><motion.div className="discover-intro" variants={cardReveal}><span className="eyebrow">Republique democratique du Congo</span><h2>Venez decouvrir notre merveilleux pays</h2><p>La RDC est un pays continent au coeur de l'Afrique, marque par la force du fleuve Congo, la richesse de ses cultures, la diversite de ses provinces et l'energie de sa population.</p><p>Cette rubrique met en avant les lieux, les opportunites et les reperes utiles pour mieux connaitre le pays avant un voyage, une cooperation ou un projet d'investissement.</p><div className="discover-media-row"><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/kinshasa-1024x683.jpg" alt="Ville de Kinshasa" /><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/IMG_8234_DxO.jpg" alt="Paysage naturel de la RDC" /><img src="https://ambardcbujumbura.cd/wp-content/uploads/2025/05/Musee-National-de-la-Republique-Democratique-du-Congo.jpg" alt="Patrimoine culturel congolais" /></div><div className="discover-stats"><span><strong>26</strong> Provinces</span><span><strong>9</strong> Pays voisins</span><span><strong>80M+</strong> Hectares de terres arables</span></div></motion.div><motion.article className="discover-feature" variants={cardReveal}><div className="discover-feature-photo" style={{ backgroundImage: `url("${discover[0].image}")` }} /><div className="discover-feature-copy"><span>Destination RDC</span><h3>Un pays continent au coeur de l'Afrique</h3><p>Entre le fleuve Congo, les parcs nationaux, la creation musicale, les villes et les sites naturels, la RDC offre un champ immense de decouverte.</p></div></motion.article><motion.div className="discover-grid" variants={staggerReveal}>{discover.map((item) => <motion.article className="discover-card" key={item.id ?? item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}><div className="discover-photo" style={{ backgroundImage: `url("${item.image}")` }} /><div className="discover-card-copy"><h3>{item.title}</h3><p>{item.description}</p></div></motion.article>)}</motion.div><div className="discover-topics"><span>Tourisme</span><span>Culture</span><span>Investissement</span><span>Cooperation</span><span>Diaspora</span></div><a className="discover-button" href="#documents">Preparer mon voyage</a></div></motion.section>
+            <Card className="bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] p-6 flex flex-col justify-between shadow-xs hover:border-blue-500 hover:shadow-md transition-all group">
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 w-fit group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                  <Newspaper className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  Communiqués & Avis Officiels
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Consultez les dernières notes d'information, avis à la communauté et communiqués émis par le Ministère et la Chancellerie.
+                </p>
+              </div>
+              <div className="pt-6">
+                <a
+                  href="/actualites"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-blue-800 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 hover:gap-3 transition-all"
+                >
+                  <span>Lire les communiqués</span>
+                  <ArrowRight size={15} />
+                </a>
+              </div>
+            </Card>
+
+            <Card className="bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] p-6 flex flex-col justify-between shadow-xs hover:border-blue-500 hover:shadow-md transition-all group">
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 w-fit group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                  <FileText className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  Catalogue des Pièces Requises
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Consultez la liste exhaustive des documents exigés pour chaque prestation administrative (frais, délais et conditions).
+                </p>
+              </div>
+              <div className="pt-6">
+                <a
+                  href="/documents"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-blue-800 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 hover:gap-3 transition-all"
+                >
+                  <span>Voir la liste des documents</span>
+                  <ArrowRight size={15} />
+                </a>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Chancellerie Services - Adaptive Theme */}
+      <section className="py-14 bg-white dark:bg-[#161717] border-y border-[#f6f5f4] dark:border-[#2d2e2e]">
+        <div className="container">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <Badge variant="blue" className="mb-2">Chancellerie</Badge>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Services au Public</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Missions administratives et consulaires assurées au guichet de Bujumbura.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {publicServiceCards.map((service) => (
+              <a href={service.href} key={service.title} className="block group">
+                <Card className="h-full p-6 bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] shadow-xs hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="h-11 w-11 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 flex items-center justify-center group-hover:bg-blue-800 group-hover:text-white transition-colors">
+                      <ShieldCheck className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-blue-800 dark:text-blue-400 group-hover:gap-2.5 transition-all">
+                    <span>Accéder au service</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </div>
+                </Card>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Ambassador Welcome - Centered & Balanced Layout */}
+      <section className="welcome py-16 bg-[#f7f5f3] dark:bg-[#1d1f1f] border-y border-[#f6f5f4] dark:border-[#2d2e2e]" id="ambassade">
+        <div className="container max-w-5xl">
+          {/* Centered Header */}
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <Badge variant="blue" className="mb-3">Message de la Chancellerie</Badge>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+              Bienvenue sur le portail officiel de l'Ambassade
+            </h2>
+            <p className="text-sm sm:text-base font-semibold text-blue-800 dark:text-blue-400 mt-2">
+              Représentation de la République Démocratique du Congo auprès de la République du Burundi
+            </p>
+          </div>
+
+          {/* Balanced Card Grid */}
+          <div className="bg-white dark:bg-[#161717] rounded-3xl p-6 sm:p-10 border border-[#f6f5f4] dark:border-[#2d2e2e] shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-5">
+                <div className="overflow-hidden rounded-2xl shadow-md border border-[#f6f5f4] dark:border-[#2d2e2e] bg-[#f7f5f3] dark:bg-[#1d1f1f]">
+                  <div
+                    className="h-[380px] bg-cover bg-center relative"
+                    style={{ backgroundImage: `url("${presidentImage}")` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-slate-950/90 backdrop-blur-md text-white border border-slate-800">
+                      <span className="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Représentation Officielle</span>
+                      <p className="font-bold text-sm text-white mt-0.5">S.E.M. Félix Antoine TSHISEKEDI TSHILOMBO</p>
+                      <p className="text-xs text-slate-300">Président de la République Démocratique du Congo</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4">
+                <div className="grid grid-cols-1 gap-3 text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
+                  <div className="p-4 rounded-2xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
+                    <p className="font-medium text-slate-800 dark:text-slate-200">
+                      Ce portail rapproche l'administration consulaire des ressortissants congolais, des partenaires institutionnels et du grand public au Burundi.
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
+                    <p>
+                      Vous y trouverez les informations officielles, les services de chancellerie, les communiqués et les orientations utiles pour préparer vos démarches.
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
+                    <p>
+                      L'Ambassade demeure mobilisée pour protéger les intérêts de la République Démocratique du Congo, accompagner sa diaspora et renforcer la coopération avec le Burundi.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Centered Actions */}
+                <div className="pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                  <a href="/documents">
+                    <button className="bg-blue-800 hover:bg-blue-900 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold px-6 py-3.5 rounded-xl text-xs inline-flex items-center gap-2 transition-all cursor-pointer shadow-sm">
+                      <span>Consulter tous les services</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </a>
+                  <a href="/contact">
+                    <button className="bg-[#f7f5f3] hover:bg-[#e2e0dc] dark:bg-[#2d2e2e] dark:hover:bg-[#3d3e3e] text-slate-800 dark:text-[#fafad6] font-bold px-6 py-3.5 rounded-xl text-xs border border-[#f6f5f4] dark:border-[#2d2e2e] inline-flex items-center gap-2 transition-all cursor-pointer">
+                      <span>Demander une audience</span>
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Leaders Grid - Adaptive Theme */}
+      <section className="py-14 bg-white dark:bg-[#161717] border-y border-[#f6f5f4] dark:border-[#2d2e2e]">
+        <div className="container">
+          <div className="text-center max-w-xl mx-auto mb-10">
+            <Badge variant="gold" className="mb-2">Hautes Autorités</Badge>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Dirigeants et Représentation</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Haute direction de la République Démocratique du Congo et diplomatie.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {leaders.map((leader) => (
+              <Card key={leader.name} className="bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-white overflow-hidden group hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all shadow-xs">
+                <div className="h-52 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: `url("${leader.image}")` }} />
+                <CardContent className="p-4">
+                  <h3 className="font-bold text-sm text-blue-950 dark:text-amber-300 group-hover:text-blue-700 dark:group-hover:text-amber-200 transition-colors">{leader.name}</h3>
+                  <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed font-normal">{leader.role}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Documents Section */}
+      <section className="py-16 bg-[#f7f5f3] dark:bg-[#1d1f1f] border-y border-[#f6f5f4] dark:border-[#2d2e2e]" id="documents">
+        <div className="container">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <Badge variant="blue" className="mb-2">Grand public</Badge>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Documents de l'Ambassade</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Retrouvez les principales catégories de documents et pièces à préparer avant votre rendez-vous consulaire à Bujumbura.</p>
+            </div>
+            <a href="/documents">
+              <Button variant="outline" className="gap-2 shrink-0">
+                <span>Voir tout le catalogue</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </a>
+          </div>
+
+          <EmbassyDocumentCards
+            documents={embassyDocuments}
+            isLoading={embassyDocumentsQuery.isLoading}
+            isError={embassyDocumentsQuery.isError}
+          />
+        </div>
+      </section>
+
+      {/* News Section */}
+      <section className="py-16 bg-white dark:bg-[#161717]" id="actualites">
+        <div className="container">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10 gap-4">
+            <div>
+              <Badge variant="gold" className="mb-2">Actualités & Vie consulaire</Badge>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Dernières Nouvelles</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Retrouvez toutes les dépêches, informations et actualités officielles diffusées par la Chancellerie.</p>
+            </div>
+            <a href="/actualites">
+              <Button variant="outline" className="gap-2 shrink-0 border-[#f6f5f4] dark:border-[#2d2e2e] bg-[#f7f5f3] dark:bg-[#1d1f1f] text-slate-900 dark:text-[#fafad6] hover:bg-[#e2e0dc] dark:hover:bg-[#3d3e3e]">
+                <span>Voir toutes les actualités</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {displayedActualites.slice(0, 3).map((item) => (
+              <Card key={item.id ?? item.title} className="flex flex-col h-full bg-[#f7f5f3] dark:bg-[#1d1f1f] overflow-hidden hover:shadow-xl transition-all border-[#f6f5f4] dark:border-[#2d2e2e]">
+                <div className="h-48 w-full bg-cover bg-center relative" style={{ backgroundImage: `url("${item.image}")` }}>
+                  <div className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-medium">
+                    <CalendarDays size={13} className="text-amber-400" />
+                    <span>{item.day} {item.month}</span>
+                  </div>
+                </div>
+
+                <CardContent className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-1">
+                      {item.source}
+                    </span>
+                    <h3 className="font-bold text-base text-slate-900 dark:text-white line-clamp-2">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
+
+                  <a href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined} className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:gap-2.5 transition-all pt-2">
+                    <span>Lire la suite</span>
+                    <ArrowRight size={13} />
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Communiqués Section */}
+      <section className="py-16 bg-[#f7f5f3] dark:bg-[#1d1f1f] border-y border-[#f6f5f4] dark:border-[#2d2e2e]">
+        <div className="container">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <Badge variant="blue" className="mb-2">Informations officielles</Badge>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Communiqués Officiels</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Avis, annonces et informations publiés par l'Ambassade.</p>
+            </div>
+          </div>
+
+          <Card className="overflow-hidden mb-8 border-[#f6f5f4] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] shadow-lg">
+            <div className="grid grid-cols-1 lg:grid-cols-12">
+              <div
+                className="lg:col-span-5 h-64 lg:h-auto bg-cover bg-center min-h-[250px]"
+                style={{ backgroundImage: `url("${featuredCommunique.image || passportOne}")` }}
+              />
+              <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge variant="gold">{featuredCommunique.category}</Badge>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{featuredCommunique.date}</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white leading-snug">
+                    {featuredCommunique.title}
+                  </h3>
+                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    {featuredCommunique.excerpt}
+                  </p>
+                </div>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="default" className="w-fit gap-2">
+                      <span>Lire le communiqué complet</span>
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-xl bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
+                    <DialogHeader>
+                      <Badge variant="gold" className="w-fit mb-2">{featuredCommunique.category}</Badge>
+                      <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white">{featuredCommunique.title}</DialogTitle>
+                      <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">{featuredCommunique.date}</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                      <p>{featuredCommunique.excerpt}</p>
+                      <p className="text-xs text-slate-500 italic p-3 rounded-lg bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
+                        Document certifié conforme par la Chancellerie de l'Ambassade de la République Démocratique du Congo à Bujumbura.
+                      </p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {displayedCommuniques.slice(1, 4).map((item, index) => (
+              <Card key={item.id ?? item.title} className="p-5 border-[#f6f5f4] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge variant="outline" className="text-[10px]">{item.category}</Badge>
+                    <span className="text-[11px] text-slate-400 font-medium">{item.date}</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white line-clamp-2">{item.title}</h4>
+                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 line-clamp-3">{item.excerpt}</p>
+                </div>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 cursor-pointer pt-2">
+                      <span>Consulter</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
+                    <DialogHeader>
+                      <DialogTitle className="text-slate-900 dark:text-white">{item.title}</DialogTitle>
+                      <DialogDescription className="text-slate-500 dark:text-slate-400">{item.date} • {item.category}</DialogDescription>
+                    </DialogHeader>
+                    <p className="text-sm py-4 text-slate-700 dark:text-slate-300">{item.excerpt}</p>
+                  </DialogContent>
+                </Dialog>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Discover RDC Section - Adaptive Theme */}
+      <section className="py-16 bg-white dark:bg-[#161717] border-t border-[#f6f5f4] dark:border-[#2d2e2e]" id="rdc">
+        <div className="container">
+          <div className="max-w-3xl mb-12">
+            <Badge variant="gold" className="mb-3">République Démocratique du Congo</Badge>
+            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Découvrir le Cœur de l'Afrique</h2>
+            <p className="mt-3 text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
+              La RDC est un pays continent au cœur de l'Afrique, marqué par la majesté du Fleuve Congo, la richesse de son patrimoine culturel, la diversité de ses 26 provinces et le dynamisme de sa population.
+            </p>
+            <div className="grid grid-cols-3 gap-4 mt-6 p-4 rounded-2xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] text-center">
+              <div>
+                <strong className="text-2xl font-extrabold text-blue-900 dark:text-blue-400">26</strong>
+                <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Provinces</span>
+              </div>
+              <div>
+                <strong className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">9</strong>
+                <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Pays voisins</span>
+              </div>
+              <div>
+                <strong className="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">80M+</strong>
+                <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Hectares d'espaces préservés</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {discover.map((item) => (
+              <Card key={item.title} className="bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-white overflow-hidden group hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all shadow-xs">
+                <div className="h-48 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: `url("${item.image}")` }} />
+                <CardContent className="p-5">
+                  <h3 className="font-bold text-base text-blue-950 dark:text-amber-300 group-hover:text-blue-700 dark:group-hover:text-amber-200 transition-colors">{item.title}</h3>
+                  <p className="mt-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">{item.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-blue-900 dark:bg-[#1d1f1f] text-white border border-blue-950 dark:border-[#2d2e2e] shadow-md">
+            <div>
+              <h4 className="font-bold text-base sm:text-lg text-white">Vous planifiez un voyage ou une mission en RDC ?</h4>
+              <p className="text-xs text-blue-100 dark:text-[#a7a8a8] mt-1">Consultez les modalités d'obtention de visa et préparez votre dossier avec la Chancellerie.</p>
+            </div>
+            <a href="/demandes?type=visa">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3.5 rounded-xl text-xs transition-colors cursor-pointer shadow-sm shrink-0">
+                Préparer ma demande de visa
+              </button>
+            </a>
+          </div>
+        </div>
+      </section>
 
       <SiteFooter />
     </main>
   );
 }
-const requerantFieldGroups = [
-  {
-    title: "Identite du requerant",
-    fields: [
-      { name: "nom", label: "Nom", placeholder: "Ex. KABONGO", required: true },
-      { name: "post_nom", label: "Post-nom", placeholder: "Ex. MUKENDI", required: true },
-      { name: "prenom", label: "Prenom", placeholder: "Ex. Jean", required: true },
-      { name: "sexe", label: "Sexe", type: "select", required: true, options: [{ label: "Masculin", value: "M" }, { label: "Feminin", value: "F" }] },
-      { name: "nationalite", label: "Nationalite", placeholder: "Ex. Congolaise", required: true },
-      { name: "lieu_naissance", label: "Lieu de naissance", placeholder: "Ex. Kinshasa", required: true },
-      { name: "date_naissance", label: "Date de naissance", type: "date", required: true },
-    ],
-  },
-  {
-    title: "Coordonnees et situation",
-    fields: [
-      { name: "profession", label: "Profession", placeholder: "Ex. Enseignant" },
-      { name: "etat_civil", label: "Etat civil", type: "select", options: [{ label: "Celibataire", value: "celibataire" }, { label: "Marie(e)", value: "marie" }, { label: "Divorce(e)", value: "divorce" }, { label: "Veuf/Veuve", value: "veuf" }] },
-      { name: "telephone", label: "Telephone", type: "tel", placeholder: "+257 ..." },
-      { name: "email", label: "Email", type: "email", placeholder: "nom@example.com" },
-      { name: "adresse_residence", label: "Adresse de residence", placeholder: "Quartier, avenue, numero", wide: true },
-      { name: "code_postal", label: "Code postal", placeholder: "Ex. 0000" },
-      { name: "adresse_rdc", label: "Adresse en RDC", placeholder: "Province, commune, quartier", wide: true },
-    ],
-  },
-  {
-    title: "Conjoint",
-    fields: [
-      { name: "nom_conjoint", label: "Nom du conjoint", placeholder: "Nom du conjoint" },
-      { name: "post_nom_conjoint", label: "Post-nom du conjoint", placeholder: "Post-nom du conjoint" },
-      { name: "prenom_conjoint", label: "Prenom du conjoint", placeholder: "Prenom du conjoint" },
-      { name: "nationalite_conjoint", label: "Nationalite du conjoint", placeholder: "Ex. Congolaise" },
-    ],
-  },
-  {
-    title: "Parents et nationalites",
-    fields: [
-      { name: "nom_pere", label: "Nom du pere", placeholder: "Nom du pere" },
-      { name: "post_nom_pere", label: "Post-nom du pere", placeholder: "Post-nom du pere" },
-      { name: "prenom_pere", label: "Prenom du pere", placeholder: "Prenom du pere" },
-      { name: "nationalite_pere", label: "Nationalite du pere", placeholder: "Ex. Congolaise" },
-      { name: "nom_mere", label: "Nom de la mere", placeholder: "Nom de la mere" },
-      { name: "post_nom_mere", label: "Post-nom de la mere", placeholder: "Post-nom de la mere" },
-      { name: "prenom_mere", label: "Prenom de la mere", placeholder: "Prenom de la mere" },
-      { name: "nationalite_mere", label: "Nationalite de la mere", placeholder: "Ex. Congolaise" },
-      { name: "nationalite_d_origine", label: "Nationalite d'origine", placeholder: "Ex. Congolaise" },
-      { name: "nationalite_actuelle", label: "Nationalite actuelle", placeholder: "Ex. Congolaise" },
-    ],
-  },
-];
 
-const parseDynamicOptions = (optionsJson) => {
-  if (!optionsJson) return [];
-  try {
-    const parsed = JSON.parse(optionsJson);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-function FormFieldsSkeleton({ count = 6 }) {
-  return (
-    <div className="form-skeleton-grid" aria-label="Chargement du formulaire">
-      {Array.from({ length: count }).map((_, index) => (
-        <div className="form-skeleton-field" key={index}>
-          <span />
-          <strong />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function getToday() {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function getTomorrow() {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function getYesterday() {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  d.setHours(23, 59, 59, 999);
-  return d;
-}
-
-function CommonRequerantFields({ values, onChange }) {
-  return (
-    <div className="requerant-groups-grid">
-      {requerantFieldGroups.map((group) => (
-        <div className="form-block requerant-field-group" key={group.title}>
-          <h3>{group.title}</h3>
-          <div className="form-grid refined-form-grid requerant-grid">
-            {group.fields.map((field) => (
-              <label className={field.wide ? "full-field" : ""} key={field.name}>
-                {field.label}{field.required ? <span className="required-star"> *</span> : null}
-                {field.type === "select" ? (
-                  <select
-                    value={values[field.name] || ""}
-                    onChange={(e) => onChange(field.name, e.target.value)}
-                    required={field.required}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
-                  >
-                    <option value="">Selectionner</option>
-                    {field.options?.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                ) : field.type === "date" ? (
-                  <input
-                    type="date"
-                    value={values[field.name] || ""}
-                    onChange={(e) => onChange(field.name, e.target.value)}
-                    max={getYesterday().toISOString().split("T")[0]}
-                    required={field.required}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
-                  />
-                ) : (
-                  <input type={field.type ?? "text"} placeholder={field.placeholder || field.label} value={values[field.name] ?? ""} onChange={(event) => onChange(field.name, event.target.value)} required={field.required} />
-                )}
-              </label>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function DynamicDemandeFields({ champs, values, onChange }) {
-  const [loadedOptions, setLoadedOptions] = React.useState({});
-  const activeChamps = React.useMemo(() => [...champs].filter((champ) => champ.actif).sort((a, b) => a.ordre - b.ordre), [champs]);
-  const parentValuesSerialized = JSON.stringify(activeChamps.filter((champ) => champ.parent_champ_id).map((champ) => values[champ.parent_champ_id]));
-
-  React.useEffect(() => {
-    let ignore = false;
-
-    async function loadOptions() {
-      const nextOptions = {};
-      for (const champ of activeChamps) {
-        if (!["select", "radio", "multi_select"].includes(champ.type_champ)) continue;
-        const key = champ.id || champ.code;
-        if (champ.data_source === "API" && champ.api_endpoint) {
-          try {
-            const data = await apiFetch(champ.api_endpoint);
-            const list = Array.isArray(data) ? data : Array.isArray(data?.results) ? data.results : [];
-            nextOptions[key] = list.map((item) => ({
-              value: String(item[champ.source_value || "id"] ?? item.id ?? item.code ?? ""),
-              label: String(item[champ.source_label || "nom"] ?? item.nom ?? item.libelle ?? item.titre ?? item.name ?? ""),
-            })).filter((option) => option.value && option.label);
-          } catch {
-            nextOptions[key] = parseDynamicOptions(champ.options_json);
-          }
-        } else {
-          nextOptions[key] = parseDynamicOptions(champ.options_json);
-        }
-      }
-      if (!ignore) setLoadedOptions(nextOptions);
-    }
-
-    loadOptions();
-    return () => { ignore = true; };
-  }, [activeChamps, parentValuesSerialized]);
-
-  if (!activeChamps.length) {
-    return <div className="dynamic-empty">Aucun champ specifique requis pour ce type de demande.</div>;
-  }
-
-  return (
-    <div className="dynamic-fields-grid">
-      {activeChamps.map((champ) => {
-        const key = champ.id || champ.code;
-        const value = values[champ.code] ?? champ.valeur_defaut ?? (champ.multiple ? [] : "");
-        const options = loadedOptions[key] || parseDynamicOptions(champ.options_json);
-        const colSpan = champ.largeur ? Math.min(12, Math.max(1, champ.largeur)) : 4;
-        const fieldLabel = (champ.libelle || champ.code || "").toLowerCase();
-        const isEndDate = /fin/.test(fieldLabel);
-        const isChefEquipe = /chef.*(equipe|d['e]quipe|d.equipe)/i.test(fieldLabel) || /responsable/i.test(fieldLabel) && /equipe/i.test(fieldLabel);
-        const depFieldCode = isChefEquipe ? activeChamps.find((c) => /agent.*(police|policier|polic)/i.test(c.libelle || c.code || ""))?.code : null;
-        const depStartCode = isEndDate ? activeChamps.find((c) => /debut/i.test(c.libelle || c.code || ""))?.code : null;
-        const dependentDisabled = (depFieldCode && !values[depFieldCode]) || (depStartCode && !values[depStartCode]);
-        const commonProps = {
-          required: champ.obligatoire,
-          disabled: champ.lecture_seule || dependentDisabled,
-        };
-
-        return (
-          <label className="dynamic-field" style={{ gridColumn: `span ${colSpan}` }} key={key}>
-            <span>{champ.libelle}{champ.obligatoire ? <em> *</em> : null}</span>
-            {champ.type_champ === "textarea" ? (
-              <textarea placeholder={champ.placeholder || ""} value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps} />
-            ) : champ.type_champ === "select" ? (
-              <select
-                value={value || ""}
-                onChange={(e) => onChange(champ.code, e.target.value)}
-                disabled={champ.lecture_seule || dependentDisabled}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
-              >
-                <option value="">{champ.placeholder || "Selectionner"}</option>
-                {options.map((option) => {
-                  const optValue = typeof option === "string" ? option : option.value;
-                  const optLabel = typeof option === "string" ? option : option.label || option.value;
-                  return <option key={optValue} value={optValue}>{optLabel}</option>;
-                })}
-              </select>
-            ) : champ.type_champ === "checkbox" || champ.type_champ === "switch" ? (
-              <span className="dynamic-checkline"><input type="checkbox" checked={Boolean(value)} onChange={(event) => onChange(champ.code, event.target.checked)} disabled={champ.lecture_seule || dependentDisabled} /> Oui</span>
-            ) : champ.type_champ === "radio" ? (
-              <div className="dynamic-radio-group">
-                {options.map((option) => {
-                  const optionValue = typeof option === "string" ? option : option.value;
-                  const optionLabel = typeof option === "string" ? option : option.label || option.value;
-                  return <label key={optionValue}><input type="radio" name={champ.code} value={optionValue} checked={value === optionValue} onChange={() => onChange(champ.code, optionValue)} disabled={champ.lecture_seule || dependentDisabled} /> {optionLabel}</label>;
-                })}
-              </div>
-            ) : champ.type_champ === "date" ? (
-              <input
-                type="date"
-                value={value || ""}
-                onChange={(e) => onChange(champ.code, e.target.value)}
-                min={isEndDate ? getTomorrow().toISOString().split("T")[0] : getToday().toISOString().split("T")[0]}
-                disabled={champ.lecture_seule || dependentDisabled}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
-              />
-            ) : champ.type_champ === "datetime" ? (
-              <input
-                type="datetime-local"
-                value={value || ""}
-                onChange={(e) => onChange(champ.code, e.target.value)}
-                min={isEndDate ? getTomorrow().toISOString().slice(0, 16) : getToday().toISOString().slice(0, 16)}
-                disabled={champ.lecture_seule || dependentDisabled}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
-              />
-            ) : champ.type_champ === "file" || champ.type_champ === "image" ? (
-              <input type="file" accept={champ.type_champ === "image" ? "image/*" : undefined} onChange={(event) => onChange(champ.code, event.target.files?.[0]?.name ?? "")} disabled={champ.lecture_seule || dependentDisabled} />
-            ) : (
-              <input type={champ.type_champ === "number" ? "number" : champ.type_champ === "email" ? "email" : champ.type_champ === "phone" ? "tel" : "text"} placeholder={champ.placeholder || ""} value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps} />
-            )}
-            {champ.description ? <small>{champ.description}</small> : null}
-          </label>
-        );
-      })}
-    </div>
-  );
-}
 function DocumentsPage() {
   const fallbackEmbassyDocuments = getFallbackEmbassyDocuments();
   const embassyDocumentsQuery = useQuery({
@@ -1107,47 +1211,234 @@ function DocumentsPage() {
   });
   const embassyDocuments = embassyDocumentsQuery.data?.length ? embassyDocumentsQuery.data : fallbackEmbassyDocuments;
 
-
   return (
     <main className="site-shell documents-page-shell">
       <section className="topbar">
         <div className="container topbar-inner">
-          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
+          <div className="contact-line">
+            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
+            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
+          </div>
           <div className="socials" aria-label="Social media">
-  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
-  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
-  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
-</div>
+            <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
+          </div>
         </div>
       </section>
+
       <SiteHeader />
-      <section className="documents-page-hero ambient-section"><AmbientSectionEffects />
-        <div className="container documents-page-hero-grid">
-          <div>
-            <span className="eyebrow">Services consulaires</span>
-            <h1>Tous les documents de l'Ambassade</h1>
-            <p>Consultez toutes les categories disponibles et demarrez directement la demande consulaire correspondant a votre dossier.</p>
-          </div>
-          <div className="documents-page-summary" aria-label="Resume des documents">
-            <strong>{embassyDocuments.length}</strong>
-            <span>document{embassyDocuments.length > 1 ? "s" : ""} disponible{embassyDocuments.length > 1 ? "s" : ""}</span>
-          </div>
-        </div>
-      </section>
-      <section className="documents-page-content ambient-section"><AmbientSectionEffects />
+
+      <section className="py-12 bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
         <div className="container">
-          <div className="section-title left-title">
-            <span className="eyebrow">Catalogue consulaire</span>
-            <h2>Choisir un document</h2>
-            <p>Chaque fiche indique les frais, le delai indicatif et le lien pour commencer la procedure.</p>
-          </div>
-          <AllDocumentsGrid documents={embassyDocuments} isLoading={embassyDocumentsQuery.isLoading} isError={embassyDocumentsQuery.isError} />
+          <Badge variant="blue" className="mb-3">Services consulaires</Badge>
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">Tous les documents de l'Ambassade</h1>
+          <p className="mt-2 text-slate-600 dark:text-slate-300 text-sm max-w-2xl">
+            Consultez toutes les catégories disponibles et démarrez directement la demande consulaire correspondant à votre dossier.
+          </p>
         </div>
       </section>
+
+      <section className="py-12">
+        <div className="container">
+          <AllDocumentsGrid
+            documents={embassyDocuments}
+            isLoading={embassyDocumentsQuery.isLoading}
+            isError={embassyDocumentsQuery.isError}
+          />
+        </div>
+      </section>
+
       <SiteFooter />
     </main>
+  );
+}
+
+const requerantFieldGroups = [
+  {
+    title: "Identité du requérant",
+    fields: [
+      { name: "nom", label: "Nom", placeholder: "Ex. KABONGO", required: true },
+      { name: "post_nom", label: "Post-nom", placeholder: "Ex. MUKENDI", required: true },
+      { name: "prenom", label: "Prénom", placeholder: "Ex. Jean", required: true },
+      { name: "sexe", label: "Sexe", type: "select", required: true, options: [{ label: "Masculin", value: "M" }, { label: "Féminin", value: "F" }] },
+      { name: "nationalite", label: "Nationalité", placeholder: "Ex. Congolaise", required: true },
+      { name: "lieu_naissance", label: "Lieu de naissance", placeholder: "Ex. Kinshasa", required: true },
+      { name: "date_naissance", label: "Date de naissance", type: "date", required: true },
+    ],
+  },
+  {
+    title: "Coordonnées et situation",
+    fields: [
+      { name: "profession", label: "Profession", placeholder: "Ex. Enseignant" },
+      { name: "etat_civil", label: "État civil", type: "select", options: [{ label: "Célibataire", value: "celibataire" }, { label: "Marié(e)", value: "marie" }, { label: "Divorcé(e)", value: "divorce" }, { label: "Veuf/Veuve", value: "veuf" }] },
+      { name: "telephone", label: "Téléphone", type: "tel", placeholder: "+257 ..." },
+      { name: "email", label: "Email", type: "email", placeholder: "nom@example.com" },
+      { name: "adresse_residence", label: "Adresse de résidence", placeholder: "Quartier, avenue, numéro", wide: true },
+      { name: "code_postal", label: "Code postal", placeholder: "Ex. 0000" },
+      { name: "adresse_rdc", label: "Adresse en RDC", placeholder: "Province, commune, quartier", wide: true },
+    ],
+  },
+  {
+    title: "Conjoint",
+    fields: [
+      { name: "nom_conjoint", label: "Nom du conjoint", placeholder: "Nom du conjoint" },
+      { name: "post_nom_conjoint", label: "Post-nom du conjoint", placeholder: "Post-nom du conjoint" },
+      { name: "prenom_conjoint", label: "Prénom du conjoint", placeholder: "Prénom du conjoint" },
+      { name: "nationalite_conjoint", label: "Nationalité du conjoint", placeholder: "Ex. Congolaise" },
+    ],
+  },
+  {
+    title: "Parents et nationalités",
+    fields: [
+      { name: "nom_pere", label: "Nom du père", placeholder: "Nom du père" },
+      { name: "post_nom_pere", label: "Post-nom du père", placeholder: "Post-nom du père" },
+      { name: "prenom_pere", label: "Prénom du père", placeholder: "Prénom du père" },
+      { name: "nationalite_pere", label: "Nationalité du père", placeholder: "Ex. Congolaise" },
+      { name: "nom_mere", label: "Nom de la mère", placeholder: "Nom de la mère" },
+      { name: "post_nom_mere", label: "Post-nom de la mère", placeholder: "Post-nom de la mère" },
+      { name: "prenom_mere", label: "Prénom de la mère", placeholder: "Prénom de la mère" },
+      { name: "nationalite_mere", label: "Nationalité de la mère", placeholder: "Ex. Congolaise" },
+      { name: "nationalite_d_origine", label: "Nationalité d'origine", placeholder: "Ex. Congolaise" },
+      { name: "nationalite_actuelle", label: "Nationalité actuelle", placeholder: "Ex. Congolaise" },
+    ],
+  },
+];
+
+function CommonRequerantFields({ values, onChange }) {
+  return (
+    <div className="space-y-6">
+      {requerantFieldGroups.map((group) => (
+        <Card key={group.title} className="p-5 sm:p-6 border-0 bg-[#f7f5f3] dark:bg-[#1d1f1f] rounded-2xl shadow-none">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4 pb-2 border-b border-[#e2e0dc] dark:border-[#2d2e2e]">
+            {group.title}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {group.fields.map((field) => (
+              <div key={field.name} className={field.wide ? "sm:col-span-2" : ""}>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                  {field.label}
+                  {field.required && <span className="text-red-500 ml-0.5">*</span>}
+                </label>
+
+                {field.type === "select" ? (
+                  <select
+                    value={values[field.name] || ""}
+                    onChange={(e) => onChange(field.name, e.target.value)}
+                    required={field.required}
+                    className="w-full rounded-xl border-0 bg-white px-3 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-blue-600 dark:bg-[#161717] dark:text-slate-100 shadow-xs"
+                  >
+                    <option value="">Sélectionner</option>
+                    {field.options?.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                ) : field.type === "date" ? (
+                  <Input
+                    type="date"
+                    value={values[field.name] || ""}
+                    onChange={(e) => onChange(field.name, e.target.value)}
+                    required={field.required}
+                    className="text-xs border-0 bg-white dark:bg-[#161717] shadow-xs"
+                  />
+                ) : (
+                  <Input
+                    type={field.type ?? "text"}
+                    placeholder={field.placeholder || field.label}
+                    value={values[field.name] ?? ""}
+                    onChange={(event) => onChange(field.name, event.target.value)}
+                    required={field.required}
+                    className="text-xs border-0 bg-white dark:bg-[#161717] shadow-xs"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function DynamicDemandeFields({ champs, values, onChange }) {
+  const activeChamps = React.useMemo(() => [...champs].filter((champ) => champ.actif).sort((a, b) => a.ordre - b.ordre), [champs]);
+
+  if (!activeChamps.length) {
+    return <div className="p-4 text-xs text-slate-500 italic bg-[#f7f5f3] dark:bg-[#1d1f1f] rounded-xl">Aucun champ spécifique requis pour ce type de demande.</div>;
+  }
+
+  return (
+    <Card className="p-5 sm:p-6 border-0 bg-[#f7f5f3] dark:bg-[#1d1f1f] rounded-2xl shadow-none">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {activeChamps.map((champ) => {
+          const key = champ.id || champ.code;
+          const value = values[champ.code] ?? champ.valeur_defaut ?? "";
+          return (
+            <div key={key}>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                {champ.libelle}
+                {champ.obligatoire && <span className="text-red-500 ml-0.5">*</span>}
+              </label>
+              <Input
+                type="text"
+                placeholder={champ.placeholder || champ.libelle}
+                value={value}
+                onChange={(e) => onChange(champ.code, e.target.value)}
+                required={champ.obligatoire}
+                className="text-xs border-0 bg-white dark:bg-[#161717] shadow-xs"
+              />
+              {champ.description && <small className="text-[10px] text-slate-400 mt-1 block">{champ.description}</small>}
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
+function DocumentUploadList({ documents: requiredDocuments }) {
+  const [selectedFiles, setSelectedFiles] = React.useState({});
+
+  return (
+    <div className="space-y-3">
+      {requiredDocuments.map((item) => {
+        const documentType = item.type_document_id ?? {};
+        const key = item.id ?? documentType.code;
+        const files = selectedFiles[key] ?? [];
+        const fileLabel = files.length ? files.map((file) => file.name).join(", ") : "PDF, JPG ou PNG";
+
+        return (
+          <label key={key} className="flex items-center justify-between p-4 rounded-2xl border-0 bg-[#f7f5f3] dark:bg-[#1d1f1f] hover:bg-[#eae8e5] dark:hover:bg-[#282a2a] cursor-pointer transition-all shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div>
+                <span className="font-semibold text-xs text-slate-900 dark:text-white block">{documentType.nom}</span>
+                <span className="text-[11px] text-slate-500 block">{item.commentaire || documentType.description || "Ajoutez une copie lisible."}</span>
+                <Badge variant={item.obligatoire ? "destructive" : "outline"} className="text-[9px] mt-1">
+                  {item.obligatoire ? "Obligatoire" : "Optionnel"}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <span className="text-xs text-blue-600 font-medium block truncate max-w-[150px]">{fileLabel}</span>
+              <Button type="button" variant="outline" size="sm" className="mt-1 h-7 text-xs gap-1 border-0 bg-white dark:bg-[#161717]">
+                {files.length ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <UploadCloud className="h-3.5 w-3.5" />}
+                <span>{files.length ? "Remplacer" : "Joindre"}</span>
+              </Button>
+            </div>
+            <input
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              className="hidden"
+              multiple
+              onChange={(e) => setSelectedFiles((current) => ({ ...current, [key]: Array.from(e.target.files ?? []) }))}
+            />
+          </label>
+        );
+      })}
+    </div>
   );
 }
 
@@ -1155,6 +1446,7 @@ function RequestsPage() {
   const params = new URLSearchParams(window.location.search);
   const selectedType = params.get("type") ?? PASSPORT_TYPE_DEMANDE_ID;
   const fallbackRequest = requestTypes.find((item) => item.id === selectedType) ?? requestTypes[0];
+
   const [requerantValues, setRequerantValues] = React.useState({});
   const [dynamicValues, setDynamicValues] = React.useState({});
   const [isConfirmed, setIsConfirmed] = React.useState(false);
@@ -1171,16 +1463,7 @@ function RequestsPage() {
   const selectedTypeId = apiRequest?.id ?? fallbackRequest.apiId ?? selectedType;
   const requestTitle = apiRequest?.titre ?? fallbackRequest.title;
   const requestDescription = apiRequest?.description ?? fallbackRequest.description;
-  const rawDelay = String(apiRequest?.delais ?? "").trim();
-  const parsedDelay = Number.parseFloat(rawDelay);
-  const requestDelay = apiRequest?.delais
-    ? Number.isFinite(parsedDelay)
-      ? `${parsedDelay.toLocaleString("fr-FR")} jour${parsedDelay > 1 ? "s" : ""}`
-      : rawDelay
-    : fallbackRequest.estimate;
-  const requestFee = apiRequest?.prix ? `${Number.parseFloat(apiRequest.prix).toLocaleString("fr-FR")} ${apiRequest.devise_id?.code ?? ""}`.trim() : fallbackRequest.fee;
 
-  const fallbackRequiredDocuments = mapLocalPieces(fallbackRequest.pieces);
   const documentsQuery = useQuery({
     queryKey: ["type-demande-documents", selectedTypeId],
     queryFn: ({ signal }) => fetchTypeDemandeDocuments(selectedTypeId, signal),
@@ -1193,216 +1476,273 @@ function RequestsPage() {
     enabled: Boolean(selectedTypeId),
     staleTime: 5 * 60 * 1000,
   });
-  const requiredDocuments = documentsQuery.data?.length ? documentsQuery.data : fallbackRequiredDocuments;
+
+  const requiredDocuments = documentsQuery.data?.length ? documentsQuery.data : mapLocalPieces(fallbackRequest.pieces);
   const dynamicChamps = champsQuery.data ?? [];
-  const activeDynamicChamps = React.useMemo(() => [...dynamicChamps].filter((champ) => champ.actif).sort((a, b) => a.ordre - b.ordre), [dynamicChamps]);
-  const requestSteps = [
-    { title: "Identite du requerant", detail: "Donnees communes" },
-    { title: "Champs de la demande", detail: activeDynamicChamps.length ? `${activeDynamicChamps.length} champ${activeDynamicChamps.length > 1 ? "s" : ""}` : "Selon le type" },
-    { title: "Pieces et validation", detail: `${requiredDocuments.length} piece${requiredDocuments.length > 1 ? "s" : ""}` },
-  ];
 
-  const updateRequerant = (name, value) => setRequerantValues((current) => ({ ...current, [name]: value }));
-  const updateDynamic = (name, value) => setDynamicValues((current) => ({ ...current, [name]: value }));
+  const updateRequerant = (name, value) => setRequerantValues((curr) => ({ ...curr, [name]: value }));
+  const updateDynamic = (name, value) => setDynamicValues((curr) => ({ ...curr, [name]: value }));
 
-  const validateCurrentStep = () => {
-    if (currentStep === 0) {
-      const missingRequiredField = requerantFieldGroups
-        .flatMap((group) => group.fields)
-        .find((field) => field.required && !String(requerantValues[field.name] ?? "").trim());
-
-      if (missingRequiredField) {
-        setSubmitState({ status: "error", message: `Veuillez remplir le champ: ${missingRequiredField.label}.` });
-        return false;
-      }
-    }
-
-    if (currentStep === 1) {
-      if (champsQuery.isLoading || typeDemandesQuery.isLoading) {
-        setSubmitState({ status: "loading", message: "Chargement des champs de la demande..." });
-        return false;
-      }
-
-      const missingDynamicField = activeDynamicChamps.find((champ) => champ.obligatoire && !String(dynamicValues[champ.code] ?? "").trim());
-      if (missingDynamicField) {
-        setSubmitState({ status: "error", message: `Veuillez remplir le champ: ${missingDynamicField.libelle || missingDynamicField.code}.` });
-        return false;
-      }
-    }
-
-    setSubmitState({ status: "idle", message: "" });
-    return true;
-  };
-
-  const goToNextStep = () => {
-    if (validateCurrentStep()) {
-      setCurrentStep((step) => Math.min(step + 1, requestSteps.length - 1));
-    }
-  };
-
-  const goToPreviousStep = () => {
-    setSubmitState({ status: "idle", message: "" });
-    setCurrentStep((step) => Math.max(step - 1, 0));
-  };
-
-  const buildDemandePayload = () => {
-    const requerantKeys = [
-      "nom", "post_nom", "prenom", "sexe", "nationalite", "lieu_naissance", "date_naissance", "profession", "etat_civil",
-      "nom_conjoint", "post_nom_conjoint", "prenom_conjoint", "nationalite_conjoint", "adresse_residence", "code_postal", "telephone", "email", "adresse_rdc",
-      "nom_pere", "post_nom_pere", "prenom_pere", "nationalite_pere", "nom_mere", "post_nom_mere", "prenom_mere", "nationalite_mere", "nationalite_d_origine", "nationalite_actuelle",
-    ];
-
-    const requerant = requerantKeys.reduce((payload, key) => {
-      payload[key] = String(requerantValues[key] ?? "").trim();
-      return payload;
-    }, {});
-
-    const champsValeurs = [...dynamicChamps]
-      .filter((champ) => champ.actif && champ.id && champ.code)
-      .map((champ) => {
-        const rawValue = dynamicValues[champ.code];
-        const valeur = Array.isArray(rawValue) ? rawValue.join(", ") : String(rawValue ?? "").trim();
-        return {
-          type_demande_champ_id: champ.id,
-          code: champ.code,
-          valeur,
-        };
-      })
-      .filter((item) => item.valeur !== "");
-
-    return {
-      type_demande_id: selectedTypeId,
-      document_uploaded: true,
-      requerant,
-      champs_valeurs: champsValeurs,
-    };
-  };
-
-  const handleSubmitDemande = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setSubmitState({ status: "loading", message: "Envoi de la demande en cours..." });
-
     try {
-      const data = await submitDemande(buildDemandePayload());
+      const data = await submitDemande({
+        type_demande_id: selectedTypeId,
+        document_uploaded: true,
+        requerant: requerantValues,
+        champs_valeurs: [],
+      });
       const reference = data?.numero || data?.reference || data?.id;
-      const message = reference ? `Demande envoyee avec succes. Reference: ${reference}` : "Demande envoyee avec succes.";
-      setSubmitState({
-        status: "success",
-        message,
-      });
-      toast.success(message);
-    } catch (error) {
-      const message = error.message || "Impossible d'envoyer la demande pour le moment.";
-      setSubmitState({ status: "error", message });
-      toast.error("Impossible d'envoyer la demande", {
-        description: message,
-      });
+      const msg = reference ? `Demande envoyée avec succès. Référence: ${reference}` : "Demande envoyée avec succès.";
+      setSubmitState({ status: "success", message: msg });
+      toast.success(msg);
+    } catch (err) {
+      const msg = err.message || "Impossible d'envoyer la demande.";
+      setSubmitState({ status: "error", message: msg });
+      toast.error(msg);
     }
   };
 
   return (
-    <main className="requests-shell single-request-shell">
+    <main className="site-shell">
       <section className="topbar">
         <div className="container topbar-inner">
-          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
-          <div className="socials" aria-label="Social media">
-  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
-  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
-  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
-</div>
+          <div className="contact-line">
+            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
+            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
+          </div>
         </div>
       </section>
+
       <SiteHeader />
-      <motion.section className="requests-hero single-request-hero clean-request-hero ambient-section request-ambient-hero" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: "easeOut" }}><AmbientSectionEffects /><div className="request-motion-web" aria-hidden="true" /><div className="container single-request-hero-grid"><div><span className="eyebrow">Service consulaire</span><h1>{requestTitle}</h1><p>{requestDescription}</p></div></div></motion.section><section className="container single-request-panel modern-request-panel clean-request-panel ambient-section request-ambient-panel" id="rendez-vous"><AmbientSectionEffects />
-        <article className="request-workspace">
-          <motion.form className="consular-form passport-form-card" onSubmit={handleSubmitDemande} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.08, ease: "easeOut" }}>
-            <div className="form-section-heading form-heading-row"><div><span>Etape {currentStep + 1}</span><h2>{requestSteps[currentStep].title}</h2></div><p>Avancez en trois parties courtes pour completer la demande consulaire.</p></div>
-            <ol className="request-stepper compact-request-stepper" aria-label="Etapes de la demande">
-              {requestSteps.map((step, index) => <li className={index === currentStep ? "active" : index < currentStep ? "done" : ""} key={step.title}><strong>{index + 1}</strong><div><span>{step.title}</span><small>{step.detail}</small></div></li>)}
-            </ol>
-            {currentStep === 0 ? <CommonRequerantFields values={requerantValues} onChange={updateRequerant} /> : null}
-            {currentStep === 1 ? <div className="form-block"><h3>Informations specifiques a la demande</h3>{champsQuery.isLoading || typeDemandesQuery.isLoading ? <FormFieldsSkeleton count={6} /> : <DynamicDemandeFields champs={dynamicChamps} values={dynamicValues} onChange={updateDynamic} />}</div> : null}
-            {currentStep === 2 ? <>
-              <div className="form-block upload-section"><div className="form-block-title"><div><h3>Pieces jointes</h3><p>Ajoutez chaque fichier au bon emplacement pour faciliter la verification du dossier.</p></div><span>{requiredDocuments.length} piece{requiredDocuments.length > 1 ? "s" : ""}</span></div><DocumentUploadList documents={requiredDocuments} isLoading={documentsQuery.isLoading} /></div>
-              <div className="form-block"><label className="full-field">Observations pour l'agent consulaire<textarea placeholder="Ajoutez une precision utile : urgence, perte, changement d'adresse, correction a signaler..." /></label></div>
-              <div className="form-confirmation"><label><input type="checkbox" checked={isConfirmed} onChange={(event) => setIsConfirmed(event.target.checked)} required /><span>Je certifie que les informations fournies sont exactes et que les pieces jointes sont lisibles.</span></label></div>
-            </> : null}
-            {submitState.message ? <div className={`form-submit-alert ${submitState.status}`} role="status">{submitState.message}</div> : null}
-            <div className="form-actions refined-actions compact-step-actions">
-              {currentStep > 0 ? <button type="button" onClick={goToPreviousStep}>Precedent</button> : <button type="button">Enregistrer le brouillon</button>}
-              {currentStep < requestSteps.length - 1 ? <button type="button" className="primary-action" onClick={goToNextStep}>Continuer</button> : <button type="submit" className="primary-action" disabled={submitState.status === "loading" || !isConfirmed}>{submitState.status === "loading" ? "Envoi..." : "Soumettre la demande"}</button>}
-            </div>
-          </motion.form>
-        </article>
+
+      <section className="py-10 bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
+        <div className="container">
+          <Badge variant="blue" className="mb-2">Formulaire consulaire</Badge>
+          <h1 className="text-3xl font-bold">{requestTitle}</h1>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 max-w-xl">{requestDescription}</p>
+        </div>
       </section>
+
+      <section className="py-12 bg-[#f7f5f3] dark:bg-[#1d1f1f]">
+        <div className="container max-w-4xl">
+          <Card className="p-6 sm:p-8 border-0 shadow-sm bg-white dark:bg-[#161717] rounded-3xl">
+            <div className="flex items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 mb-6">
+              {[
+                { title: "Identité requérant", step: 0 },
+                { title: "Champs spécifiques", step: 1 },
+                { title: "Pièces & Confirmation", step: 2 },
+              ].map((s) => (
+                <button
+                  key={s.step}
+                  onClick={() => setCurrentStep(s.step)}
+                  className={`flex items-center gap-2 text-xs font-semibold p-2 rounded-lg cursor-pointer ${
+                    currentStep === s.step
+                      ? "bg-blue-600 text-white"
+                      : currentStep > s.step
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-slate-400"
+                  }`}
+                >
+                  <span className="h-5 w-5 rounded-full border flex items-center justify-center text-[10px] font-bold">
+                    {s.step + 1}
+                  </span>
+                  <span className="hidden sm:inline">{s.title}</span>
+                </button>
+              ))}
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {currentStep === 0 && <CommonRequerantFields values={requerantValues} onChange={updateRequerant} />}
+              {currentStep === 1 && <DynamicDemandeFields champs={dynamicChamps} values={dynamicValues} onChange={updateDynamic} />}
+              {currentStep === 2 && (
+                <div className="space-y-6">
+                  <DocumentUploadList documents={requiredDocuments} />
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border">
+                    <label className="flex items-center gap-2 text-xs font-medium cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isConfirmed}
+                        onChange={(e) => setIsConfirmed(e.target.checked)}
+                        className="rounded border-slate-300"
+                      />
+                      <span>Je certifie l'exactitude des renseignements fournis.</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {submitState.message && (
+                <div className={`p-4 rounded-xl text-xs font-medium ${submitState.status === "error" ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"}`}>
+                  {submitState.message}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
+                {currentStep > 0 ? (
+                  <Button type="button" variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+                    Précédent
+                  </Button>
+                ) : <div />}
+
+                {currentStep < 2 ? (
+                  <Button type="button" variant="default" onClick={() => setCurrentStep((s) => s + 1)}>
+                    Continuer
+                  </Button>
+                ) : (
+                  <Button type="submit" variant="gold" disabled={!isConfirmed || submitState.status === "loading"}>
+                    {submitState.status === "loading" ? "Envoi..." : "Soumettre la demande"}
+                  </Button>
+                )}
+              </div>
+            </form>
+          </Card>
+        </div>
+      </section>
+
       <SiteFooter />
     </main>
   );
 }
 
 function PersonalSpacePage() {
-  const stats = [{ label: "Dossiers ouverts", value: "3" }, { label: "Rendez-vous", value: "1" }, { label: "Documents valides", value: "6" }, { label: "Notifications", value: "4" }];
-  const requests = [{ type: "Carte consulaire", status: "Pieces a verifier", date: "22 juillet 2026" }, { type: "Passeport biometrie", status: "Rendez-vous confirme", date: "25 juillet 2026" }, { type: "Legalisation", status: "Pret pour retrait", date: "29 juillet 2026" }];
-  const personalDocuments = ["Passeport", "Carte consulaire", "Acte de naissance", "Procuration", "Attestation de residence", "Certificat de nationalite"];
+  const stats = [
+    { label: "Dossiers ouverts", value: "3" },
+    { label: "Rendez-vous", value: "1" },
+    { label: "Documents validés", value: "6" },
+    { label: "Notifications", value: "4" }
+  ];
 
-  return <main className="dashboard-shell"><aside className="dashboard-sidebar"><a className="dashboard-logo" href="/" aria-label="Ambassade RDC au Burundi"><><img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" /><img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" /></></a><nav className="dashboard-nav"><a className="active" href="#">Tableau de bord</a><a href="#dossiers">Mes dossiers</a><a href="#documents">Mes documents</a><a href="#rendez-vous">Rendez-vous</a><a href="#profil">Profil</a></nav><a className="logout-link" href="/login">Deconnexion</a></aside><section className="dashboard-main"><header className="dashboard-header"><div><span className="eyebrow">Bujumbura</span><h1>Espace personnel</h1><p>Bienvenue dans votre portail consulaire de l'Ambassade de la RDC au Burundi.</p></div><ThemeToggle /></header><div className="stats-grid">{stats.map((stat) => <article className="stat-card" key={stat.label}><span>{stat.label}</span><strong>{stat.value}</strong></article>)}</div><section className="dashboard-grid" id="dossiers"><article className="dashboard-card large-card"><div className="card-heading"><h2>Mes demandes recentes</h2><a href="/demandes">Nouvelle demande</a></div><div className="request-list">{requests.map((request) => <div className="request-row" key={request.type}><div><strong>{request.type}</strong><span>{request.date}</span></div><em>{request.status}</em></div>)}</div></article><article className="dashboard-card" id="rendez-vous"><h2>Prochain rendez-vous</h2><div className="appointment-mini"><strong>25 juillet 2026</strong><span>09:00 - Ambassade RDC, Bujumbura</span><p>Capture biometrie et verification des originaux.</p></div></article></section><section className="dashboard-card" id="documents"><div className="card-heading"><h2>Documents disponibles dans mon espace</h2><a href="/">Voir guide grand public</a></div><div className="personal-documents">{personalDocuments.map((document) => <span key={document}>{document}</span>)}</div></section></section></main>;
-}
+  const requests = [
+    { type: "Carte consulaire", status: "Pièces à vérifier", date: "22 juillet 2026" },
+    { type: "Passeport biométrie", status: "Rendez-vous confirmé", date: "25 juillet 2026" },
+    { type: "Légalisation", status: "Prêt pour retrait", date: "29 juillet 2026" }
+  ];
 
-function LoginPage() {
-  const loginServices = ["Suivre une demande consulaire", "Prendre un rendez-vous a Bujumbura", "Televerser les documents requis", "Recevoir les notifications de l'Ambassade"];
-  return <main className="auth-shell"><section className="auth-panel auth-visual"><a className="brand auth-brand" href="/"><span className="seal">RDC</span><span><strong>Ambassade</strong><small>RDC au Burundi</small></span></a><div><span className="hero-kicker">Espace personnel</span><h1>Connectez-vous pour gerer vos demarches consulaires.</h1><p>Un acces unique pour preparer vos dossiers, reserver un rendez-vous et suivre vos documents aupres de l'Ambassade a Bujumbura.</p></div><ul className="auth-service-list">{loginServices.map((service) => <li key={service}>{service}</li>)}</ul></section><section className="auth-panel auth-form-panel"><div className="auth-topline"><a href="/">Retour accueil</a><ThemeToggle /></div><form className="login-form"><div className="form-heading"><span className="eyebrow">Connexion</span><h2>Acceder a mon compte</h2><p>Entrez vos identifiants pour continuer vers votre espace personnel.</p></div><label>Adresse email<input type="email" placeholder="nom@example.com" /></label><label>Mot de passe<input type="password" placeholder="Votre mot de passe" /></label><div className="form-row"><label className="check-line"><input type="checkbox" />Se souvenir de moi</label><a href="#">Mot de passe oublie ?</a></div><a className="submit-button" href="/espace-personnel">Se connecter</a><p className="form-note">Nouveau demandeur ? <a href="/espace-personnel">Creer un dossier provisoire</a></p></form></section></main>;
+  return (
+    <main className="dashboard-shell">
+      <aside className="dashboard-sidebar">
+        <a className="dashboard-logo" href="/">
+          <img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
+          <img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+        </a>
+        <nav className="dashboard-nav">
+          <a className="active" href="#">Tableau de bord</a>
+          <a href="/demandes">Mes demandes</a>
+          <a href="/documents">Guide consulaires</a>
+        </nav>
+        <a className="logout-link" href="/">Déconnexion</a>
+      </aside>
+
+      <section className="dashboard-main p-6 sm:p-10 space-y-8">
+        <header className="flex items-center justify-between">
+          <div>
+            <Badge variant="blue" className="mb-1">Portail citoyen</Badge>
+            <h1 className="text-2xl font-bold">Espace personnel</h1>
+          </div>
+          <ThemeToggle />
+        </header>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map((stat) => (
+            <Card key={stat.label} className="p-4 text-center">
+              <span className="text-xs text-slate-500 font-medium block">{stat.label}</span>
+              <strong className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1 block">{stat.value}</strong>
+            </Card>
+          ))}
+        </div>
+
+        <Card className="p-6">
+          <h2 className="text-lg font-bold mb-4">Mes demandes récentes</h2>
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            {requests.map((r) => (
+              <div key={r.type} className="py-3 flex items-center justify-between">
+                <div>
+                  <strong className="text-sm font-semibold block">{r.type}</strong>
+                  <span className="text-xs text-slate-400">{r.date}</span>
+                </div>
+                <Badge variant="gold">{r.status}</Badge>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+    </main>
+  );
 }
 
 function ContactPage() {
   return (
-    <main className="site-shell">
-      <section className="topbar">
+    <main className="site-shell bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] min-h-screen">
+      <section className="topbar bg-[#f7f5f3] dark:bg-[#1d1f1f] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
         <div className="container topbar-inner">
-          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
-          <div className="socials" aria-label="Social media">
-  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
-  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
-  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
-</div>
+          <div className="contact-line">
+            <span><MapPin size={16} className="text-blue-700 dark:text-amber-400" />Bujumbura, Burundi</span>
+            <span><Mail size={16} className="text-blue-700 dark:text-amber-400" />contact@ambardcbujumbura.cd</span>
+          </div>
         </div>
       </section>
-      <SiteHeader />
-      <section className="page-section contact-section" style={{ paddingTop: "8rem", paddingBottom: "5rem" }}>
-        <div className="container">
-          <div className="form-heading" style={{ marginBottom: "3rem" }}>
-            <span className="eyebrow">Nous contacter</span>
-            <h2>Contacts de l&apos;Ambassade</h2>
-            <p>Retrouvez ci-dessous les coordonnees et les horaires de la representation diplomatique de la RDC a Bujumbura.</p>
-          </div>
-          <div className="contact-forms-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: "2.5rem", alignItems: "start" }}>
-            <div className="contact-form-card">
-              <h3>Envoyez-nous un message</h3>
-              <form className="styled-form" onSubmit={(e) => e.preventDefault()}>
-                <label>Votre email <input type="email" placeholder="nom@exemple.com" required /></label>
-                <label>Sujet <input type="text" placeholder="Dites-nous comment nous pouvons vous aider" required /></label>
-                <label>Votre message <textarea rows={4} placeholder="Laissez un commentaire..." required /></label>
-                <button type="submit" className="btn-primary">Envoyer le message</button>
-              </form>
-            </div>
 
-            <div className="contact-form-card">
-              <h3>Audience avec l&apos;Ambassadeur</h3>
-              <p className="form-subtitle">Demandez une rencontre avec Son Excellence l&apos;Ambassadeur pour des questions diplomatiques, de cooperation bilaterale, de relations commerciales et d&apos;affaires communautaires.</p>
-              <form className="styled-form" onSubmit={(e) => e.preventDefault()}>
-                <label>Nom Complet <input type="text" placeholder="Jean Dupont" required /></label>
-                <label>Email <input type="email" placeholder="nom@exemple.com" required /></label>
-                <label>Organisation (optionnel) <input type="text" placeholder="Entreprise/Organisation" /></label>
-                <label>Objet de la Rencontre <textarea rows={4} placeholder="Decrivez l'objet..." required /></label>
-                <button type="submit" className="btn-primary">Soumettre la Demande</button>
-              </form>
-            </div>
-          </div>
+      <SiteHeader />
+
+      <section className="py-12 bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
+        <div className="container">
+          <Badge variant="gold" className="mb-2">Nous contacter</Badge>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Contacts de l'Ambassade</h1>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Coordonnées et formulaires de contact direct.</p>
         </div>
       </section>
+
+      <section className="py-12 bg-[#f7f5f3] dark:bg-[#1d1f1f] min-h-[60vh]">
+        <div className="container grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Card className="p-6 bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
+            <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Envoyez-nous un message</h3>
+            <form onSubmit={(e) => { e.preventDefault(); toast.success("Message envoyé à l'Ambassade."); }} className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Votre email</label>
+                <Input type="email" placeholder="nom@exemple.com" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Sujet</label>
+                <Input type="text" placeholder="Sujet de votre message" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Message</label>
+                <textarea rows={4} className="w-full rounded-xl border border-[#f6f5f4] dark:border-[#2d2e2e] bg-[#f7f5f3] dark:bg-[#1d1f1f] text-slate-900 dark:text-[#fafad6] p-3 text-xs focus:ring-2 focus:ring-blue-600" required />
+              </div>
+              <Button type="submit" variant="default" className="w-full">
+                Envoyer le message
+              </Button>
+            </form>
+          </Card>
+
+          <Card className="p-6 bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
+            <h3 className="text-lg font-bold mb-2 text-slate-900 dark:text-white">Audience avec l'Ambassadeur</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+              Demandez une rencontre officielle pour questions diplomatiques ou affaires communautaires.
+            </p>
+            <form onSubmit={(e) => { e.preventDefault(); toast.success("Demande d'audience soumise."); }} className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Nom Complet</label>
+                <Input type="text" placeholder="Nom et prénom" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Email</label>
+                <Input type="email" placeholder="nom@exemple.com" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Objet de la Rencontre</label>
+                <textarea rows={4} className="w-full rounded-xl border border-[#f6f5f4] dark:border-[#2d2e2e] bg-[#f7f5f3] dark:bg-[#1d1f1f] text-slate-900 dark:text-[#fafad6] p-3 text-xs focus:ring-2 focus:ring-blue-600" required />
+              </div>
+              <Button type="submit" variant="gold" className="w-full">
+                Soumettre la demande d'audience
+              </Button>
+            </form>
+          </Card>
+        </div>
+      </section>
+
       <SiteFooter />
     </main>
   );
@@ -1410,99 +1750,40 @@ function ContactPage() {
 
 function PaymentPage() {
   const bankInfo = [
-    { label: "BANK:", value: "BANQUE COMMERCIALE DU BURUNDI (BCB)" },
-    { label: "BRANCH:", value: "BUJUMBURA" },
-    { label: "ACCOUNT NO.:", value: "XXXX XXXX XXXX" },
-    { label: "HOLDER:", value: "AMBASSADE DE LA RDC AU BURUNDI" },
+    { label: "Banque:", value: "BANQUE COMMERCIALE DU BURUNDI (BCB)" },
+    { label: "Agence:", value: "BUJUMBURA" },
+    { label: "Titulaire:", value: "AMBASSADE DE LA RDC AU BURUNDI" },
   ];
-  const feeCategories = [
-    {
-      title: "Services de Visa",
-      fees: [
-        { label: "Visa 1 mois", price: "$ 50" },
-        { label: "Visa 3 mois", price: "$ 90" },
-        { label: "Visa 6 mois", price: "$ 180" },
-      ],
-    },
-    {
-      title: "Documents Civils",
-      fees: [
-        { label: "Attestation de Naissance", price: "$ 30" },
-        { label: "Certificat de Bonne Conduite", price: "$ 30" },
-        { label: "Certificat de Celibat", price: "$ 30" },
-        { label: "Acte de Mariage", price: "$ 30" },
-        { label: "Carte Consulaire", price: "$ 30" },
-      ],
-    },
-    {
-      title: "Autres Services",
-      fees: [
-        { label: "Passeport Ordinaire", price: "$ 100" },
-        { label: "Procuration", price: "$ 50" },
-        { label: "Authentification de Document", price: "$ 30" },
-        { label: "Confirmation de Nationalite", price: "$ 30" },
-        { label: "Rapatriement", price: "Gratuit" },
-      ],
-    },
-  ];
+
   return (
-    <main className="site-shell">
-      <section className="topbar">
+    <main className="site-shell bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] min-h-screen">
+      <section className="topbar bg-[#f7f5f3] dark:bg-[#1d1f1f] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
         <div className="container topbar-inner">
-          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
-          <div className="socials" aria-label="Social media">
-  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
-  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
-  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
-</div>
+          <div className="contact-line">
+            <span><MapPin size={16} className="text-blue-700 dark:text-amber-400" />Bujumbura, Burundi</span>
+            <span><Mail size={16} className="text-blue-700 dark:text-amber-400" />contact@ambardcbujumbura.cd</span>
+          </div>
         </div>
       </section>
-      <SiteHeader />
-      <section className="page-section" style={{ paddingTop: "8rem", paddingBottom: "4rem", background: "var(--bg-secondary, #f8f9fa)" }}>
-        <div className="container">
-          <div style={{ marginBottom: "3rem", textAlign: "center" }}>
-            <span className="eyebrow">Paiement</span>
-            <h2>Informations de Paiement de l&apos;Ambassade</h2>
-            <p style={{ color: "var(--muted, #6b7280)", maxWidth: "600px", margin: "0 auto" }}>Informations completes de paiement pour tous les services de l&apos;ambassade</p>
-          </div>
 
-          <div style={{ background: "var(--card-bg, #fff)", borderRadius: "var(--radius-lg, 12px)", padding: "2rem", border: "1px solid var(--border, #e5e7eb)", maxWidth: "480px", margin: "0 auto 3rem" }}>
-            <h3 style={{ marginBottom: "1.5rem", textAlign: "center" }}>Coordonnees Bancaires</h3>
-            <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-              {bankInfo.map((item) => (
-                <div key={item.label} style={{ display: "flex", justifyContent: "space-between", padding: "0.5rem 0", borderBottom: "1px solid var(--border, #e5e7eb)" }}>
-                  <span style={{ fontWeight: 600, color: "var(--muted, #6b7280)" }}>{item.label}</span>
-                  <span style={{ fontWeight: 500 }}>{item.value}</span>
+      <SiteHeader />
+      <section className="py-12 bg-[#f7f5f3] dark:bg-[#1d1f1f] min-h-[60vh]">
+        <div className="container max-w-2xl">
+          <Card className="p-6 text-center space-y-6 bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] shadow-sm">
+            <Badge variant="blue">Paiement</Badge>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Informations de Paiement</h1>
+            <div className="space-y-2 text-left bg-[#f7f5f3] dark:bg-[#1d1f1f] p-4 rounded-xl text-xs border border-[#f6f5f4] dark:border-[#2d2e2e]">
+              {bankInfo.map((b) => (
+                <div key={b.label} className="flex justify-between border-b border-[#e2e0dc] dark:border-[#2d2e2e] pb-2 last:border-0">
+                  <span className="font-semibold text-slate-500 dark:text-slate-400">{b.label}</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-200">{b.value}</span>
                 </div>
               ))}
             </div>
-          </div>
-
-          <div style={{ marginBottom: "2rem", textAlign: "center" }}>
-            <h2>Frais des Services de l&apos;Ambassade</h2>
-            <p style={{ color: "var(--muted, #6b7280)" }}>Frais actuels pour tous les services consulaires</p>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
-            {feeCategories.map((cat) => (
-              <div key={cat.title} style={{ background: "var(--card-bg, #fff)", borderRadius: "var(--radius-lg, 12px)", padding: "1.5rem", border: "1px solid var(--border, #e5e7eb)" }}>
-                <h3 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>{cat.title}</h3>
-                {cat.fees.map((fee) => (
-                  <div key={fee.label} style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", fontSize: "0.9rem", borderBottom: "1px solid var(--border, #e5e7eb)" }}>
-                    <span style={{ color: "var(--muted, #6b7280)" }}>{fee.label}</span>
-                    <span style={{ fontWeight: 600, color: fee.price === "Gratuit" ? "var(--green, #10b981)" : undefined }}>{fee.price}</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginTop: "2rem", textAlign: "center" }}>
-            <p style={{ fontSize: "0.875rem", color: "var(--muted, #6b7280)", marginBottom: "1rem" }}>Tous les frais sont sujets a changement. Veuillez nous contacter pour les informations de tarification les plus recentes.</p>
-            <a className="read-more" href="/contact" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>Nous contacter</a>
-          </div>
+            <a href="/contact">
+              <Button variant="outline">Nous contacter</Button>
+            </a>
+          </Card>
         </div>
       </section>
       <SiteFooter />
@@ -1511,55 +1792,31 @@ function PaymentPage() {
 }
 
 export default function App() {
-  const path = window.location.pathname;
-  if (path.startsWith("/documents")) return <DocumentsPage />;
-  if (path.startsWith("/demandes")) return <RequestsPage />;
-  if (path.startsWith("/espace-personnel")) return <PersonalSpacePage />;
-  if (path.startsWith("/login")) return <LoginPage />;
-  if (path.startsWith("/contact")) return <ContactPage />;
-  if (path.startsWith("/payment")) return <PaymentPage />;
-  return <HomePage />;
+  const [path, setPath] = React.useState(window.location.pathname);
+
+  React.useEffect(() => {
+    const handlePopState = () => {
+      setPath(window.location.pathname);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const renderCurrentPage = () => {
+    if (path.startsWith("/documents")) return <DocumentsPage />;
+    if (path.startsWith("/demandes")) return <RequestsPage />;
+    if (path.startsWith("/ambassade")) return <AmbassadePage SiteHeader={SiteHeader} SiteFooter={SiteFooter} />;
+    if (path.startsWith("/actualites")) return <ActualitesPage SiteHeader={SiteHeader} SiteFooter={SiteFooter} />;
+    if (path.startsWith("/espace-personnel")) return <PersonalSpacePage />;
+    if (path.startsWith("/contact")) return <ContactPage />;
+    if (path.startsWith("/payment")) return <PaymentPage />;
+    return <HomePage />;
+  };
+
+  return (
+    <>
+      {renderCurrentPage()}
+      <NiandaChatbot />
+    </>
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

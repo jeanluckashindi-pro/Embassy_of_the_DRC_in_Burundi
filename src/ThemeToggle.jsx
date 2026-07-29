@@ -1,11 +1,13 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Sun, Moon, Monitor, ChevronDown, Check } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { motion } from "motion/react";
 
 const STORAGE_KEY = "ambardc-theme";
 const options = [
-  { value: "light", label: "Clair", icon: "sun" },
-  { value: "dark", label: "Sombre", icon: "moon" },
-  { value: "system", label: "Systeme", icon: "screen" },
+  { value: "light", label: "Clair", icon: Sun },
+  { value: "dark", label: "Sombre", icon: Moon },
+  { value: "system", label: "Système", icon: Monitor },
 ];
 
 function getSystemTheme() {
@@ -25,13 +27,19 @@ function resolveTheme(choice) {
 
 export function ThemeToggle() {
   const [choice, setChoice] = useState(() => getStoredChoice());
-  const [open, setOpen] = useState(false);
   const activeTheme = resolveTheme(choice);
   const activeOption = options.find((option) => option.value === choice) ?? options[2];
+  const ActiveIcon = activeOption.icon;
 
   useEffect(() => {
     const applyTheme = () => {
-      document.documentElement.dataset.theme = resolveTheme(choice);
+      const active = resolveTheme(choice);
+      document.documentElement.dataset.theme = active;
+      if (active === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     };
 
     applyTheme();
@@ -44,45 +52,56 @@ export function ThemeToggle() {
     return () => media.removeEventListener("change", applyTheme);
   }, [choice]);
 
-  function selectTheme(nextChoice) {
-    setChoice(nextChoice);
-    setOpen(false);
-  }
-
   return (
-    <div className="theme-picker">
-      <button
-        className="theme-menu-button"
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label="Changer le theme"
-        data-theme-active={activeTheme}
-      >
-        <span className={`theme-icon ${activeOption.icon}`} aria-hidden="true" />
-        <span>{activeOption.label}</span>
-        <span className="theme-chevron" aria-hidden="true" />
-      </button>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:bg-slate-50 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 cursor-pointer"
+          type="button"
+          aria-label="Changer le thème"
+        >
+          <ActiveIcon className="h-4 w-4 text-amber-500 dark:text-blue-400" />
+          <span>{activeOption.label}</span>
+          <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+        </button>
+      </DropdownMenu.Trigger>
 
-      {open ? (
-        <div className="theme-menu" role="menu">
-          {options.map((option) => (
-            <button
-              className={option.value === choice ? "active" : ""}
-              key={option.value}
-              type="button"
-              role="menuitemradio"
-              aria-checked={option.value === choice}
-              onClick={() => selectTheme(option.value)}
-            >
-              <span className={`theme-icon ${option.icon}`} aria-hidden="true" />
-              <span>{option.label}</span>
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          asChild
+          sideOffset={6}
+          align="end"
+          className="z-[200] min-w-[130px] rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg dark:border-slate-800 dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            {options.map((option) => {
+              const Icon = option.icon;
+              const isSelected = option.value === choice;
+              return (
+                <DropdownMenu.Item
+                  key={option.value}
+                  onClick={() => setChoice(option.value)}
+                  className={`flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors outline-none ${
+                    isSelected
+                      ? "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 font-semibold"
+                      : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-3.5 w-3.5" />
+                    <span>{option.label}</span>
+                  </div>
+                  {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />}
+                </DropdownMenu.Item>
+              );
+            })}
+          </motion.div>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
-

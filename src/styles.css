@@ -1,4 +1,7 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import url("https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kaushan+Script&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playball&family=Story+Script&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
 :root {
@@ -24,53 +27,39 @@
   --font-heading: "Inter", "Open Sans", Arial, Helvetica, sans-serif;
   --font-ui: "Inter", "Open Sans", Arial, Helvetica, sans-serif;
   --font-script: "Kaushan Script", "Playball", "Story Script", cursive;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
- :root {
-    --bg-1: #161717;
-    --bg-2: #1d1f1f;
-    --bg-3: #2d2e2e;
-    --color: #fafad6;
-    --color-icone: #a7a8a8;
-    --background: var(--bg-1);
-    --foreground: var(--color);
-    --surface: var(--bg-2);
-    --surface-strong: var(--bg-3);
-    --icon-color: var(--color-icone);
-    --line: color-mix(in srgb, var(--color) 16%, transparent);
-    --soft: var(--bg-2);
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg-1: #161717;
-  --bg-2: #1d1f1f;
-  --bg-3: #2d2e2e;
-  --color: #fafad6;
-  --color-icone: #a7a8a8;
-  --background: var(--bg-1);
-  --foreground: var(--color);
-  --surface: var(--bg-2);
-  --surface-strong: var(--bg-3);
-  --icon-color: var(--color-icone);
-  --line: color-mix(in srgb, var(--color) 16%, transparent);
-  --soft: var(--bg-2);
-}
-
-:root[data-theme="light"] {
+html:not(.dark) {
   --bg-1: #ffffff;
   --bg-2: #f7f5f3;
   --bg-3: #f6f5f4;
   --color: #190a0a;
   --color-icone: #636261;
-  --background: var(--bg-1);
-  --foreground: var(--color);
-  --surface: var(--bg-2);
-  --surface-strong: var(--bg-3);
-  --icon-color: var(--color-icone);
+  --background: #ffffff;
+  --foreground: #190a0a;
+  --surface: #f7f5f3;
+  --surface-strong: #f6f5f4;
+  --icon-color: #636261;
   --line: color-mix(in srgb, var(--color) 12%, transparent);
-  --soft: var(--bg-2);
+  --soft: #f7f5f3;
+  color-scheme: light;
+}
+
+html.dark {
+  --bg-1: #161717;
+  --bg-2: #1d1f1f;
+  --bg-3: #2d2e2e;
+  --color: #fafad6;
+  --color-icone: #a7a8a8;
+  --background: #161717;
+  --foreground: #fafad6;
+  --surface: #1d1f1f;
+  --surface-strong: #2d2e2e;
+  --icon-color: #a7a8a8;
+  --line: color-mix(in srgb, var(--color) 16%, transparent);
+  --soft: #1d1f1f;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -79,12 +68,127 @@
   --color-bg-1: var(--bg-1);
   --color-bg-2: var(--bg-2);
   --color-bg-3: var(--bg-3);
-   --color-icone: var(--icon-color);
+  --color-text-app: var(--color);
+  --color-icone: var(--icon-color);
   --font-sans: var(--font-body);
   --font-heading: var(--font-heading);
   --font-ui: var(--font-ui);
   --font-script: var(--font-script);
   --font-mono: "Ubuntu", monospace;
+}
+
+html {
+  background-color: var(--bg-1);
+  color: var(--color);
+}
+
+body {
+  background-color: var(--bg-1);
+  color: var(--color);
+  font-family: var(--font-body);
+}
+
+/* Light mode explicit styling overrides */
+html:not(.dark) body,
+html:not(.dark) .site-shell,
+html:not(.dark) .dashboard-shell,
+html:not(.dark) .auth-shell {
+  background-color: #ffffff !important;
+  color: #190a0a !important;
+}
+
+html:not(.dark) .topbar,
+html:not(.dark) .topbar-inner,
+html:not(.dark) .contact-line,
+html:not(.dark) .contact-line span,
+html:not(.dark) .contact-line a {
+  background-color: #f7f5f3 !important;
+  color: #190a0a !important;
+  font-weight: 600 !important;
+}
+
+html:not(.dark) .contact-line svg {
+  color: #0054a6 !important;
+}
+
+html:not(.dark) .site-header {
+  background-color: #ffffff !important;
+  border-color: #f6f5f4 !important;
+}
+
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6 {
+  color: #190a0a;
+}
+
+/* Dark mode explicit styling overrides */
+html.dark body,
+html.dark .site-shell,
+html.dark .dashboard-shell,
+html.dark .auth-shell {
+  background-color: #161717 !important;
+  color: #fafad6 !important;
+}
+
+html.dark .topbar,
+html.dark .topbar-inner,
+html.dark .contact-line,
+html.dark .contact-line span,
+html.dark .contact-line a {
+  background-color: #1d1f1f !important;
+  color: #fafad6 !important;
+  font-weight: 600 !important;
+}
+
+html.dark .contact-line svg {
+  color: #f7d117 !important;
+}
+
+html.dark .site-header {
+  background-color: #161717 !important;
+  border-color: #2d2e2e !important;
+}
+
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #fafad6;
+}
+
+/* Strict enforcement: ALL buttons and primary action links MUST ALWAYS have white text regardless of theme */
+button,
+.btn,
+.button,
+[role="button"],
+button *,
+.btn *,
+.button *,
+.bg-blue-800,
+.bg-blue-800 *,
+.bg-blue-900,
+.bg-blue-900 *,
+.bg-blue-700,
+.bg-blue-700 *,
+.bg-blue-600,
+.bg-blue-600 *,
+.bg-red-600,
+.bg-red-600 * {
+  color: #ffffff !important;
+}
+
+.mobile-menu-toggle,
+.mobile-menu-close {
+  background-color: #0054a6 !important;
+  color: #ffffff !important;
+  border-radius: 8px;
+  padding: 6px;
 }
 
 * {
@@ -163,9 +267,9 @@ a {
   width: 24px;
   height: 24px;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--line);
   border-radius: 50%;
-  color: #fff;
+  color: var(--color);
   font-size: 10px;
   font-weight: 400;
   text-decoration: none;
@@ -173,8 +277,9 @@ a {
 }
 
 .socials a:hover {
-  background: rgba(255, 255, 255, .15);
-  border-color: #fff;
+  background: var(--blue-dark);
+  color: #fff;
+  border-color: var(--blue-dark);
 }
 
 .main-header {
@@ -268,7 +373,6 @@ a {
 }
 
 .online-link,
-.hero-content a,
 .read-more,
 .appointment-copy a,
 .discover-button {

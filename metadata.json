@@ -1,0 +1,6 @@
+{
+  "name": "Ambassade RDC au Burundi",
+  "description": "Site officiel et services consulaires de l'Ambassade de la Republique Democratique du Congo au Burundi à Bujumbura.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
