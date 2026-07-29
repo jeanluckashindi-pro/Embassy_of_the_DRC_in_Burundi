@@ -13,7 +13,7 @@
     "id": "notice",
     "label": "Information officielle",
     "title": "Communiques",
-    "description": "Retrouvez les avis, annonces publiques et informations importantes publies par l'Ambassade a Bujumbura.",
+    "description": "Avis, annonces publiques et informations importantes publies par l'Ambassade a Bujumbura.",
     "action": "Voir plus",
     "href": "#actualites",
     "className": "notice",

@@ -3,8 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
 import { toast } from "sonner";
 import { ArrowRight, CalendarDays, CheckCircle2, ClipboardCheck, Clock, FileText, Globe, Home, Info, Mail, MapPin, Phone, FileBadge, FileEdit, Newspaper, TrendingUp, UploadCloud } from "lucide-react";
 import logoAmbassade from "./assets/logo_ambassade.png";
@@ -920,22 +918,18 @@ function FormFieldsSkeleton({ count = 6 }) {
     </div>
   );
 }
-function parseDateValue(val) {
-  if (!val) return null;
-  if (val instanceof Date) return val;
-  if (typeof val === "string" && /^\d{4}-\d{2}-\d{2}/.test(val)) {
-    const [y, m, d] = val.split("-").map(Number);
-    return new Date(y, m - 1, d);
-  }
-  return null;
+
+function getToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
-function formatDateValue(date) {
-  if (!date) return "";
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+function getTomorrow() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
 function getYesterday() {
@@ -956,26 +950,25 @@ function CommonRequerantFields({ values, onChange }) {
               <label className={field.wide ? "full-field" : ""} key={field.name}>
                 {field.label}{field.required ? <span className="required-star"> *</span> : null}
                 {field.type === "select" ? (
-                  <Dropdown
-                    value={values[field.name] || null}
-                    options={field.options}
-                    onChange={(e) => onChange(field.name, e.value)}
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Selectionner"
+                  <select
+                    value={values[field.name] || ""}
+                    onChange={(e) => onChange(field.name, e.target.value)}
                     required={field.required}
-                    className="w-full"
-                  />
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+                  >
+                    <option value="">Selectionner</option>
+                    {field.options?.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
                 ) : field.type === "date" ? (
-                  <Calendar
-                    value={parseDateValue(values[field.name])}
-                    onChange={(e) => onChange(field.name, formatDateValue(e.value))}
-                    dateFormat="dd/mm/yy"
-                    placeholder="jj/mm/aaaa"
-                    showIcon
-                    maxDate={getYesterday()}
+                  <input
+                    type="date"
+                    value={values[field.name] || ""}
+                    onChange={(e) => onChange(field.name, e.target.value)}
+                    max={getYesterday().toISOString().split("T")[0]}
                     required={field.required}
-                    className="w-full"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
                   />
                 ) : (
                   <input type={field.type ?? "text"} placeholder={field.placeholder || field.label} value={values[field.name] ?? ""} onChange={(event) => onChange(field.name, event.target.value)} required={field.required} />
@@ -1035,9 +1028,15 @@ function DynamicDemandeFields({ champs, values, onChange }) {
         const value = values[champ.code] ?? champ.valeur_defaut ?? (champ.multiple ? [] : "");
         const options = loadedOptions[key] || parseDynamicOptions(champ.options_json);
         const colSpan = champ.largeur ? Math.min(12, Math.max(1, champ.largeur)) : 4;
+        const fieldLabel = (champ.libelle || champ.code || "").toLowerCase();
+        const isEndDate = /fin/.test(fieldLabel);
+        const isChefEquipe = /chef.*(equipe|d['e]quipe|d.equipe)/i.test(fieldLabel) || /responsable/i.test(fieldLabel) && /equipe/i.test(fieldLabel);
+        const depFieldCode = isChefEquipe ? activeChamps.find((c) => /agent.*(police|policier|polic)/i.test(c.libelle || c.code || ""))?.code : null;
+        const depStartCode = isEndDate ? activeChamps.find((c) => /debut/i.test(c.libelle || c.code || ""))?.code : null;
+        const dependentDisabled = (depFieldCode && !values[depFieldCode]) || (depStartCode && !values[depStartCode]);
         const commonProps = {
           required: champ.obligatoire,
-          disabled: champ.lecture_seule,
+          disabled: champ.lecture_seule || dependentDisabled,
         };
 
         return (
@@ -1046,54 +1045,49 @@ function DynamicDemandeFields({ champs, values, onChange }) {
             {champ.type_champ === "textarea" ? (
               <textarea placeholder={champ.placeholder || ""} value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps} />
             ) : champ.type_champ === "select" ? (
-              <Dropdown
-                value={value || null}
-                options={options.map((option) => ({
-                  label: typeof option === "string" ? option : option.label || option.value,
-                  value: typeof option === "string" ? option : option.value,
-                }))}
-                onChange={(e) => onChange(champ.code, e.value)}
-                optionLabel="label"
-                optionValue="value"
-                placeholder={champ.placeholder || "Selectionner"}
-                {...commonProps}
-                className="w-full"
-              />
+              <select
+                value={value || ""}
+                onChange={(e) => onChange(champ.code, e.target.value)}
+                disabled={champ.lecture_seule || dependentDisabled}
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+              >
+                <option value="">{champ.placeholder || "Selectionner"}</option>
+                {options.map((option) => {
+                  const optValue = typeof option === "string" ? option : option.value;
+                  const optLabel = typeof option === "string" ? option : option.label || option.value;
+                  return <option key={optValue} value={optValue}>{optLabel}</option>;
+                })}
+              </select>
             ) : champ.type_champ === "checkbox" || champ.type_champ === "switch" ? (
-              <span className="dynamic-checkline"><input type="checkbox" checked={Boolean(value)} onChange={(event) => onChange(champ.code, event.target.checked)} disabled={champ.lecture_seule} /> Oui</span>
+              <span className="dynamic-checkline"><input type="checkbox" checked={Boolean(value)} onChange={(event) => onChange(champ.code, event.target.checked)} disabled={champ.lecture_seule || dependentDisabled} /> Oui</span>
             ) : champ.type_champ === "radio" ? (
               <div className="dynamic-radio-group">
                 {options.map((option) => {
                   const optionValue = typeof option === "string" ? option : option.value;
                   const optionLabel = typeof option === "string" ? option : option.label || option.value;
-                  return <label key={optionValue}><input type="radio" name={champ.code} value={optionValue} checked={value === optionValue} onChange={() => onChange(champ.code, optionValue)} disabled={champ.lecture_seule} /> {optionLabel}</label>;
+                  return <label key={optionValue}><input type="radio" name={champ.code} value={optionValue} checked={value === optionValue} onChange={() => onChange(champ.code, optionValue)} disabled={champ.lecture_seule || dependentDisabled} /> {optionLabel}</label>;
                 })}
               </div>
             ) : champ.type_champ === "date" ? (
-              <Calendar
-                value={parseDateValue(value)}
-                onChange={(e) => onChange(champ.code, formatDateValue(e.value))}
-                dateFormat="dd/mm/yy"
-                placeholder="jj/mm/aaaa"
-                showIcon
-                maxDate={getYesterday()}
-                {...commonProps}
-                className="w-full"
+              <input
+                type="date"
+                value={value || ""}
+                onChange={(e) => onChange(champ.code, e.target.value)}
+                min={isEndDate ? getTomorrow().toISOString().split("T")[0] : getToday().toISOString().split("T")[0]}
+                disabled={champ.lecture_seule || dependentDisabled}
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
               />
             ) : champ.type_champ === "datetime" ? (
-              <Calendar
-                value={parseDateValue(value)}
-                onChange={(e) => onChange(champ.code, formatDateValue(e.value))}
-                dateFormat="dd/mm/yy"
-                showTime
-                placeholder="jj/mm/aaaa hh:mm"
-                showIcon
-                maxDate={getYesterday()}
-                {...commonProps}
-                className="w-full"
+              <input
+                type="datetime-local"
+                value={value || ""}
+                onChange={(e) => onChange(champ.code, e.target.value)}
+                min={isEndDate ? getTomorrow().toISOString().slice(0, 16) : getToday().toISOString().slice(0, 16)}
+                disabled={champ.lecture_seule || dependentDisabled}
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
               />
             ) : champ.type_champ === "file" || champ.type_champ === "image" ? (
-              <input type="file" accept={champ.type_champ === "image" ? "image/*" : undefined} onChange={(event) => onChange(champ.code, event.target.files?.[0]?.name ?? "")} disabled={champ.lecture_seule} />
+              <input type="file" accept={champ.type_champ === "image" ? "image/*" : undefined} onChange={(event) => onChange(champ.code, event.target.files?.[0]?.name ?? "")} disabled={champ.lecture_seule || dependentDisabled} />
             ) : (
               <input type={champ.type_champ === "number" ? "number" : champ.type_champ === "email" ? "email" : champ.type_champ === "phone" ? "tel" : "text"} placeholder={champ.placeholder || ""} value={value} onChange={(event) => onChange(champ.code, event.target.value)} {...commonProps} />
             )}
