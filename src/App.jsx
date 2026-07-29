@@ -1,12 +1,12 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { toast } from "sonner";
-import { ArrowRight, CalendarDays, CheckCircle2, ClipboardCheck, Clock, FileText, Globe, Mail, MapPin, Phone, UploadCloud } from "lucide-react";
+import { ArrowRight, CalendarDays, CheckCircle2, ClipboardCheck, Clock, FileText, Globe, Home, Info, Mail, MapPin, Phone, FileBadge, FileEdit, Newspaper, TrendingUp, UploadCloud } from "lucide-react";
 import logoAmbassade from "./assets/logo_ambassade.png";
 import logoAmbassadeLight from "./assets/logo_ambassade_light.png";
 import passportOne from "./assets/passport_1.jpg";
@@ -18,18 +18,20 @@ import firstLadyTwo from "./assets/premiere_dame_2.jpg";
 import { API_BASE_URL, apiFetch, fetchActualites, fetchCommuniques, fetchTypeDemandeChamps, fetchTypeDemandeDocuments, fetchTypeDemandes, submitDemande } from "./api.js";
 import { ThemeToggle } from "./ThemeToggle.jsx";
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const menu = [
-  { label: "Accueil", href: "/" },
-  { label: "Ambassade", href: "/#ambassade" },
-  { label: "Documents", href: "/documents" },
-  { label: "Demandes", href: "/demandes" },
-  { label: "Actualites", href: "/#actualites" },
-  { label: "Decouvrir", href: "/#rdc" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Accueil", href: "/", icon: "Home" },
+  { label: "Ambassade", href: "/#ambassade", icon: "Info" },
+  { label: "Nos services", href: "/documents", icon: "FileBadge" },
+  { label: "Demandes", href: "/demandes", icon: "FileEdit" },
+  { label: "Actualites", href: "/#actualites", icon: "Newspaper" },
+  { label: "Contact nous", href: "/contact", icon: "Mail" },
 ];
+
+const iconMap = {
+  Home, Info, FileBadge, FileEdit, Newspaper, Mail
+};
 
 function SiteHeader() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -47,8 +49,8 @@ function SiteHeader() {
     <header className="main-header">
       <div className="container nav-wrap">
         <a className="brand logo-brand" href="/" aria-label="Ambassade RDC au Burundi"><><img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" /><img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" /></></a>
-        <nav className="desktop-nav" aria-label="Navigation principale">{menu.map((item) => <a key={item.label} href={item.href}>{item.label}</a>)}</nav>
-        <div className="nav-actions"><a className="online-link" href="/espace-personnel"><span className="bi-kanban" aria-hidden="true" />Espace personnel</a></div>
+        <nav className="desktop-nav" aria-label="Navigation principale">{menu.map((item) => { const Icon = iconMap[item.icon]; return <a key={item.label} href={item.href}>{Icon ? <Icon size={16} strokeWidth={2.2} aria-hidden="true" /> : null}{item.label}</a>; })}</nav>
+        <div className="nav-actions">{/* <a className="online-link" href="/espace-personnel"><span className="bi-kanban" aria-hidden="true" />Espace personnel</a> */}</div>
         <button className="mobile-menu-toggle" type="button" aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"} onClick={() => setMobileOpen((prev) => !prev)}>
           <span className={mobileOpen ? "bar open" : "bar"} /><span className={mobileOpen ? "bar open" : "bar"} /><span className={mobileOpen ? "bar open" : "bar"} />
         </button>
@@ -56,8 +58,8 @@ function SiteHeader() {
       <div className={"mobile-nav-overlay" + (mobileOpen ? " open" : "")} onClick={() => setMobileOpen(false)} />
       <nav className={"mobile-nav" + (mobileOpen ? " open" : "")} aria-label="Navigation mobile">
         <div className="mobile-nav-header"><span>Menu</span><button className="mobile-menu-close" type="button" aria-label="Fermer le menu" onClick={() => setMobileOpen(false)}>&times;</button></div>
-        {menu.map((item) => <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}>{item.label}</a>)}
-        <a className="mobile-nav-cta" href="/espace-personnel" onClick={() => setMobileOpen(false)}>Espace personnel</a>
+        {menu.map((item) => { const Icon = iconMap[item.icon]; return <a key={item.label} href={item.href} onClick={() => setMobileOpen(false)}>{Icon ? <Icon size={16} strokeWidth={2.2} aria-hidden="true" /> : null}{item.label}</a>; })}
+        {/* <a className="mobile-nav-cta" href="/espace-personnel" onClick={() => setMobileOpen(false)}>Espace personnel</a> */}
       </nav>
     </header>
   );
@@ -76,8 +78,7 @@ function SiteFooter() {
           <h3>Ambassade</h3>
           <a href="/#ambassade">Mission diplomatique</a>
           <a href="/#actualites">Actualites</a>
-          <a href="/#rdc">Decouvrir la RDC</a>
-          <a href="/#contact">Contact</a>
+          <a href="/contact">Contact</a>
         </div>
         <div className="footer-column">
           <h3>Services consulaires</h3>
@@ -119,9 +120,9 @@ async function fetchQuickLinks() {
 const PASSPORT_TYPE_DEMANDE_ID = "2822f0ec-0b3c-4529-b82d-1e5e279f4c28";
 
 const quickLinksFallback = [
-  { id: "invest", label: "Investissement", title: "Investir en Republique Democratique du Congo", description: "Orientations pratiques pour comprendre les opportunites et les premieres demarches d'investissement en RDC.", action: "Comment investir ?", href: "#documents", className: "invest", image: "/images/president_2.jpg" },
-  { id: "notice", label: "Information officielle", title: "Communiques", description: "Avis, annonces publiques et informations importantes publies par l'Ambassade a Bujumbura.", action: "Voir plus", href: "#actualites", className: "notice", image: "/images/premiere_dame_2.jpg" },
-  { id: "documents", label: "Services consulaires", title: "Documents consulaires", description: "Pieces a preparer et demandes consulaires disponibles en ligne.", action: "Voir les documents", href: "/documents", className: "discover", image: "/images/passport_1.jpg" },
+  { id: "invest", icon: "TrendingUp", label: "Investissement", title: "Investir en Republique Democratique du Congo", description: "Orientations pratiques pour comprendre les opportunites et les premieres demarches d'investissement en RDC.", action: "Comment investir ?", href: "#documents", className: "invest", image: "/images/president_2.jpg" },
+  { id: "notice", icon: "Newspaper", label: "Information officielle", title: "Communiques", description: "Avis, annonces publiques et informations importantes publies par l'Ambassade a Bujumbura.", action: "Voir plus", href: "#actualites", className: "notice", image: "/images/premiere_dame_2.jpg" },
+  { id: "documents", icon: "FileBadge", label: "Services consulaires", title: "Documents consulaires", description: "Pieces a preparer et demandes consulaires disponibles en ligne.", action: "Voir les documents", href: "/documents", className: "discover", image: "/images/passport_1.jpg" },
 ];
 
 const leaders = [
@@ -352,8 +353,9 @@ function EmbassyDocumentCards({ documents: embassyDocuments, isLoading, isError 
       {isError ? <div className="documents-carousel-alert">Documents locaux affiches - service API momentanement indisponible.</div> : null}
       <Swiper
         className="documents-swiper"
-        modules={[Navigation, Pagination]}
-        navigation
+        modules={[Pagination]}
+        grabCursor
+        speed={600}
         pagination={{ clickable: true }}
         spaceBetween={14}
         slidesPerView={4}
@@ -403,6 +405,15 @@ function AllDocumentsGrid({ documents: embassyDocuments, isLoading, isError }) {
     return <article className="document-card document-state-card"><h3>Aucun document disponible</h3><p>Les services consulaires seront affiches des leur publication.</p></article>;
   }
 
+  const piecesRequises = {
+    "PASSEPORT": ["Photo d'identite recente", "Acte de naissance", "Carte d'identite", "Ancien passeport (si renouvellement)", "Preuve de residence au Burundi"],
+    "CARTE-CONSULAIRE": ["Photo d'identite", "Acte de naissance", "Preuve de residence au Burundi", "Copie du passport"],
+    "VISA": ["Passeport valide", "Photo d'identite", "Formulaire de demande", "Preuve de voyage", "Justificatif d'hébergement", "Certificat de vaccination"],
+    "LAISSEZ-PASSER": ["Photo d'identite", "Declararation de perte (si applicable)", "Billet ou preuve de voyage", "Piece d'identite"],
+    "LEGALISATION": ["Document original a legaliser", "Copie du document", "Carte d'identite du requerant"],
+    "PROCURATION": ["Carte d'identite", "Acte de naissance", "Document prouvant le motif", "Piece d'identite du mandataire (copie)"],
+  };
+
   return (
     <div className="all-documents-grid" aria-label="Tous les documents de l'Ambassade">
       {isError ? <div className="documents-carousel-alert all-documents-alert">Documents locaux affiches - service API momentanement indisponible.</div> : null}
@@ -411,21 +422,30 @@ function AllDocumentsGrid({ documents: embassyDocuments, isLoading, isError }) {
         const price = Number.parseFloat(item.prix);
         const currency = item.devise_id?.code ?? "";
         const formattedPrice = Number.isFinite(price) ? `${price.toLocaleString("fr-FR")} ${currency}`.trim() : "Frais a confirmer";
+        const codeKey = item.code?.toUpperCase().replace(/ /g, "-");
+        const pieces = piecesRequises[codeKey] || piecesRequises[Object.keys(piecesRequises).find(k => codeKey?.includes(k))] || [];
         return (
-          <article className="document-card api-document-card" key={item.id ?? item.code}>
-            <div className="document-photo" style={{ backgroundImage: `url("${image}")` }} />
-            <div className="document-card-body">
-              <div className="document-card-topline">
-                <span className="document-code">{item.code}</span>
-                <span className={item.actif ? "document-status active" : "document-status"}>{item.actif ? "Disponible" : "Indisponible"}</span>
+          <article className="api-document-card" key={item.id ?? item.code}>
+            <div className="doc-card-image" style={{ backgroundImage: `url("${image}")` }}>
+              <span className="doc-card-badge">{item.code}</span>
+            </div>
+            <div className="doc-card-body">
+              <div className="doc-card-top">
+                <h3>{item.titre}</h3>
+                <span className={item.actif ? "doc-status available" : "doc-status"}>{item.actif ? "Disponible" : "Indisponible"}</span>
               </div>
-              <h3>{item.titre}</h3>
               <p>{item.description}</p>
-              <dl className="document-facts">
-                <div><dt>Frais</dt><dd>{formattedPrice}</dd></div>
-                <div><dt>Delai</dt><dd>{item.delais} jour{String(item.delais) === "1" ? "" : "s"}</dd></div>
-              </dl>
-              <a href={`/demandes?type=${item.id}`}>Demarrer la demande</a>
+              <div className="doc-card-facts">
+                <div className="doc-fact"><span className="doc-fact-label">Frais</span><span className="doc-fact-value">{formattedPrice}</span></div>
+                <div className="doc-fact"><span className="doc-fact-label">Delai</span><span className="doc-fact-value">{item.delais} jour{String(item.delais) === "1" ? "" : "s"}</span></div>
+              </div>
+              {pieces.length > 0 && (
+                <div className="doc-card-pieces">
+                  <span className="doc-pieces-title">Pieces requises</span>
+                  <ul>{pieces.map((p, i) => <li key={i}>{p}</li>)}</ul>
+                </div>
+              )}
+              <a className="doc-card-cta" href={`/demandes?type=${item.id}`}>Demarrer la demande</a>
             </div>
           </article>
         );
@@ -658,7 +678,13 @@ function HomePage() {
       <section className="topbar">
         <div className="container topbar-inner">
           <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
-          <div className="socials" aria-label="Social media"><span>f</span><span>x</span><span>yt</span><span>ig</span><span>in</span></div>
+          <div className="socials" aria-label="Social media">
+  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
+  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
+  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
+</div>
         </div>
       </section>
 
@@ -668,10 +694,9 @@ function HomePage() {
         <div className="hero-slide hero-invest">
           <div className="container classic-hero-content embassy-hero-grid">
             <motion.div className="embassy-hero-copy" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: "easeOut" }}>
-              <span className="classic-hero-kicker">Site officiel de l'Ambassade</span>
               <h1>Ambassade de la Republique Democratique du Congo au Burundi</h1>
               <p>Informations officielles, services consulaires, communiques et accompagnement des ressortissants congolais a Bujumbura.</p>
-              <div className="classic-hero-actions"><a href="/demandes?type=passeport">Demander un document</a><a href="#actualites">Communiques officiels</a></div>
+              <div className="classic-hero-actions"><a href="/demandes?type=passeport" className="btn-primary"><FileText size={18} strokeWidth={2.4} aria-hidden="true" />Demander un document</a><a href="#actualites" className="btn-secondary"><Clock size={18} strokeWidth={2.4} aria-hidden="true" />Communiques officiels</a></div>
             </motion.div>
           </div>
         </div>
@@ -686,17 +711,34 @@ function HomePage() {
         <div className="quick-grid">
           {isLoading ? <article className="quick-card quick-loading"><span>Chargement</span><h2>Preparation des raccourcis...</h2></article> : null}
           {isError ? <article className="quick-card quick-error"><span>Hors ligne</span><h2>Les raccourcis locaux restent disponibles.</h2></article> : null}
-          {quickLinks.map((item) => (
-            <motion.article className={`quick-card ${item.className}`} key={item.id ?? item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 28 }}>
-              <div className="quick-card-image" style={{ backgroundImage: `url("${item.image}")` }} />
-              <div className="quick-card-body">
-                <span>{item.label}</span>
-                <h2>{item.title}</h2>
-                <p>{item.description}</p>
-                <a href={item.href}>{item.action}</a>
-              </div>
-            </motion.article>
-          ))}
+            {(() => {
+            const docCount = embassyDocuments?.length || 0;
+            const comCount = displayedCommuniques?.length || 0;
+            const latestCommunique = displayedCommuniques?.[0];
+            const enriched = quickLinks.map((item) => {
+              if (item.id === "notice" && comCount > 0) {
+                return { ...item, description: `${comCount} communiques recents — ${latestCommunique?.title || item.description}`, badge: comCount };
+              }
+              if (item.id === "documents" && docCount > 0) {
+                return { ...item, description: `${docCount} types de documents disponibles — Consultez les pieces a preparer avant votre rendez-vous.`, badge: docCount };
+              }
+              return item;
+            });
+            return enriched.map((item) => {
+              const QuickIcon = item.icon === "TrendingUp" ? TrendingUp : item.icon === "Newspaper" ? Newspaper : item.icon === "FileBadge" ? FileBadge : null;
+              return (
+              <motion.article className={`quick-card ${item.className}`} key={item.id ?? item.title} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 28 }}>
+                <div className="quick-card-image" style={{ backgroundImage: `url("${item.image}")` }} />
+                <div className="quick-card-body">
+                  <span>{QuickIcon ? <QuickIcon size={14} strokeWidth={2.5} aria-hidden="true" /> : null}{item.label}{item.badge ? <span className="quick-badge">{item.badge}</span> : null}</span>
+                  <h2>{item.title}</h2>
+                  <p>{item.description}</p>
+                  <a href={item.href}>{item.action}</a>
+                </div>
+              </motion.article>
+            );
+            });
+          })()}
         </div>
       </motion.section>
 
@@ -725,7 +767,26 @@ function HomePage() {
       <motion.section className="leaders ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={staggerReveal}><AmbientSectionEffects /><div className="container leader-grid">{leaders.map((leader) => <motion.article className="leader" key={leader.name} variants={cardReveal} whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 320, damping: 30 }}><div className="leader-photo" style={{ backgroundImage: `url("${leader.image}")` }} /><h3>{leader.name}</h3><p>{leader.role}</p></motion.article>)}</div></motion.section>
 
       <motion.section className="documents-section ambient-section" id="documents" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><a className="section-title documents-title-link" href="/documents"><span className="eyebrow">Grand public</span><h2>Documents de l'Ambassade</h2><p>Retrouvez les principales categories de documents et pieces a preparer avant votre rendez-vous consulaire a Bujumbura.</p></a><div className="documents-grid"><EmbassyDocumentCards documents={embassyDocuments} isLoading={embassyDocumentsQuery.isLoading} isError={embassyDocumentsQuery.isError} /></div></div></motion.section>
-      <motion.section className="news-section ambient-section" id="actualites" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects /><div className="container"><div className="news-heading-row official-heading-row"><div className="section-title left-title official-section-title"><span className="eyebrow">Informations officielles</span><h2>Actualites</h2><p>Suivez les dernieres informations de l'Ambassade a Bujumbura.</p></div><a className="news-all-link" href="/demandes?type=passeport#rendez-vous">Prendre rendez-vous</a></div><div className="news-modern-layout"><motion.article className="news-feature-card" variants={cardReveal}><div className="news-feature-photo" style={{ backgroundImage: `url("${featuredActualite.image}")` }} /><div className="news-feature-copy"><span className="news-label">{featuredActualite.source}</span><h3>{featuredActualite.title}</h3><p>{featuredActualite.description}</p><a href={featuredActualite.url} target={featuredActualite.url?.startsWith("http") ? "_blank" : undefined} rel={featuredActualite.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article><motion.div className="news-modern-list" variants={staggerReveal}>{displayedActualites.slice(1, 4).map((item) => <motion.article className="news-card" key={item.id ?? item.title} variants={cardReveal}><div className="news-thumb" style={{ backgroundImage: `url("${item.image}")` }} /><div className="date-box"><strong>{item.day}</strong><span>{item.month}</span></div><div><h3>{item.title}</h3><p>{item.source}</p><a href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire l'actualite</a></div></motion.article>)}</motion.div></div></div></motion.section>
+      <motion.section className="news-section ambient-section" id="actualites" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects />
+        <div className="container">
+          <div className="news-list">
+            {displayedActualites.map((item, i) => (
+              <motion.article className="news-item" key={item.id ?? item.title} variants={cardReveal}>
+                <div className="news-item-img" style={{ backgroundImage: `url("${item.image}")` }} />
+                <div className="news-item-body">
+                  <div className="news-item-meta">
+                    <span className="news-item-date"><CalendarDays size={13} /> {item.day} {item.month}</span>
+                    <span className="news-item-source">{item.source}</span>
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                  <a className="news-item-link" href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined}>Lire la suite <ArrowRight size={13} /></a>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </motion.section>
 
       <motion.section className="communiques ambient-section" initial="hidden" whileInView="show" viewport={revealViewport} variants={sectionReveal}><AmbientSectionEffects />
         <div className="container">
@@ -1054,7 +1115,20 @@ function DocumentsPage() {
 
 
   return (
-    <main className="site-shell documents-page-shell"><SiteHeader />
+    <main className="site-shell documents-page-shell">
+      <section className="topbar">
+        <div className="container topbar-inner">
+          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
+          <div className="socials" aria-label="Social media">
+  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
+  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
+  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
+</div>
+        </div>
+      </section>
+      <SiteHeader />
       <section className="documents-page-hero ambient-section"><AmbientSectionEffects />
         <div className="container documents-page-hero-grid">
           <div>
@@ -1233,7 +1307,20 @@ function RequestsPage() {
   };
 
   return (
-    <main className="requests-shell single-request-shell"><SiteHeader />
+    <main className="requests-shell single-request-shell">
+      <section className="topbar">
+        <div className="container topbar-inner">
+          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
+          <div className="socials" aria-label="Social media">
+  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
+  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
+  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
+</div>
+        </div>
+      </section>
+      <SiteHeader />
       <motion.section className="requests-hero single-request-hero clean-request-hero ambient-section request-ambient-hero" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: "easeOut" }}><AmbientSectionEffects /><div className="request-motion-web" aria-hidden="true" /><div className="container single-request-hero-grid"><div><span className="eyebrow">Service consulaire</span><h1>{requestTitle}</h1><p>{requestDescription}</p></div></div></motion.section><section className="container single-request-panel modern-request-panel clean-request-panel ambient-section request-ambient-panel" id="rendez-vous"><AmbientSectionEffects />
         <article className="request-workspace">
           <motion.form className="consular-form passport-form-card" onSubmit={handleSubmitDemande} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.08, ease: "easeOut" }}>
@@ -1274,12 +1361,169 @@ function LoginPage() {
   return <main className="auth-shell"><section className="auth-panel auth-visual"><a className="brand auth-brand" href="/"><span className="seal">RDC</span><span><strong>Ambassade</strong><small>RDC au Burundi</small></span></a><div><span className="hero-kicker">Espace personnel</span><h1>Connectez-vous pour gerer vos demarches consulaires.</h1><p>Un acces unique pour preparer vos dossiers, reserver un rendez-vous et suivre vos documents aupres de l'Ambassade a Bujumbura.</p></div><ul className="auth-service-list">{loginServices.map((service) => <li key={service}>{service}</li>)}</ul></section><section className="auth-panel auth-form-panel"><div className="auth-topline"><a href="/">Retour accueil</a><ThemeToggle /></div><form className="login-form"><div className="form-heading"><span className="eyebrow">Connexion</span><h2>Acceder a mon compte</h2><p>Entrez vos identifiants pour continuer vers votre espace personnel.</p></div><label>Adresse email<input type="email" placeholder="nom@example.com" /></label><label>Mot de passe<input type="password" placeholder="Votre mot de passe" /></label><div className="form-row"><label className="check-line"><input type="checkbox" />Se souvenir de moi</label><a href="#">Mot de passe oublie ?</a></div><a className="submit-button" href="/espace-personnel">Se connecter</a><p className="form-note">Nouveau demandeur ? <a href="/espace-personnel">Creer un dossier provisoire</a></p></form></section></main>;
 }
 
+function ContactPage() {
+  return (
+    <main className="site-shell">
+      <section className="topbar">
+        <div className="container topbar-inner">
+          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
+          <div className="socials" aria-label="Social media">
+  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
+  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
+  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
+</div>
+        </div>
+      </section>
+      <SiteHeader />
+      <section className="page-section contact-section" style={{ paddingTop: "8rem", paddingBottom: "5rem" }}>
+        <div className="container">
+          <div className="form-heading" style={{ marginBottom: "3rem" }}>
+            <span className="eyebrow">Nous contacter</span>
+            <h2>Contacts de l&apos;Ambassade</h2>
+            <p>Retrouvez ci-dessous les coordonnees et les horaires de la representation diplomatique de la RDC a Bujumbura.</p>
+          </div>
+          <div className="contact-forms-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: "2.5rem", alignItems: "start" }}>
+            <div className="contact-form-card">
+              <h3>Envoyez-nous un message</h3>
+              <form className="styled-form" onSubmit={(e) => e.preventDefault()}>
+                <label>Votre email <input type="email" placeholder="nom@exemple.com" required /></label>
+                <label>Sujet <input type="text" placeholder="Dites-nous comment nous pouvons vous aider" required /></label>
+                <label>Votre message <textarea rows={4} placeholder="Laissez un commentaire..." required /></label>
+                <button type="submit" className="btn-primary">Envoyer le message</button>
+              </form>
+            </div>
+
+            <div className="contact-form-card">
+              <h3>Audience avec l&apos;Ambassadeur</h3>
+              <p className="form-subtitle">Demandez une rencontre avec Son Excellence l&apos;Ambassadeur pour des questions diplomatiques, de cooperation bilaterale, de relations commerciales et d&apos;affaires communautaires.</p>
+              <form className="styled-form" onSubmit={(e) => e.preventDefault()}>
+                <label>Nom Complet <input type="text" placeholder="Jean Dupont" required /></label>
+                <label>Email <input type="email" placeholder="nom@exemple.com" required /></label>
+                <label>Organisation (optionnel) <input type="text" placeholder="Entreprise/Organisation" /></label>
+                <label>Objet de la Rencontre <textarea rows={4} placeholder="Decrivez l'objet..." required /></label>
+                <button type="submit" className="btn-primary">Soumettre la Demande</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+      <SiteFooter />
+    </main>
+  );
+}
+
+function PaymentPage() {
+  const bankInfo = [
+    { label: "BANK:", value: "BANQUE COMMERCIALE DU BURUNDI (BCB)" },
+    { label: "BRANCH:", value: "BUJUMBURA" },
+    { label: "ACCOUNT NO.:", value: "XXXX XXXX XXXX" },
+    { label: "HOLDER:", value: "AMBASSADE DE LA RDC AU BURUNDI" },
+  ];
+  const feeCategories = [
+    {
+      title: "Services de Visa",
+      fees: [
+        { label: "Visa 1 mois", price: "$ 50" },
+        { label: "Visa 3 mois", price: "$ 90" },
+        { label: "Visa 6 mois", price: "$ 180" },
+      ],
+    },
+    {
+      title: "Documents Civils",
+      fees: [
+        { label: "Attestation de Naissance", price: "$ 30" },
+        { label: "Certificat de Bonne Conduite", price: "$ 30" },
+        { label: "Certificat de Celibat", price: "$ 30" },
+        { label: "Acte de Mariage", price: "$ 30" },
+        { label: "Carte Consulaire", price: "$ 30" },
+      ],
+    },
+    {
+      title: "Autres Services",
+      fees: [
+        { label: "Passeport Ordinaire", price: "$ 100" },
+        { label: "Procuration", price: "$ 50" },
+        { label: "Authentification de Document", price: "$ 30" },
+        { label: "Confirmation de Nationalite", price: "$ 30" },
+        { label: "Rapatriement", price: "Gratuit" },
+      ],
+    },
+  ];
+  return (
+    <main className="site-shell">
+      <section className="topbar">
+        <div className="container topbar-inner">
+          <div className="contact-line"><span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span><span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span></div>
+          <div className="socials" aria-label="Social media">
+  <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+  <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l6.25 8.5L4 20h2.5l5.5-7 4.5 7H20l-6.75-9L19.5 4H17l-5 6.5L6.5 4z"/></svg></a>
+  <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg></a>
+  <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+  <a href="https://linkedin.com/company/ambardcbujumbura" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></a>
+</div>
+        </div>
+      </section>
+      <SiteHeader />
+      <section className="page-section" style={{ paddingTop: "8rem", paddingBottom: "4rem", background: "var(--bg-secondary, #f8f9fa)" }}>
+        <div className="container">
+          <div style={{ marginBottom: "3rem", textAlign: "center" }}>
+            <span className="eyebrow">Paiement</span>
+            <h2>Informations de Paiement de l&apos;Ambassade</h2>
+            <p style={{ color: "var(--muted, #6b7280)", maxWidth: "600px", margin: "0 auto" }}>Informations completes de paiement pour tous les services de l&apos;ambassade</p>
+          </div>
+
+          <div style={{ background: "var(--card-bg, #fff)", borderRadius: "var(--radius-lg, 12px)", padding: "2rem", border: "1px solid var(--border, #e5e7eb)", maxWidth: "480px", margin: "0 auto 3rem" }}>
+            <h3 style={{ marginBottom: "1.5rem", textAlign: "center" }}>Coordonnees Bancaires</h3>
+            <div style={{ maxWidth: "400px", margin: "0 auto" }}>
+              {bankInfo.map((item) => (
+                <div key={item.label} style={{ display: "flex", justifyContent: "space-between", padding: "0.5rem 0", borderBottom: "1px solid var(--border, #e5e7eb)" }}>
+                  <span style={{ fontWeight: 600, color: "var(--muted, #6b7280)" }}>{item.label}</span>
+                  <span style={{ fontWeight: 500 }}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: "2rem", textAlign: "center" }}>
+            <h2>Frais des Services de l&apos;Ambassade</h2>
+            <p style={{ color: "var(--muted, #6b7280)" }}>Frais actuels pour tous les services consulaires</p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
+            {feeCategories.map((cat) => (
+              <div key={cat.title} style={{ background: "var(--card-bg, #fff)", borderRadius: "var(--radius-lg, 12px)", padding: "1.5rem", border: "1px solid var(--border, #e5e7eb)" }}>
+                <h3 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>{cat.title}</h3>
+                {cat.fees.map((fee) => (
+                  <div key={fee.label} style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", fontSize: "0.9rem", borderBottom: "1px solid var(--border, #e5e7eb)" }}>
+                    <span style={{ color: "var(--muted, #6b7280)" }}>{fee.label}</span>
+                    <span style={{ fontWeight: 600, color: fee.price === "Gratuit" ? "var(--green, #10b981)" : undefined }}>{fee.price}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: "2rem", textAlign: "center" }}>
+            <p style={{ fontSize: "0.875rem", color: "var(--muted, #6b7280)", marginBottom: "1rem" }}>Tous les frais sont sujets a changement. Veuillez nous contacter pour les informations de tarification les plus recentes.</p>
+            <a className="read-more" href="/contact" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>Nous contacter</a>
+          </div>
+        </div>
+      </section>
+      <SiteFooter />
+    </main>
+  );
+}
+
 export default function App() {
   const path = window.location.pathname;
   if (path.startsWith("/documents")) return <DocumentsPage />;
   if (path.startsWith("/demandes")) return <RequestsPage />;
   if (path.startsWith("/espace-personnel")) return <PersonalSpacePage />;
   if (path.startsWith("/login")) return <LoginPage />;
+  if (path.startsWith("/contact")) return <ContactPage />;
+  if (path.startsWith("/payment")) return <PaymentPage />;
   return <HomePage />;
 }
 

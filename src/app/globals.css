@@ -158,7 +158,8 @@ a {
   gap: 8px;
 }
 
-.socials span {
+.socials span,
+.socials a {
   display: grid;
   width: 24px;
   height: 24px;
@@ -166,6 +167,14 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 50%;
   color: #fff;
+  text-decoration: none;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.socials a:hover {
+  background: rgba(255, 255, 255, .15);
+  border-color: #fff;
+}
   font-size: 10px;
   font-weight: 400;
 }
@@ -1041,9 +1050,16 @@ body {
   border-bottom: 1px solid var(--line);
 }
 
-.socials span {
+.socials span,
+.socials a {
   border-color: var(--line);
   color: var(--color-icone);
+}
+
+.socials a:hover {
+  border-color: var(--blue-dark);
+  color: var(--blue-dark);
+  background: color-mix(in srgb, var(--blue-dark) 8%, transparent);
 }
 
 .welcome-copy h2,

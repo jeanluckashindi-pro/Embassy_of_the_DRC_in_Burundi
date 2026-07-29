@@ -12,21 +12,39 @@ import { ThemeToggle } from "./ThemeToggle";
 const menu = [
   { label: "Accueil", href: "#" },
   { label: "Ambassade", href: "#ambassade" },
-  { label: "Documents", href: "#documents" },
+  { label: "Nos services", href: "#documents" },
   { label: "Demandes", href: "/demandes" },
   { label: "Actualites", href: "#actualites" },
-  { label: "Decouvrir", href: "#rdc" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const quickLinks = [
   {
+    id: "invest",
+    label: "Investissement",
     title: "Investir en Republique Democratique du Congo",
-    action: "Comment Investir ?",
+    description: "Orientations pratiques pour comprendre les opportunites et les premieres demarches d'investissement en RDC.",
+    action: "Comment investir ?",
     className: "invest",
   },
-  { title: "Communique", action: "Voir plus", className: "notice", image: firstLadyTwo.src },
-  { title: "Documents consulaires", action: "Voir les documents", className: "discover", image: passportOne.src },
+  {
+    id: "notice",
+    label: "Information officielle",
+    title: "Communiques",
+    description: "Avis, annonces publiques et informations importantes publies par l'Ambassade a Bujumbura.",
+    action: "Voir plus",
+    className: "notice",
+    image: firstLadyTwo.src,
+  },
+  {
+    id: "documents",
+    label: "Services consulaires",
+    title: "Documents consulaires",
+    description: "Pieces a preparer et demandes consulaires disponibles en ligne.",
+    action: "Voir les documents",
+    className: "discover",
+    image: passportOne.src,
+  },
 ];
 
 const leaders = [
@@ -241,10 +259,10 @@ export default function Home() {
             ))}
           </nav>
           <div className="nav-actions">
-            <Link className="online-link" href="/espace-personnel">
+            {/* <Link className="online-link" href="/espace-personnel">
               <span className="bi-kanban" aria-hidden="true" />
               Espace personnel
-            </Link>
+            </Link> */}
           </div>
         </div>
       </header>
@@ -285,15 +303,23 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="quick-grid container" id="grand-public">
-        {quickLinks.map((item) => (
-          <article className={`quick-card ${item.className}`} key={item.title} style={{ backgroundImage: `url("${item.image}")` }}>
-            <div>
-              <h2>{item.title}</h2>
-              <a href="#documents">{item.action}</a>
-            </div>
-          </article>
-        ))}
+      <section className="quick-grid container" id="grand-public" style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <span className="eyebrow">Acces rapide</span>
+          <h2>Informations utiles pour le public</h2>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
+          {quickLinks.map((item) => (
+            <article className={`quick-card ${item.className}`} key={item.title} style={{ backgroundImage: `url("${item.image}")`, backgroundSize: "cover", backgroundPosition: "center", borderRadius: "var(--radius-lg, 12px)", overflow: "hidden", position: "relative" }}>
+              <div style={{ padding: "2rem", background: "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2))", color: "#fff", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                <span style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "0.5rem" }}>{item.label}</span>
+                <h2 style={{ fontSize: "1.3rem", marginBottom: "0.5rem" }}>{item.title}</h2>
+                <p style={{ fontSize: "0.9rem", opacity: 0.85, marginBottom: "1rem" }}>{item.description}</p>
+                <a href="#documents" style={{ color: "var(--primary, #fff)", fontWeight: 600, textDecoration: "underline" }}>{item.action}</a>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="welcome container" id="ambassade">
@@ -367,50 +393,21 @@ export default function Home() {
 
       <section className="news-section" id="actualites">
         <div className="container">
-          <div className="news-heading-row">
-            <div className="section-title left-title">
-              <span className="eyebrow">Informations officielles</span>
-              <h2>Actualites</h2>
-              <p>Suivez les dernieres informations de l&apos;Ambassade a Bujumbura.</p>
-            </div>
-            <Link className="news-all-link" href="/demandes?type=passeport#rendez-vous">Prendre rendez-vous</Link>
-          </div>
-
-          <div className="news-modern-layout">
-            <article className="news-feature-card">
-              <div className="news-feature-photo" style={{ backgroundImage: `url("${presidentTwo.src}")` }} />
-              <div className="news-feature-copy">
-                <span className="news-label">A la une</span>
-                <h3>Accueil consulaire et rendez-vous a Bujumbura</h3>
-                <p>
-                  Les services consulaires accompagnent les ressortissants dans
-                  la preparation des dossiers, la verification des pieces et la
-                  planification des rendez-vous.
-                </p>
-                <ul>
-                  <li>Verification des pieces avant depot</li>
-                  <li>Rendez-vous obligatoire pour les captures et signatures</li>
-                  <li>Suivi depuis l&apos;espace personnel</li>
-                </ul>
-              </div>
-            </article>
-
-            <div className="news-modern-list">
-              {news.map((item) => (
-                <article className="news-card" key={item.title}>
-                  <div className="news-thumb" style={{ backgroundImage: `url("${item.image}")` }} />
-                  <div className="date-box">
-                    <strong>{item.day}</strong>
-                    <span>{item.month}</span>
+          <div className="news-list">
+            {news.map((item) => (
+              <article className="news-item" key={item.title}>
+                <div className="news-item-img" style={{ backgroundImage: `url("${item.image}")` }} />
+                <div className="news-item-body">
+                  <div className="news-item-meta">
+                    <span className="news-item-date">{item.day} {item.month}</span>
+                    <span className="news-item-source">Ambassade RDC au Burundi</span>
                   </div>
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>Ambassade RDC au Burundi - Bujumbura</p>
-                    <a href="#">Lire l&apos;actualite</a>
-                  </div>
-                </article>
-              ))}
-            </div>
+                  <h3>{item.title}</h3>
+                  <p>Ambassade RDC au Burundi - Bujumbura</p>
+                  <a className="news-item-link" href="#">Lire la suite</a>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -513,8 +510,7 @@ export default function Home() {
             <h3>Ambassade</h3>
             <a href="#ambassade">Mission diplomatique</a>
             <a href="#actualites">Actualites</a>
-            <a href="#rdc">Decouvrir la RDC</a>
-            <a href="#contact">Contact</a>
+            <a href="/contact">Contact</a>
           </div>
 
           <div className="footer-column">
