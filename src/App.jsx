@@ -52,6 +52,8 @@ import {
 import { ThemeToggle } from "./ThemeToggle.jsx";
 import { NiandaChatbot } from "./components/NiandaChatbot.jsx";
 import { DocumentCard, DEFAULT_DOCUMENTS } from "./components/DocumentCard.jsx";
+import { ActualiteDetailDialog } from "./components/ActualiteDetailDialog.jsx";
+import { SplashScreen } from "./components/SplashScreen.jsx";
 import { AmbassadePage } from "./pages/AmbassadePage.jsx";
 import { ActualitesPage } from "./pages/ActualitesPage.jsx";
 
@@ -98,13 +100,13 @@ function SiteHeader() {
 
   return (
     <header className="main-header">
-      <div className="container nav-wrap">
-        <a className="brand logo-brand" href="/" aria-label="Ambassade RDC au Burundi">
-          <img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
-          <img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+      <div className="container nav-wrap flex items-center justify-between">
+        <a className="brand logo-brand shrink-0" href="/" aria-label="Ambassade RDC au Burundi">
+          <img className="theme-logo logo-dark-artwork h-12 sm:h-14 w-auto object-contain" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
+          <img className="theme-logo logo-light-artwork h-12 sm:h-14 w-auto object-contain" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
         </a>
 
-        <nav className="desktop-nav" aria-label="Navigation principale">
+        <nav className="desktop-nav hidden md:flex" aria-label="Navigation principale">
           {menu.map((item) => {
             const Icon = item.icon;
             return (
@@ -116,7 +118,7 @@ function SiteHeader() {
           })}
         </nav>
 
-        <div className="nav-actions flex items-center gap-3">
+        <div className="nav-actions flex items-center gap-3 shrink-0">
           <a href="/espace-personnel">
             <Button variant="outline" size="sm" className="hidden md:inline-flex gap-1.5 font-medium border-slate-300 dark:border-slate-700">
               <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
@@ -124,12 +126,12 @@ function SiteHeader() {
             </Button>
           </a>
           <button
-            className="mobile-menu-toggle md:hidden"
+            className="mobile-menu-toggle flex md:hidden items-center justify-center p-2 rounded-xl bg-[#0054a6] text-white hover:bg-blue-900 transition-all cursor-pointer shrink-0 shadow-md"
             type="button"
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
             onClick={() => setMobileOpen((prev) => !prev)}
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={24} className="!text-white" /> : <Menu size={24} className="!text-white" />}
           </button>
         </div>
       </div>
@@ -430,18 +432,36 @@ export function mapApiActualites(data) {
     .map((item) => {
       const dateParts = getActualiteDateParts(item.date_publication || item.created_at);
       const formattedDate = formatCommuniqueDate(item.date_publication || item.created_at);
+      const categoryFormatted = Array.isArray(item.categorie)
+        ? item.categorie.join(", ")
+        : item.categorie || item.category || "Actualité";
+      const paysFormatted = Array.isArray(item.pays)
+        ? item.pays.join(", ")
+        : item.pays || "dr congo";
+
       return {
         id: item.id ?? item.article_id ?? String(Math.random()),
+        article_id: item.article_id || item.id,
         title: item.titre || "Actualité de la RDC",
         description: stripHtml(item.description || item.contenu || "Information publiée par une source d'actualité."),
         content: stripHtml(item.contenu || item.description || "Aucun contenu supplémentaire disponible pour cette actualité."),
         image: item.image_url || presidentTwo,
         url: item.url || "#actualites",
         source: item.source_name || item.source || "Chancellerie RDC",
-        category: item.categorie || item.category || "Actualité",
+        source_url: item.source_url || null,
+        source_icon: item.source_icon || null,
+        category: categoryFormatted,
+        pays: paysFormatted,
+        langue: item.langue || "french",
+        date_publication: item.date_publication || null,
+        date_recuperation: item.date_recuperation || null,
+        hash_article: item.hash_article || null,
+        created_at: item.created_at || null,
+        updated_at: item.updated_at || null,
         date: formattedDate !== "Date à confirmer" ? formattedDate : `${dateParts.day} ${dateParts.month}`,
         day: dateParts.day,
         month: dateParts.month,
+        raw: item,
       };
     });
 }
@@ -1035,9 +1055,14 @@ function HomePage() {
 
                 <CardContent className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-1">
-                      {item.source}
-                    </span>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">
+                        {item.source}
+                      </span>
+                      {item.category && (
+                        <Badge variant="blue" className="text-[10px] py-0 px-1.5 font-medium">{item.category}</Badge>
+                      )}
+                    </div>
                     <h3 className="font-bold text-base text-slate-900 dark:text-white line-clamp-2">
                       {item.title}
                     </h3>
@@ -1046,10 +1071,9 @@ function HomePage() {
                     </p>
                   </div>
 
-                  <a href={item.url} target={item.url?.startsWith("http") ? "_blank" : undefined} rel={item.url?.startsWith("http") ? "noopener noreferrer" : undefined} className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:gap-2.5 transition-all pt-2">
-                    <span>Lire la suite</span>
-                    <ArrowRight size={13} />
-                  </a>
+                  <div className="pt-2">
+                    <ActualiteDetailDialog item={item} />
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -1792,7 +1816,15 @@ function PaymentPage() {
 }
 
 export default function App() {
+  const [loading, setLoading] = React.useState(true);
   const [path, setPath] = React.useState(window.location.pathname);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   React.useEffect(() => {
     const handlePopState = () => {
@@ -1815,6 +1847,9 @@ export default function App() {
 
   return (
     <>
+      <AnimatePresence mode="wait">
+        {loading && <SplashScreen key="splash-loader" />}
+      </AnimatePresence>
       {renderCurrentPage()}
       <NiandaChatbot />
     </>

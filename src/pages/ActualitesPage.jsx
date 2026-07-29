@@ -9,6 +9,7 @@ import { CalendarDays, Newspaper, Search, ArrowRight, ExternalLink, MapPin, Mail
 
 import { fetchActualites, fetchCommuniques } from "../api.js";
 import { mapApiActualites } from "../App.jsx";
+import { ActualiteDetailDialog } from "../components/ActualiteDetailDialog.jsx";
 
 const presidentTwo = "/images/president_2.jpg";
 const firstLadyTwo = "/images/premiere_dame_2.jpg";
@@ -168,31 +169,7 @@ export function ActualitesPage({ SiteHeader, SiteFooter }) {
                 </div>
 
                 <div className="p-5 pt-0">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <button className="w-full bg-[#f7f5f3] dark:bg-[#2d2e2e] hover:bg-blue-800 hover:text-white dark:hover:bg-blue-700 text-slate-800 dark:text-[#fafad6] font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer border border-[#f6f5f4] dark:border-[#2d2e2e]">
-                        <span>Lire l'article</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6] sm:max-w-xl">
-                      <DialogHeader>
-                        <div className="flex items-center gap-2 mb-1">
-                          <Badge variant="gold">{item.category}</Badge>
-                          <span className="text-xs text-slate-500 dark:text-slate-400">{item.date}</span>
-                        </div>
-                        <DialogTitle className="text-xl font-bold text-slate-900 dark:text-[#fafad6]">{item.title}</DialogTitle>
-                        <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">{item.source}</DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4 py-3 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                        <p className="font-semibold text-slate-900 dark:text-[#fafad6]">{item.description}</p>
-                        <p>{item.content}</p>
-                        <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/60 text-[11px] text-blue-900 dark:text-blue-300">
-                          📌 Publication officielle enregistrée au Registre des Communiqués de la Chancellerie RDC à Bujumbura.
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <ActualiteDetailDialog item={item} />
                 </div>
               </Card>
             ))}

@@ -183,10 +183,11 @@ export function DocumentCardDark({ doc }) {
           <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
             <DialogTrigger asChild>
               <button
-                className="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 p-3 rounded-xl border border-zinc-700/60 transition-colors cursor-pointer flex items-center justify-center shrink-0"
-                aria-label="Détails du document"
+                className="doc-download-btn bg-zinc-800 hover:bg-zinc-700 text-zinc-200 p-3 rounded-xl border border-zinc-700/60 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-sm"
+                aria-label="Détails du document et téléchargement"
+                title="Voir la fiche et les pièces à fournir"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-4 w-4 text-amber-400" />
               </button>
             </DialogTrigger>
             <DialogContent className="bg-slate-950 border border-slate-800 text-white sm:max-w-lg">

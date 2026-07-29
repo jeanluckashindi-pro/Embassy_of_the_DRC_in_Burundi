@@ -162,14 +162,7 @@ html.dark h6 {
   color: #fafad6;
 }
 
-/* Strict enforcement: ALL buttons and primary action links MUST ALWAYS have white text regardless of theme */
-button,
-.btn,
-.button,
-[role="button"],
-button *,
-.btn *,
-.button *,
+/* Strict enforcement: Primary filled buttons and blue action links MUST ALWAYS have white text */
 .bg-blue-800,
 .bg-blue-800 *,
 .bg-blue-900,
@@ -179,8 +172,45 @@ button *,
 .bg-blue-600,
 .bg-blue-600 *,
 .bg-red-600,
-.bg-red-600 * {
+.bg-red-600 *,
+.btn-primary,
+.btn-primary * {
   color: #ffffff !important;
+}
+
+/* Secondary, light, outline and document download buttons adapt according to light and dark theme */
+button.bg-slate-100,
+button.bg-slate-100 *,
+button.bg-slate-200,
+button.bg-slate-200 *,
+button.bg-\[\#f7f5f3\],
+button.bg-\[\#f7f5f3\] *,
+.doc-download-btn,
+.doc-download-btn *,
+.btn-outline,
+.btn-outline *,
+.btn-secondary,
+.btn-secondary * {
+  color: #1e293b !important;
+}
+
+html.dark button.bg-slate-100,
+html.dark button.bg-slate-100 *,
+html.dark button.bg-slate-200,
+html.dark button.bg-slate-200 *,
+html.dark button.bg-slate-800,
+html.dark button.bg-slate-800 *,
+html.dark button.bg-zinc-800,
+html.dark button.bg-zinc-800 *,
+html.dark button.bg-\[\#2d2e2e\],
+html.dark button.bg-\[\#2d2e2e\] *,
+html.dark .doc-download-btn,
+html.dark .doc-download-btn *,
+html.dark .btn-outline,
+html.dark .btn-outline *,
+html.dark .btn-secondary,
+html.dark .btn-secondary * {
+  color: #fafad6 !important;
 }
 
 .mobile-menu-toggle,
@@ -188,7 +218,84 @@ button *,
   background-color: #0054a6 !important;
   color: #ffffff !important;
   border-radius: 8px;
-  padding: 6px;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 84, 166, 0.25);
+}
+
+.mobile-menu-toggle svg,
+.mobile-menu-close svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-menu-toggle {
+    display: inline-flex !important;
+  }
+  .brand {
+    min-width: 0 !important;
+    max-width: 210px;
+  }
+  .nav-wrap {
+    min-height: 68px !important;
+    padding: 8px 0;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-menu-toggle {
+    display: none !important;
+  }
+}
+
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+}
+
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(320px, 85vw);
+  background: #ffffff;
+  color: #0f172a;
+  z-index: 9999;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+}
+
+html.dark .mobile-nav {
+  background: #161717;
+  color: #fafad6;
+  border-left: 1px solid #2d2e2e;
+}
+
+.mobile-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+html.dark .mobile-nav-header {
+  border-bottom-color: #2d2e2e;
 }
 
 * {

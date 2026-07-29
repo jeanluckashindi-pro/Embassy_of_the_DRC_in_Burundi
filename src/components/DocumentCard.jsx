@@ -183,10 +183,11 @@ export function DocumentCard({ doc }) {
           <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
             <DialogTrigger asChild>
               <button
-                className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 p-3 rounded-xl border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer flex items-center justify-center shrink-0"
-                aria-label="Détails du document"
+                className="doc-download-btn bg-slate-100 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 p-3 rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-sm"
+                aria-label="Détails du document et téléchargement"
+                title="Voir la fiche et les pièces à fournir"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-4 w-4 text-blue-700 dark:text-amber-400" />
               </button>
             </DialogTrigger>
             <DialogContent className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 sm:max-w-lg">
