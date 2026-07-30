@@ -168,14 +168,14 @@ export function DocumentCard({ doc }) {
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-slate-500 dark:text-slate-400 font-medium">Frais Consulaires:</span>
-            <span className="text-blue-700 dark:text-amber-400 font-bold">{formattedFrais}</span>
+            <span className="text-blue-700 dark:text-blue-400 font-bold">{formattedFrais}</span>
           </div>
         </div>
 
         {/* Actions Button Bar */}
         <div className="flex items-center gap-2.5">
           <a href={`/demandes?type=${docId}`} className="flex-1">
-            <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-amber-400 dark:text-slate-950 dark:hover:bg-amber-500 text-white font-bold py-3 px-4 rounded-xl text-xs text-center transition-colors shadow-sm cursor-pointer">
+            <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-xl text-xs text-center transition-colors shadow-sm cursor-pointer">
               Procéder à la demande
             </button>
           </a>
@@ -187,13 +187,13 @@ export function DocumentCard({ doc }) {
                 aria-label="Détails du document et téléchargement"
                 title="Voir la fiche et les pièces à fournir"
               >
-                <Download className="h-4 w-4 text-blue-700 dark:text-amber-400" />
+                <Download className="h-4 w-4 text-blue-700 dark:text-blue-400" />
               </button>
             </DialogTrigger>
             <DialogContent className="bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6] sm:max-w-lg">
               <DialogHeader>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2.5 rounded-xl bg-blue-800 dark:bg-amber-400 text-white dark:text-slate-950">
+                  <div className="p-2.5 rounded-xl bg-blue-800 dark:bg-blue-700 text-white">
                     <IconComponent className="h-5 w-5" />
                   </div>
                   <div>
@@ -205,13 +205,13 @@ export function DocumentCard({ doc }) {
 
               <div className="space-y-4 py-3 text-xs text-slate-700 dark:text-slate-300">
                 <div className="p-4 rounded-xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] space-y-2">
-                  <span className="text-[11px] font-semibold text-blue-800 dark:text-amber-400 tracking-wider uppercase block">
+                  <span className="text-[11px] font-semibold text-blue-800 dark:text-blue-400 tracking-wider uppercase block">
                     Liste complète des pièces à fournir
                   </span>
                   <ul className="space-y-2 pt-1">
                     {pieces.map((p, i) => (
                       <li key={i} className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-amber-400" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
                         <span>{p}</span>
                       </li>
                     ))}
@@ -225,7 +225,7 @@ export function DocumentCard({ doc }) {
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">Tarif consulaire</span>
-                    <strong className="text-sm font-bold text-blue-700 dark:text-amber-400">{formattedFrais}</strong>
+                    <strong className="text-sm font-bold text-blue-700 dark:text-blue-400">{formattedFrais}</strong>
                   </div>
                 </div>
 
@@ -235,7 +235,7 @@ export function DocumentCard({ doc }) {
 
                 <div className="pt-2">
                   <a href={`/demandes?type=${docId}`}>
-                    <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-amber-400 dark:text-slate-950 dark:hover:bg-amber-500 text-white font-semibold py-3 px-4 rounded-xl text-xs transition-colors cursor-pointer">
+                    <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-semibold py-3 px-4 rounded-xl text-xs transition-colors cursor-pointer">
                       Démarrer ma démarche en ligne
                     </button>
                   </a>

@@ -111,11 +111,11 @@ export function TopBar() {
       <div className="container topbar-inner flex items-center justify-between py-2 text-xs">
         <div className="contact-line flex items-center gap-3 sm:gap-6">
           <span className="flex items-center gap-1.5 text-slate-800 dark:text-[#fafad6] font-semibold text-[11px] sm:text-xs">
-            <MapPin size={15} className="text-[#0054a6] dark:text-amber-400 shrink-0" strokeWidth={2.4} aria-hidden="true" />
+            <MapPin size={15} className="text-[#0054a6] dark:text-blue-400 shrink-0" strokeWidth={2.4} aria-hidden="true" />
             <span>Bujumbura, Burundi</span>
           </span>
           <span className="flex items-center gap-1.5 text-slate-800 dark:text-[#fafad6] font-semibold text-[11px] sm:text-xs">
-            <Mail size={15} className="text-[#0054a6] dark:text-amber-400 shrink-0" strokeWidth={2.4} aria-hidden="true" />
+            <Mail size={15} className="text-[#0054a6] dark:text-blue-400 shrink-0" strokeWidth={2.4} aria-hidden="true" />
             <span className="hidden sm:inline">contact@ambardcbujumbura.cd</span>
             <span className="inline sm:hidden">contact@ambardcbujumbura.cd</span>
           </span>
@@ -182,15 +182,16 @@ function SiteHeader() {
     <header className="main-header sticky top-0 z-50 bg-[#002855] dark:bg-[#0a1324] text-white border-b border-blue-900/50 dark:border-slate-800/80 backdrop-blur-md shadow-md">
       <div className="container nav-wrap flex items-center justify-between py-2 sm:py-3">
         <a className="brand logo-brand shrink-0 flex items-center gap-2.5 sm:gap-3 group" href="/" aria-label="Ambassade RDC au Burundi">
-          <img className="h-10 sm:h-12 md:h-14 w-auto object-contain" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+          <img className="h-10 sm:h-12 md:h-14 w-auto object-contain logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+          <img className="h-10 sm:h-12 md:h-14 w-auto object-contain logo-dark-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
         </a>
 
         <nav className="desktop-nav hidden md:flex items-center gap-6" aria-label="Navigation principale">
           {menu.map((item) => {
             const Icon = item.icon;
             return (
-              <a key={item.label} href={item.href} className="inline-flex items-center gap-1.5 transition-colors hover:text-amber-300 font-semibold text-xs sm:text-sm text-slate-100">
-                <Icon size={16} strokeWidth={2} aria-hidden="true" className="text-amber-400" />
+              <a key={item.label} href={item.href} className="inline-flex items-center gap-1.5 transition-colors hover:text-blue-200 font-semibold text-xs sm:text-sm text-slate-100">
+                <Icon size={16} strokeWidth={2} aria-hidden="true" className="text-blue-300" />
                 <span>{item.label}</span>
               </a>
             );
@@ -201,21 +202,21 @@ function SiteHeader() {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("open-nianda"))}
-            className="flex md:hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-xs transition-all cursor-pointer shrink-0 shadow-sm"
+            className="flex md:hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-blue-700 text-white hover:bg-blue-800 font-bold text-xs transition-all cursor-pointer shrink-0 shadow-sm"
             title="Assistant Consulaire Nianda"
             aria-label="Assistant Consulaire Nianda"
           >
-            <Bot className="h-4 w-4 text-blue-900 shrink-0 animate-pulse" />
+            <Bot className="h-4 w-4 text-blue-200 shrink-0 animate-pulse" />
             <span className="font-extrabold text-[11px] sm:text-xs">Nianda AI</span>
           </button>
           <ThemeToggle />
           <button
-            className="mobile-menu-toggle flex items-center justify-center p-2 rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all cursor-pointer shrink-0 shadow-md border-0 md:hidden"
+            className="mobile-menu-toggle flex items-center justify-center p-2 rounded-xl bg-blue-700 text-white hover:bg-blue-800 transition-all cursor-pointer shrink-0 shadow-md border-0 md:hidden"
             type="button"
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
             onClick={() => setMobileOpen((prev) => !prev)}
           >
-            {mobileOpen ? <X size={22} className="shrink-0 text-slate-950" /> : <Menu size={22} className="shrink-0 text-slate-950" />}
+            {mobileOpen ? <X size={22} className="shrink-0 text-white" /> : <Menu size={22} className="shrink-0 text-white" />}
           </button>
         </div>
       </div>
@@ -263,12 +264,12 @@ function SiteHeader() {
                     setMobileOpen(false);
                     window.dispatchEvent(new CustomEvent("open-nianda"));
                   }}
-                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl bg-blue-50 dark:bg-amber-400/10 text-blue-900 dark:text-amber-300 border border-blue-200 dark:border-amber-400/30 mb-2 transition-all cursor-pointer"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-800 mb-2 transition-all cursor-pointer"
                 >
-                  <Bot size={20} className="text-blue-700 dark:text-amber-400 shrink-0 animate-pulse" />
+                  <Bot size={20} className="text-blue-700 dark:text-blue-400 shrink-0 animate-pulse" />
                   <div className="text-left">
                     <span className="block leading-tight">Assistant Nianda AI</span>
-                    <span className="text-[10px] text-blue-600 dark:text-amber-400/80 font-normal">Orientation consulaire rapide</span>
+                    <span className="text-[10px] text-blue-600 dark:text-blue-400/80 font-normal">Orientation consulaire rapide</span>
                   </div>
                 </button>
                 {menu.map((item) => {
@@ -278,9 +279,9 @@ function SiteHeader() {
                       key={item.label}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-800 dark:text-slate-100 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-amber-300 transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-800 dark:text-slate-100 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 transition-colors"
                     >
-                      <Icon size={20} className="text-blue-700 dark:text-amber-400 shrink-0" />
+                      <Icon size={20} className="text-blue-700 dark:text-blue-400 shrink-0" />
                       <span>{item.label}</span>
                     </a>
                   );
@@ -293,7 +294,7 @@ function SiteHeader() {
                   <ThemeToggle />
                 </div>
                 <a href="/espace-personnel" onClick={() => setMobileOpen(false)} className="block">
-                  <Button variant="default" className="w-full justify-center gap-2 bg-blue-800 hover:bg-blue-900 text-white dark:bg-amber-400 dark:text-slate-950 dark:hover:bg-amber-500 font-bold py-2.5">
+                  <Button variant="default" className="w-full justify-center gap-2 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2.5">
                     <User size={18} />
                     <span>Espace personnel</span>
                   </Button>
@@ -353,60 +354,60 @@ function SiteFooter() {
 
           {/* Col 2: Mission & Actualités (lg:col-span-2) */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-xs font-extrabold text-blue-800 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <Building className="h-4 w-4 text-blue-700 dark:text-amber-400" />
+            <h4 className="text-xs font-extrabold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-2">
+              <Building className="h-4 w-4 text-blue-700 dark:text-blue-400" />
               <span>Ambassade</span>
             </h4>
             <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
-              <li><a href="/#ambassade" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Mission diplomatique</a></li>
-              <li><a href="/#actualites" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Actualités & Communiqués</a></li>
-              <li><a href="/#rdc" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Découvrir la RDC</a></li>
-              <li><a href="/contact" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Demande d'audience</a></li>
-              <li><a href="/payment" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Coordonnées bancaires</a></li>
+              <li><a href="/#ambassade" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Mission diplomatique</a></li>
+              <li><a href="/#actualites" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Actualités & Communiqués</a></li>
+              <li><a href="/#rdc" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Découvrir la RDC</a></li>
+              <li><a href="/contact" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Demande d'audience</a></li>
+              <li><a href="/payment" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Coordonnées bancaires</a></li>
             </ul>
           </div>
 
           {/* Col 3: Consular Services (lg:col-span-3) */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-extrabold text-blue-800 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-blue-700 dark:text-amber-400" />
+            <h4 className="text-xs font-extrabold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-blue-700 dark:text-blue-400" />
               <span>Services Consulaires</span>
             </h4>
             <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
-              <li><a href="/demandes?type=passeport" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Passeport Biométrique</a></li>
-              <li><a href="/demandes?type=visa" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Demande de Visa d'Entrée</a></li>
-              <li><a href="/demandes?type=carte-consulaire" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Carte d'Immatriculation</a></li>
-              <li><a href="/documents" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Catalogue des documents</a></li>
-              <li><a href="/espace-personnel" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Suivi de dossier citoyen</a></li>
+              <li><a href="/demandes?type=passeport" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Passeport Biométrique</a></li>
+              <li><a href="/demandes?type=visa" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Demande de Visa d'Entrée</a></li>
+              <li><a href="/demandes?type=carte-consulaire" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Carte d'Immatriculation</a></li>
+              <li><a href="/documents" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Catalogue des documents</a></li>
+              <li><a href="/espace-personnel" className="hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Suivi de dossier citoyen</a></li>
             </ul>
           </div>
 
           {/* Col 4: Contacts & Hours (lg:col-span-3) */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-extrabold text-blue-800 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-blue-700 dark:text-amber-400" />
+            <h4 className="text-xs font-extrabold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-blue-700 dark:text-blue-400" />
               <span>Chancellerie</span>
             </h4>
             <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300">
               <div className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0 mt-0.5" />
+                <MapPin className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0 mt-0.5" />
                 <span>Avenue de la Révolution, Bujumbura, Burundi</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                <Phone className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
                 <span>+257 22 22 23 24</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                <Mail className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
                 <span>contact@ambardcbujumbura.cd</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Globe className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                <Globe className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
                 <span>www.ambardcbujumbura.cd</span>
               </div>
 
               <div className="mt-3 p-3 rounded-xl bg-white dark:bg-[#1d1f1f] border border-slate-300 dark:border-slate-800 text-xs space-y-1">
-                <div className="flex items-center gap-1.5 text-blue-800 dark:text-amber-300 font-bold">
+                <div className="flex items-center gap-1.5 text-blue-800 dark:text-blue-300 font-bold">
                   <Clock className="h-3.5 w-3.5" />
                   <span>Guichet Consulaire</span>
                 </div>
@@ -873,15 +874,6 @@ function HeroSlider() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="lg:col-span-8 space-y-6"
             >
-              <div className="flex items-center gap-2">
-                <Badge variant="blue" className="text-xs font-bold px-3 py-1 bg-blue-800 text-white dark:bg-amber-400 dark:text-slate-950">
-                  {currentSlide.badge}
-                </Badge>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                  RDC — Burundi
-                </span>
-              </div>
-
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-slate-900 dark:text-[#fafad6] tracking-tight">
                 {currentSlide.title}
               </h1>
@@ -904,7 +896,7 @@ function HeroSlider() {
                   href="/actualites"
                   className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-white/90 hover:bg-white dark:bg-[#2d2e2e]/90 dark:hover:bg-[#3d3e3e] text-slate-900 dark:text-[#fafad6] border border-slate-300 dark:border-slate-700 font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer backdrop-blur-sm"
                 >
-                  <Clock className="h-4 w-4 text-blue-700 dark:text-amber-400" />
+                  <Clock className="h-4 w-4 text-blue-700 dark:text-blue-400" />
                   <span>Communiqués & Actualités</span>
                 </a>
               </div>
@@ -912,15 +904,15 @@ function HeroSlider() {
               {/* Information Strip */}
               <div className="pt-6 border-t border-slate-300/80 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-medium text-slate-800 dark:text-slate-200">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                  <MapPin className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
                   <span>Avenue de la Révolution, Bujumbura</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                  <Clock className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
                   <span>Lun - Ven : 09h00 à 15h30</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                  <Phone className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
                   <span>+257 22 22 23 24</span>
                 </div>
               </div>
@@ -935,13 +927,13 @@ function HeroSlider() {
             >
               <div className="relative p-7 rounded-3xl bg-white/90 dark:bg-[#1d1f1f]/90 border border-slate-200 dark:border-[#2d2e2e] shadow-xl backdrop-blur-md text-center max-w-sm">
                 <div className="h-28 w-28 mx-auto mb-4 p-2.5 bg-slate-50 dark:bg-[#161717] rounded-2xl flex items-center justify-center border border-slate-200 dark:border-[#2d2e2e] shadow-inner">
-                  <img src={logoAmbassade} alt="Armoiries RDC - Mode clair" className="logo-dark-artwork h-full object-contain" />
-                  <img src={logoAmbassadeLight} alt="Armoiries RDC - Mode sombre" className="logo-light-artwork h-full object-contain" />
+                  <img src={logoAmbassade} alt="Armoiries RDC - Mode clair" className="logo-light-artwork h-full object-contain" />
+                  <img src={logoAmbassadeLight} alt="Armoiries RDC - Mode sombre" className="logo-dark-artwork h-full object-contain" />
                 </div>
                 <h3 className="text-base font-extrabold text-slate-900 dark:text-[#fafad6] tracking-tight">
                   Ambassade RDC au Burundi
                 </h3>
-                <p className="text-xs text-blue-700 dark:text-amber-300 font-bold mt-1">
+                <p className="text-xs text-blue-700 dark:text-blue-300 font-bold mt-1">
                   Justice - Paix - Travail
                 </p>
                 <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400">
@@ -1661,7 +1653,7 @@ function CommonRequerantFields({ values, onChange }) {
     <div className="space-y-4 sm:space-y-6">
       {requerantFieldGroups.map((group) => (
         <div key={group.title} className="p-3 sm:p-6 border border-slate-200/80 dark:border-slate-800/80 sm:border-0 bg-slate-50/70 sm:bg-[#f7f5f3] dark:bg-[#151616] dark:sm:bg-[#1d1f1f] rounded-xl sm:rounded-2xl">
-          <h3 className="text-xs sm:text-base font-extrabold text-blue-900 dark:text-amber-300 mb-2.5 sm:mb-4 pb-1.5 border-b border-slate-200 dark:border-slate-800 uppercase sm:normal-case tracking-wider sm:tracking-normal">
+          <h3 className="text-xs sm:text-base font-extrabold text-blue-900 dark:text-blue-300 mb-2.5 sm:mb-4 pb-1.5 border-b border-slate-200 dark:border-slate-800 uppercase sm:normal-case tracking-wider sm:tracking-normal">
             {group.title}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -1884,9 +1876,9 @@ function RequestsPage() {
                   onClick={() => setCurrentStep(s.step)}
                   className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-2 rounded-xl cursor-pointer transition-all shrink-0 ${
                     currentStep === s.step
-                      ? "bg-blue-800 text-white dark:bg-amber-400 dark:text-slate-950 font-bold shadow-xs"
+                      ? "bg-blue-800 text-white dark:bg-blue-600 dark:text-white font-bold shadow-xs"
                       : currentStep > s.step
-                      ? "text-blue-700 dark:text-amber-400 bg-blue-50 dark:bg-blue-950/40"
+                      ? "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40"
                       : "text-slate-500 bg-slate-100 dark:bg-slate-800/40"
                   }`}
                 >
@@ -1953,11 +1945,11 @@ function RequestsPage() {
                     whileHover={{ scale: 1.01 }}
                     type="submit"
                     disabled={!isConfirmed || submitState.status === "loading"}
-                    className="w-full sm:w-auto h-12 text-sm sm:text-base px-8 font-extrabold rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto h-12 text-sm sm:text-base px-8 font-extrabold rounded-xl bg-blue-800 hover:bg-blue-900 text-white shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitState.status === "loading" ? (
                       <>
-                        <span className="animate-spin rounded-full h-4 w-4 border-2 border-slate-950 border-t-transparent" />
+                        <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
                         <span>Envoi en cours...</span>
                       </>
                     ) : (
@@ -1994,8 +1986,8 @@ function PersonalSpacePage() {
     <main className="dashboard-shell">
       <aside className="dashboard-sidebar">
         <a className="dashboard-logo" href="/">
-          <img className="theme-logo logo-dark-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
-          <img className="theme-logo logo-light-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+          <img className="theme-logo logo-light-artwork" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
+          <img className="theme-logo logo-dark-artwork" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
         </a>
         <nav className="dashboard-nav">
           <a className="active" href="#">Tableau de bord</a>
@@ -2106,7 +2098,7 @@ function ContactPage() {
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.01 }}
                 type="submit"
-                className="w-full h-12 text-sm font-extrabold rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
+                className="w-full h-12 text-sm font-extrabold rounded-xl bg-blue-800 hover:bg-blue-900 text-white shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
               >
                 Soumettre la demande d'audience
               </motion.button>

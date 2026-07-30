@@ -187,7 +187,7 @@ export function DocumentCardDark({ doc }) {
                 aria-label="Détails du document et téléchargement"
                 title="Voir la fiche et les pièces à fournir"
               >
-                <Download className="h-4 w-4 text-amber-400" />
+                <Download className="h-4 w-4 text-blue-400" />
               </button>
             </DialogTrigger>
             <DialogContent className="bg-slate-950 border border-slate-800 text-white sm:max-w-lg">
@@ -205,7 +205,7 @@ export function DocumentCardDark({ doc }) {
 
               <div className="space-y-4 py-3 text-xs text-slate-300">
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                  <span className="text-[11px] font-semibold text-amber-400 tracking-wider uppercase block">
+                  <span className="text-[11px] font-semibold text-blue-400 tracking-wider uppercase block">
                     Liste complète des pièces à fournir
                   </span>
                   <ul className="space-y-2 pt-1">
@@ -225,7 +225,7 @@ export function DocumentCardDark({ doc }) {
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-400 uppercase font-semibold block">Tarif consulaire</span>
-                    <strong className="text-sm font-bold text-amber-300">{formattedFrais}</strong>
+                    <strong className="text-sm font-bold text-blue-300">{formattedFrais}</strong>
                   </div>
                 </div>
 
