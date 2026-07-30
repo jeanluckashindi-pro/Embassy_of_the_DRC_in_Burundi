@@ -215,35 +215,35 @@ html.dark .btn-secondary * {
 
 /* Dual Logo Theme Toggle - Light Default */
 .logo-dark-artwork {
-  display: block !important;
+  display: none !important;
 }
 .logo-light-artwork {
-  display: none !important;
+  display: block !important;
 }
 
 html.dark .logo-dark-artwork,
 html[data-theme="dark"] .logo-dark-artwork {
-  display: none !important;
+  display: block !important;
 }
 html.dark .logo-light-artwork,
 html[data-theme="dark"] .logo-light-artwork {
-  display: block !important;
+  display: none !important;
 }
 
 html[data-theme="light"] .logo-dark-artwork {
-  display: block !important;
+  display: none !important;
 }
 html[data-theme="light"] .logo-light-artwork {
-  display: none !important;
+  display: block !important;
 }
 
 /* Support system OS theme changes when theme is set to 'system' or auto */
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]) .logo-dark-artwork {
-    display: none !important;
+    display: block !important;
   }
   html:not([data-theme="light"]) .logo-light-artwork {
-    display: block !important;
+    display: none !important;
   }
 }
 

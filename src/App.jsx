@@ -8,6 +8,8 @@ import {
   ArrowRight,
   CalendarDays,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   ClipboardCheck,
   Clock,
   FileText,
@@ -26,18 +28,37 @@ import {
   ShieldCheck,
   User,
   CreditCard,
-  ChevronRight,
   Building,
   Sparkles,
   Check,
   Copy,
   ExternalLink,
   Menu,
-  X
+  X,
+  Bell,
+  FileCheck,
+  Bot,
+  MessageSquare
 } from "lucide-react";
 
 import logoAmbassade from "./assets/logo_ambassade.png";
 import logoAmbassadeLight from "./assets/logo_ambassade_light.png";
+
+import thereseKayikwambaImg from "./assets/images/therese_kayikwamba_jpg_1785441674768.jpg";
+import crispinMbaduImg from "./assets/images/crispin_mbadu_jpg_1785441686017.jpg";
+import noellaAyeganagatoImg from "./assets/images/noella_ayeganagato_jpg_1785441695918.jpg";
+import ambassadorWillyMulumbaImg from "./assets/images/ambassador_willy_mulumba_1785442280044.jpg";
+
+import heroSlide1 from "./assets/images/hero_slide_1_jpg_1785441710687.jpg";
+import heroSlide2 from "./assets/images/hero_slide_2_jpg_1785441722600.jpg";
+import heroSlide3 from "./assets/images/hero_slide_3_jpg_1785441734421.jpg";
+
+import rdcVillesImg from "./assets/images/rdc_villes_kinshasa_1785442760707.jpg";
+import rdcGastronomieImg from "./assets/images/rdc_gastronomie_moambe_1785442771752.jpg";
+import rdcParcsImg from "./assets/images/rdc_parcs_virunga_1785442783631.jpg";
+import rdcCultureImg from "./assets/images/rdc_culture_musee_1785442794778.jpg";
+import rdcHistoriqueImg from "./assets/images/rdc_historique_monument_1785442806151.jpg";
+import rdcNatureImg from "./assets/images/rdc_nature_fleuve_1785442817177.jpg";
 
 import {
   API_BASE_URL,
@@ -158,19 +179,18 @@ function SiteHeader() {
   }, [mobileOpen]);
 
   return (
-    <header className="main-header bg-white/95 dark:bg-[#161717]/95 border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
+    <header className="main-header sticky top-0 z-50 bg-[#002855] dark:bg-[#0a1324] text-white border-b border-blue-900/50 dark:border-slate-800/80 backdrop-blur-md shadow-md">
       <div className="container nav-wrap flex items-center justify-between py-2 sm:py-3">
-        <a className="brand logo-brand shrink-0 flex items-center gap-2" href="/" aria-label="Ambassade RDC au Burundi">
-          <img className="theme-logo logo-dark-artwork h-10 sm:h-14 w-auto object-contain" src={logoAmbassade} alt="Ambassade RDC au Burundi" />
-          <img className="theme-logo logo-light-artwork h-10 sm:h-14 w-auto object-contain" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
+        <a className="brand logo-brand shrink-0 flex items-center gap-2.5 sm:gap-3 group" href="/" aria-label="Ambassade RDC au Burundi">
+          <img className="h-10 sm:h-12 md:h-14 w-auto object-contain" src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" />
         </a>
 
         <nav className="desktop-nav hidden md:flex items-center gap-6" aria-label="Navigation principale">
           {menu.map((item) => {
             const Icon = item.icon;
             return (
-              <a key={item.label} href={item.href} className="inline-flex items-center gap-1.5 transition-colors hover:text-blue-600 dark:hover:text-blue-400 font-medium text-xs sm:text-sm">
-                <Icon size={16} strokeWidth={2} aria-hidden="true" />
+              <a key={item.label} href={item.href} className="inline-flex items-center gap-1.5 transition-colors hover:text-amber-300 font-semibold text-xs sm:text-sm text-slate-100">
+                <Icon size={16} strokeWidth={2} aria-hidden="true" className="text-amber-400" />
                 <span>{item.label}</span>
               </a>
             );
@@ -178,46 +198,56 @@ function SiteHeader() {
         </nav>
 
         <div className="nav-actions flex items-center gap-2 sm:gap-3 shrink-0">
-          <ThemeToggle />
-          <a href="/espace-personnel" className="hidden md:inline-flex">
-            <Button variant="outline" size="sm" className="gap-1.5 font-medium border-slate-300 dark:border-slate-700">
-              <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <span>Espace personnel</span>
-            </Button>
-          </a>
           <button
-            className="mobile-menu-toggle flex md:hidden items-center justify-center p-2 rounded-xl bg-[#0054a6] text-white hover:bg-blue-900 transition-all cursor-pointer shrink-0 shadow-md border-0"
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("open-nianda"))}
+            className="flex md:hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-xs transition-all cursor-pointer shrink-0 shadow-sm"
+            title="Assistant Consulaire Nianda"
+            aria-label="Assistant Consulaire Nianda"
+          >
+            <Bot className="h-4 w-4 text-blue-900 shrink-0 animate-pulse" />
+            <span className="font-extrabold text-[11px] sm:text-xs">Nianda AI</span>
+          </button>
+          <ThemeToggle />
+          <button
+            className="mobile-menu-toggle flex items-center justify-center p-2 rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all cursor-pointer shrink-0 shadow-md border-0 md:hidden"
             type="button"
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
             onClick={() => setMobileOpen((prev) => !prev)}
           >
-            {mobileOpen ? <X size={22} className="!text-white" /> : <Menu size={22} className="!text-white" />}
+            {mobileOpen ? <X size={22} className="shrink-0 text-slate-950" /> : <Menu size={22} className="shrink-0 text-slate-950" />}
           </button>
         </div>
       </div>
 
       <AnimatePresence>
         {mobileOpen && (
-          <>
+          <React.Fragment key="mobile-nav-fragment">
             <motion.div
+              key="mobile-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="mobile-nav-overlay open"
+              className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[99998] md:hidden"
               onClick={() => setMobileOpen(false)}
             />
             <motion.nav
-              initial={{ x: "100%" }}
+              key="mobile-sidebar"
+              initial={{ x: "-100%" }}
               animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="mobile-nav open"
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="fixed top-0 left-0 bottom-0 w-[85vw] max-w-[320px] bg-white dark:bg-[#181919] text-slate-900 dark:text-[#fafad6] z-[99999] p-5 flex flex-col shadow-2xl border-r border-slate-200 dark:border-slate-800 overflow-y-auto md:hidden"
               aria-label="Navigation mobile"
             >
-              <div className="mobile-nav-header">
-                <span className="font-semibold text-base">Menu Ambassade</span>
+              <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <img src={logoAmbassade} alt="RDC Logo" className="h-8 w-auto object-contain logo-light-artwork" />
+                  <img src={logoAmbassadeLight} alt="RDC Logo" className="h-8 w-auto object-contain logo-dark-artwork" />
+                  <span className="font-extrabold text-sm text-slate-900 dark:text-[#fafad6] uppercase">Menu Ambassade</span>
+                </div>
                 <button
-                  className="mobile-menu-close p-1"
+                  className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
                   type="button"
                   aria-label="Fermer le menu"
                   onClick={() => setMobileOpen(false)}
@@ -226,7 +256,21 @@ function SiteHeader() {
                 </button>
               </div>
 
-              <div className="flex flex-col gap-1 py-4">
+              <div className="flex flex-col gap-1 py-4 flex-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    window.dispatchEvent(new CustomEvent("open-nianda"));
+                  }}
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl bg-blue-50 dark:bg-amber-400/10 text-blue-900 dark:text-amber-300 border border-blue-200 dark:border-amber-400/30 mb-2 transition-all cursor-pointer"
+                >
+                  <Bot size={20} className="text-blue-700 dark:text-amber-400 shrink-0 animate-pulse" />
+                  <div className="text-left">
+                    <span className="block leading-tight">Assistant Nianda AI</span>
+                    <span className="text-[10px] text-blue-600 dark:text-amber-400/80 font-normal">Orientation consulaire rapide</span>
+                  </div>
+                </button>
                 {menu.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -234,29 +278,29 @@ function SiteHeader() {
                       key={item.label}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-800 dark:text-slate-100 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-amber-300 transition-colors"
                     >
-                      <Icon size={18} className="text-blue-600 dark:text-blue-400" />
+                      <Icon size={20} className="text-blue-700 dark:text-amber-400 shrink-0" />
                       <span>{item.label}</span>
                     </a>
                   );
                 })}
               </div>
 
-              <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Thème d'affichage</span>
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center justify-between px-2">
+                  <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Mode d'affichage</span>
                   <ThemeToggle />
                 </div>
                 <a href="/espace-personnel" onClick={() => setMobileOpen(false)} className="block">
-                  <Button variant="default" className="w-full justify-center gap-2">
-                    <User size={16} />
+                  <Button variant="default" className="w-full justify-center gap-2 bg-blue-800 hover:bg-blue-900 text-white dark:bg-amber-400 dark:text-slate-950 dark:hover:bg-amber-500 font-bold py-2.5">
+                    <User size={18} />
                     <span>Espace personnel</span>
                   </Button>
                 </a>
               </div>
             </motion.nav>
-          </>
+          </React.Fragment>
         )}
       </AnimatePresence>
     </header>
@@ -265,7 +309,7 @@ function SiteHeader() {
 
 function SiteFooter() {
   return (
-    <footer className="bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-slate-100 border-t border-blue-900 relative overflow-hidden" id="contact">
+    <footer className="bg-[#f7f5f3] dark:bg-[#121313] text-slate-900 dark:text-slate-100 border-t border-[#e2e0dc] dark:border-[#2d2e2e] relative overflow-hidden transition-colors" id="contact">
       {/* Flag Accent Ribbon Top */}
       <div className="h-1.5 w-full flex">
         <div className="w-1/3 bg-sky-500" />
@@ -274,109 +318,100 @@ function SiteFooter() {
       </div>
 
       <div className="container py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-800/80">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-300 dark:border-slate-800">
           
           {/* Col 1: Brand & Identity (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 via-amber-400 to-red-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
-                <div className="h-full w-full rounded-full bg-blue-950 flex items-center justify-center font-extrabold text-amber-300 text-xs tracking-wider">
-                  RDC
-                </div>
-              </div>
-              <div>
-                <h3 className="font-extrabold text-base text-white tracking-tight uppercase leading-snug">
-                  Ambassade de la RDC
-                </h3>
-                <p className="text-xs text-amber-300 font-medium">République du Burundi — Bujumbura</p>
-              </div>
-            </div>
+            <a href="/" className="inline-block group">
+              <img src={logoAmbassade} alt="Ambassade RDC au Burundi" className="logo-light-artwork h-14 w-auto object-contain" />
+              <img src={logoAmbassadeLight} alt="Ambassade RDC au Burundi" className="logo-dark-artwork h-14 w-auto object-contain" />
+            </a>
 
-            <p className="text-xs text-slate-300 leading-relaxed pt-1">
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pt-1">
               Représentation diplomatique officielle de la République Démocratique du Congo auprès de la République du Burundi. Chancellerie, affaires consulaires et protection de la communauté congolaise.
             </p>
 
             {/* Emergency Hotline Banner */}
-            <div className="p-3.5 rounded-xl bg-blue-900/60 border border-blue-800/80 flex items-center justify-between text-xs shadow-inner">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#1d1f1f] border border-slate-300 dark:border-slate-800 flex items-center justify-between text-xs shadow-xs">
               <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg bg-red-600/90 text-white flex items-center justify-center shrink-0 font-bold">
+                <div className="h-8 w-8 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0 font-bold">
                   <Phone className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="block text-[10px] text-slate-300 font-semibold uppercase tracking-wider">Urgence Consulaire 24/7</span>
-                  <span className="block font-bold text-white text-xs">+257 22 22 23 24</span>
+                  <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Urgence Consulaire 24/7</span>
+                  <span className="block font-bold text-slate-900 dark:text-white text-xs">+257 22 22 23 24</span>
                 </div>
               </div>
               <Badge variant="gold" className="text-[10px] py-0.5">Assistance</Badge>
             </div>
 
             <div className="flex items-center gap-3 pt-1">
-              <span className="text-xs text-slate-400 font-medium">Thème du site :</span>
+              <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Thème du site :</span>
               <ThemeToggle />
             </div>
           </div>
 
           {/* Col 2: Mission & Actualités (lg:col-span-2) */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <Building className="h-4 w-4 text-amber-400" />
+            <h4 className="text-xs font-extrabold text-blue-800 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
+              <Building className="h-4 w-4 text-blue-700 dark:text-amber-400" />
               <span>Ambassade</span>
             </h4>
-            <ul className="space-y-2 text-xs text-slate-300 font-medium">
-              <li><a href="/#ambassade" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Mission diplomatique</a></li>
-              <li><a href="/#actualites" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Actualités & Communiqués</a></li>
-              <li><a href="/#rdc" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Découvrir la RDC</a></li>
-              <li><a href="/contact" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Demande d'audience</a></li>
-              <li><a href="/payment" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Coordonnées bancaires</a></li>
+            <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+              <li><a href="/#ambassade" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Mission diplomatique</a></li>
+              <li><a href="/#actualites" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Actualités & Communiqués</a></li>
+              <li><a href="/#rdc" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Découvrir la RDC</a></li>
+              <li><a href="/contact" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Demande d'audience</a></li>
+              <li><a href="/payment" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Coordonnées bancaires</a></li>
             </ul>
           </div>
 
           {/* Col 3: Consular Services (lg:col-span-3) */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-amber-400" />
+            <h4 className="text-xs font-extrabold text-blue-800 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-blue-700 dark:text-amber-400" />
               <span>Services Consulaires</span>
             </h4>
-            <ul className="space-y-2 text-xs text-slate-300 font-medium">
-              <li><a href="/demandes?type=passeport" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Passeport Biométrique</a></li>
-              <li><a href="/demandes?type=visa" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Demande de Visa d'Entrée</a></li>
-              <li><a href="/demandes?type=carte-consulaire" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Carte d'Immatriculation</a></li>
-              <li><a href="/documents" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Catalogue des documents</a></li>
-              <li><a href="/espace-personnel" className="hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-400 shrink-0" />Suivi de dossier citoyen</a></li>
+            <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+              <li><a href="/demandes?type=passeport" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Passeport Biométrique</a></li>
+              <li><a href="/demandes?type=visa" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Demande de Visa d'Entrée</a></li>
+              <li><a href="/demandes?type=carte-consulaire" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Carte d'Immatriculation</a></li>
+              <li><a href="/documents" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Catalogue des documents</a></li>
+              <li><a href="/espace-personnel" className="hover:text-blue-700 dark:hover:text-amber-300 transition-colors flex items-center gap-1.5"><ChevronRight className="h-3 w-3 text-sky-500 shrink-0" />Suivi de dossier citoyen</a></li>
             </ul>
           </div>
 
           {/* Col 4: Contacts & Hours (lg:col-span-3) */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-amber-400" />
+            <h4 className="text-xs font-extrabold text-blue-800 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-blue-700 dark:text-amber-400" />
               <span>Chancellerie</span>
             </h4>
-            <div className="space-y-2.5 text-xs text-slate-300">
+            <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300">
               <div className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                <MapPin className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0 mt-0.5" />
                 <span>Avenue de la Révolution, Bujumbura, Burundi</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-amber-400 shrink-0" />
+                <Phone className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
                 <span>+257 22 22 23 24</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-amber-400 shrink-0" />
+                <Mail className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
                 <span>contact@ambardcbujumbura.cd</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Globe className="h-4 w-4 text-amber-400 shrink-0" />
+                <Globe className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
                 <span>www.ambardcbujumbura.cd</span>
               </div>
 
-              <div className="mt-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-xs space-y-1">
-                <div className="flex items-center gap-1.5 text-amber-300 font-bold">
+              <div className="mt-3 p-3 rounded-xl bg-white dark:bg-[#1d1f1f] border border-slate-300 dark:border-slate-800 text-xs space-y-1">
+                <div className="flex items-center gap-1.5 text-blue-800 dark:text-amber-300 font-bold">
                   <Clock className="h-3.5 w-3.5" />
                   <span>Guichet Consulaire</span>
                 </div>
-                <p className="text-slate-200 text-[11px] font-medium">Lundi – Vendredi : 09h00 – 15h30</p>
-                <p className="text-slate-400 text-[10px]">Fermé les week-ends et jours fériés légaux RDC / Burundi.</p>
+                <p className="text-slate-800 dark:text-slate-200 text-[11px] font-medium">Lundi – Vendredi : 09h00 – 15h30</p>
+                <p className="text-slate-500 dark:text-slate-400 text-[10px]">Fermé les week-ends et jours fériés légaux RDC / Burundi.</p>
               </div>
             </div>
           </div>
@@ -384,24 +419,24 @@ function SiteFooter() {
         </div>
 
         {/* Bottom copyright bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600 dark:text-slate-400">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
             <span>© 2026 Ambassade de la République Démocratique du Congo au Burundi.</span>
-            <span className="hidden sm:inline text-slate-700">•</span>
+            <span className="hidden sm:inline text-slate-400 dark:text-slate-600">•</span>
             <span>Tous droits réservés.</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-blue-800 text-slate-300 hover:text-white transition-colors" aria-label="Facebook">
+            <a href="https://facebook.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white dark:bg-[#1d1f1f] border border-slate-300 dark:border-slate-800 hover:bg-blue-800 hover:text-white dark:hover:bg-blue-600 text-slate-700 dark:text-slate-300 transition-colors" aria-label="Facebook">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
             </a>
-            <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-blue-800 text-slate-300 hover:text-white transition-colors" aria-label="X (Twitter)">
+            <a href="https://twitter.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white dark:bg-[#1d1f1f] border border-slate-300 dark:border-slate-800 hover:bg-blue-800 hover:text-white dark:hover:bg-blue-600 text-slate-700 dark:text-slate-300 transition-colors" aria-label="X (Twitter)">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
-            <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-red-700 text-slate-300 hover:text-white transition-colors" aria-label="YouTube">
+            <a href="https://youtube.com/@ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white dark:bg-[#1d1f1f] border border-slate-300 dark:border-slate-800 hover:bg-red-600 hover:text-white text-slate-700 dark:text-slate-300 transition-colors" aria-label="YouTube">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 0 0-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6 3.5z"/></svg>
             </a>
-            <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 hover:bg-pink-700 text-slate-300 hover:text-white transition-colors" aria-label="Instagram">
+            <a href="https://instagram.com/ambardcbujumbura" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white dark:bg-[#1d1f1f] border border-slate-300 dark:border-slate-800 hover:bg-pink-600 hover:text-white text-slate-700 dark:text-slate-300 transition-colors" aria-label="Instagram">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
             </a>
           </div>
@@ -430,10 +465,10 @@ const quickLinksFallback = [
 const leaders = [
   { name: "S.E.M. Félix Antoine TSHISEKEDI TSHILOMBO", role: "Président de la République Démocratique du Congo, Chef de l'État", image: presidentImage },
   { name: "S.E. Judith SUMINWA TULUKA", role: "Première ministre de la République Démocratique du Congo", image: firstLadyImage },
-  { name: "S.E. Thérèse KAYIKWAMBA WAGNER", role: "Ministre d'État, Ministre des Affaires Étrangères, Coopération Internationale et Francophonie", image: firstLadyTwo },
-  { name: "S.E. Crispin MBADU PHANZU", role: "Ministre délégué en charge de la Francophonie et de la Diaspora congolaise", image: presidentTwo },
-  { name: "S.E. Noëlla AYEGANAGATO NAKWIPONE", role: "Vice-Ministre des Affaires étrangères, Coopération Internationale, Francophonie et Diaspora.", image: firstLadyImage },
-  { name: "S.E. Ambassadeur de la RDC au Burundi", role: "Ambassadeur de la République Démocratique du Congo au Burundi", image: presidentImage },
+  { name: "S.E. Thérèse KAYIKWAMBA WAGNER", role: "Ministre d'État, Ministre des Affaires Étrangères, Coopération Internationale et Francophonie", image: thereseKayikwambaImg },
+  { name: "S.E. Crispin MBADU PHANZU", role: "Ministre délégué près le Ministre des Affaires étrangères en charge de la Francophonie et de la Diaspora congolaise", image: crispinMbaduImg },
+  { name: "S.E. Noëlla AYEGANAGATO NAKWIPONE", role: "Vice-Ministre des Affaires étrangères, Coopération Internationale, Francophonie et Diaspora", image: noellaAyeganagatoImg },
+  { name: "S.E. Willy MULUMBA", role: "Ambassadeur Extraordinaire et Plénipotentiaire de la RDC au Burundi", image: ambassadorWillyMulumbaImg },
 ];
 
 const news = [
@@ -568,12 +603,48 @@ const documents = [
 ];
 
 const discover = [
-  { title: "Villes", description: "Kinshasa, Lubumbashi, Goma et les grands centres urbains portent l'énergie économique et culturelle du pays.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/kinshasa-1024x683.jpg" },
-  { title: "Gastronomie", description: "Des saveurs familiales, des produits locaux et une cuisine conviviale racontent les terroirs congolais.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/186899.jpg" },
-  { title: "Parcs nationaux", description: "Virunga, Garamba, Salonga et d'autres réserves protègent une biodiversité exceptionnelle.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/71e37602-23e3-4af2-aa46-be67acbc05c1.jpg" },
-  { title: "Les lieux culturels", description: "Musées, arts, musique et patrimoine immatériel donnent à voir la profondeur de l'identité congolaise.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/Musee-National-de-la-Republique-Democratique-du-Congo.jpg" },
-  { title: "Sites historiques", description: "Des lieux de mémoire et des itinéraires historiques pour comprendre les grandes étapes du pays.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/site_1511_0011-1200-630-20170904150559.jpg" },
-  { title: "Sites naturels", description: "Fleuve Congo, volcans, forêts et paysages majestueux offrent une destination rare en Afrique centrale.", image: "https://ambardcbujumbura.cd/wp-content/uploads/2025/05/IMG_8234_DxO.jpg" },
+  {
+    title: "Villes",
+    description: "Kinshasa, Lubumbashi, Goma et les grands centres urbains portent l'énergie économique et culturelle du pays.",
+    image: rdcVillesImg,
+    details: "Kinshasa est la capitale vibrante de la RDC et la plus grande métropole francophone au monde. Lubumbashi brille par sa puissance minière et industrielle, tandis que Goma et Bukavu sur les rives du lac Kivu attirent visiteurs et entrepreneurs du monde entier.",
+    highlights: ["Kinshasa — Capitale culturelle & Mégapole", "Lubumbashi — Pôle économique du Katanga", "Goma & Bukavu — Tourisme & Lac Kivu"]
+  },
+  {
+    title: "Gastronomie",
+    description: "Des saveurs familiales, des produits locaux et une cuisine conviviale racontent les terroirs congolais.",
+    image: rdcGastronomieImg,
+    details: "La gastronomie congolaise est réputée pour sa générosité. Le Poulet à la Moambé (plat national à base de noix de palme), le Fufu de manioc, le Liboke de poisson cuit dans des feuilles de bananier et les bananes aloko accompagnent tous les grands rassemblements.",
+    highlights: ["Poulet à la Moambé (Plat National)", "Liboke de poisson capitaine", "Fufu de Manioc & Mpondu"]
+  },
+  {
+    title: "Parcs nationaux",
+    description: "Virunga, Garamba, Salonga et d'autres réserves protègent une biodiversité exceptionnelle.",
+    image: rdcParcsImg,
+    details: "La RDC abrite 5 sites inscrits au patrimoine mondial de l'UNESCO. Le Parc National des Virunga protège les derniers gorilles de montagne, Salonga est la plus grande réserve de forêt tropicale humide d'Afrique, et Kahuzi-Biega accueille les gorilles de plaine.",
+    highlights: ["Parc des Virunga — Gorilles de montagne", "Parc de la Salonga — Sanctuaire mondial UNESCO", "Parc de Kahuzi-Biega — Gorilles de plaine"]
+  },
+  {
+    title: "Les lieux culturels",
+    description: "Musées, arts, musique et patrimoine immatériel donnent à voir la profondeur de l'identité congolaise.",
+    image: rdcCultureImg,
+    details: "De la Rumba congolaise inscrite au patrimoine culturel immatériel de l'UNESCO aux masques royaux de l'art Kuba, Luba et Kongo, la RDC est un phare culturel mondial. Le Musée National de Kinshasa préserve plus de 45 000 pièces séculaires d'ethnographie.",
+    highlights: ["Rumba Congolaise (UNESCO)", "Musée National de la RDC à Kinshasa", "Artisanat traditionnel Kuba & Luba"]
+  },
+  {
+    title: "Sites historiques",
+    description: "Des lieux de mémoire et des itinéraires historiques pour comprendre les grandes étapes du pays.",
+    image: rdcHistoriqueImg,
+    details: "Du Jardin Botanique de Kisantu créé en 1900 aux édifices historiques de la colonisation et de l'indépendance de 1960, le patrimoine historique congolais reflète la mémoire collective, le patriotisme et la dignité de toute une nation.",
+    highlights: ["Mémorial de l'Indépendance", "Jardin Botanique de Kisantu (1900)", "Ancien Palais de la Nation"]
+  },
+  {
+    title: "Sites naturels",
+    description: "Fleuve Congo, volcans, forêts et paysages majestueux offrent une destination rare en Afrique centrale.",
+    image: rdcNatureImg,
+    details: "Le Fleuve Congo est le deuxième plus puissant fleuve du monde par son débit. Ses rapides majestueux à Kinsuka, le volcan Nyiragongo doté d'un des plus grands lacs de lave au monde, et les chutes de Zongo offrent des panoramas à couper le souffle.",
+    highlights: ["Majestueux Fleuve Congo & Chutes de Zongo", "Volcan Nyiragongo & Lac de lave", "Lac Kivu & Ile d'Idjwi"]
+  },
 ];
 
 const requestTypes = documents.map((doc) => ({
@@ -714,6 +785,211 @@ function AllDocumentsGrid({ documents: embassyDocuments, isLoading, isError }) {
   );
 }
 
+const heroSlidesData = [
+  {
+    id: "slide-1",
+    image: heroSlide1,
+    badge: "Chancellerie Diplomatique",
+    title: "Ambassade de la République Démocratique du Congo au Burundi",
+    description: "Représentation diplomatique officielle, délivrance des passeports biométriques, visas, immatriculation consulaire et accompagnement de la communauté congolaise à Bujumbura.",
+  },
+  {
+    id: "slide-2",
+    image: heroSlide2,
+    badge: "Guichet Consulaire Modernisé",
+    title: "Services rapides & suivi en ligne des demandes consulaires",
+    description: "Préparez vos formulaires administratifs à distance, prenez rendez-vous et suivez en temps réel la délivrance de vos documents officiels.",
+  },
+  {
+    id: "slide-3",
+    image: heroSlide3,
+    badge: "Coopération & Rayonnement",
+    title: "Renforcement des liens bilatéraux entre la RDC et le Burundi",
+    description: "Promotion des opportunités d'investissement, affaires culturelles et protection des ressortissants congolais.",
+  }
+];
+
+function HeroSlider() {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isHovered) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % heroSlidesData.length);
+    }, 5500);
+    return () => clearInterval(timer);
+  }, [isHovered]);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + heroSlidesData.length) % heroSlidesData.length);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % heroSlidesData.length);
+  };
+
+  const currentSlide = heroSlidesData[currentIndex];
+
+  return (
+    <section
+      className="relative bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] overflow-hidden border-b border-[#f6f5f4] dark:border-[#2d2e2e]"
+      aria-label="Accueil Ambassade RDC"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Flag Ribbon Top Accent */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 flex z-30">
+        <div className="w-1/3 bg-sky-500" />
+        <div className="w-1/3 bg-amber-400" />
+        <div className="w-1/3 bg-red-600" />
+      </div>
+
+      {/* Slide Background Container */}
+      <div className="relative min-h-[500px] lg:min-h-[560px] flex items-center py-16 lg:py-20">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide.id}
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url("${currentSlide.image}")` }}
+          >
+            {/* Dynamic Light/Dark Overlay Mask */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/40 dark:from-[#161717]/98 dark:via-[#161717]/85 dark:to-[#161717]/40" />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="container relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* Hero Text Content */}
+            <motion.div
+              key={`text-${currentSlide.id}`}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="lg:col-span-8 space-y-6"
+            >
+              <div className="flex items-center gap-2">
+                <Badge variant="blue" className="text-xs font-bold px-3 py-1 bg-blue-800 text-white dark:bg-amber-400 dark:text-slate-950">
+                  {currentSlide.badge}
+                </Badge>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  RDC — Burundi
+                </span>
+              </div>
+
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-slate-900 dark:text-[#fafad6] tracking-tight">
+                {currentSlide.title}
+              </h1>
+
+              <p className="text-sm sm:text-base lg:text-lg text-slate-700 dark:text-slate-200 leading-relaxed max-w-2xl font-normal">
+                {currentSlide.description}
+              </p>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
+                <a
+                  href="/demandes"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-blue-800 hover:bg-blue-900 !text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <FileText className="h-4 w-4 !text-white shrink-0" />
+                  <span className="!text-white font-bold">Demander un document consulaire</span>
+                </a>
+
+                <a
+                  href="/actualites"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-white/90 hover:bg-white dark:bg-[#2d2e2e]/90 dark:hover:bg-[#3d3e3e] text-slate-900 dark:text-[#fafad6] border border-slate-300 dark:border-slate-700 font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer backdrop-blur-sm"
+                >
+                  <Clock className="h-4 w-4 text-blue-700 dark:text-amber-400" />
+                  <span>Communiqués & Actualités</span>
+                </a>
+              </div>
+
+              {/* Information Strip */}
+              <div className="pt-6 border-t border-slate-300/80 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-medium text-slate-800 dark:text-slate-200">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                  <span>Avenue de la Révolution, Bujumbura</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                  <span>Lun - Ven : 09h00 à 15h30</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-blue-700 dark:text-amber-400 shrink-0" />
+                  <span>+257 22 22 23 24</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Theme-Adaptive Coat of Arms Badge */}
+            <motion.div
+              className="lg:col-span-4 hidden lg:flex justify-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <div className="relative p-7 rounded-3xl bg-white/90 dark:bg-[#1d1f1f]/90 border border-slate-200 dark:border-[#2d2e2e] shadow-xl backdrop-blur-md text-center max-w-sm">
+                <div className="h-28 w-28 mx-auto mb-4 p-2.5 bg-slate-50 dark:bg-[#161717] rounded-2xl flex items-center justify-center border border-slate-200 dark:border-[#2d2e2e] shadow-inner">
+                  <img src={logoAmbassade} alt="Armoiries RDC - Mode clair" className="logo-dark-artwork h-full object-contain" />
+                  <img src={logoAmbassadeLight} alt="Armoiries RDC - Mode sombre" className="logo-light-artwork h-full object-contain" />
+                </div>
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-[#fafad6] tracking-tight">
+                  Ambassade RDC au Burundi
+                </h3>
+                <p className="text-xs text-blue-700 dark:text-amber-300 font-bold mt-1">
+                  Justice - Paix - Travail
+                </p>
+                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400">
+                  Représentation officielle & Chancellerie générale
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+
+        {/* Carousel Navigation Arrows */}
+        <button
+          onClick={handlePrev}
+          aria-label="Image précédente"
+          className="absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-20 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 shadow-md flex items-center justify-center transition-all cursor-pointer"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
+
+        <button
+          onClick={handleNext}
+          aria-label="Image suivante"
+          className="absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-20 h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 shadow-md flex items-center justify-center transition-all cursor-pointer"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
+
+        {/* Dots Pagination Indicator */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+          {heroSlidesData.map((slide, idx) => (
+            <button
+              key={slide.id}
+              onClick={() => setCurrentIndex(idx)}
+              aria-label={`Aller à l'image ${idx + 1}`}
+              className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                currentIndex === idx
+                  ? "w-8 bg-blue-700 dark:bg-amber-400"
+                  : "w-2.5 bg-slate-400/60 hover:bg-slate-600 dark:bg-slate-600/60 dark:hover:bg-slate-400"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HomePage() {
   const [activeCommunique, setActiveCommunique] = React.useState(null);
 
@@ -752,96 +1028,14 @@ function HomePage() {
       <TopBar />
       <SiteHeader />
 
-      {/* Hero Section */}
-      <section className="relative bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] overflow-hidden py-16 lg:py-24 border-b border-[#f6f5f4] dark:border-[#2d2e2e]" aria-label="Accueil">
-        {/* Flag Ribbon Top Accent */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 flex">
-          <div className="w-1/3 bg-sky-500" />
-          <div className="w-1/3 bg-amber-400" />
-          <div className="w-1/3 bg-red-600" />
-        </div>
-
-        <div className="container relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <motion.div
-              className="lg:col-span-8 space-y-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white tracking-tight">
-                Ambassade de la République Démocratique du Congo au Burundi
-              </h1>
-
-              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-normal">
-                Représentation diplomatique officielle, délivrance des passeports biométriques, visas, immatriculation consulaire et accompagnement de la communauté congolaise.
-              </p>
-
-              {/* Uniform Action Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <a
-                  href="/demandes"
-                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-blue-800 hover:bg-blue-900 !text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer"
-                >
-                  <FileText className="h-4 w-4 !text-white shrink-0" />
-                  <span className="!text-white font-bold">Demander un document consulaire</span>
-                </a>
-
-                <a
-                  href="/actualites"
-                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#f7f5f3] hover:bg-[#e2e0dc] dark:bg-[#2d2e2e] dark:hover:bg-[#3d3e3e] text-slate-800 dark:text-[#fafad6] border border-[#f6f5f4] dark:border-[#2d2e2e] font-semibold text-sm transition-all cursor-pointer"
-                >
-                  <Clock className="h-4 w-4 text-blue-700 dark:text-blue-400" />
-                  <span>Communiqués & Actualités</span>
-                </a>
-              </div>
-
-              {/* Information Strip */}
-              <div className="pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-600 dark:text-slate-300">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
-                  <span>Avenue de la Révolution, Bujumbura</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
-                  <span>Lun - Ven : 09h00 à 15h30</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-blue-700 dark:text-blue-400 shrink-0" />
-                  <span>+257 22 22 23 24</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Coat of Arms Badge Visual */}
-            <motion.div
-              className="lg:col-span-4 hidden lg:flex justify-center"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <div className="relative p-8 rounded-3xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] shadow-md text-center max-w-sm">
-                <div className="h-28 w-28 mx-auto mb-4 p-2 bg-white dark:bg-[#161717] rounded-2xl flex items-center justify-center border border-[#f6f5f4] dark:border-[#2d2e2e]">
-                  <img src={logoAmbassade} alt="Armoiries RDC" className="h-full object-contain dark:hidden" />
-                  <img src={logoAmbassadeLight} alt="Armoiries RDC" className="h-full object-contain hidden dark:block" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-wide">République Démocratique du Congo</h3>
-                <p className="text-xs text-blue-700 dark:text-blue-400 font-semibold mt-1">Justice - Paix - Travail</p>
-                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
-                  Service public d'État & Chancellerie Générale
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Slider */}
+      <HeroSlider />
 
       {/* Quick Access Section - Uniform Section Theme Background */}
       <section className="py-14 bg-[#f7f5f3] dark:bg-[#1d1f1f] border-y border-[#f6f5f4] dark:border-[#2d2e2e]" id="grand-public">
         <div className="container">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
             <div>
-              <Badge variant="blue" className="mb-2">Accès rapide</Badge>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Informations utiles pour le public</h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Accédez directement aux services officiels et orientations administratives de la Chancellerie.</p>
             </div>
@@ -924,7 +1118,6 @@ function HomePage() {
       <section className="py-14 bg-white dark:bg-[#161717] border-y border-[#f6f5f4] dark:border-[#2d2e2e]">
         <div className="container">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <Badge variant="blue" className="mb-2">Chancellerie</Badge>
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Services au Public</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Missions administratives et consulaires assurées au guichet de Bujumbura.</p>
           </div>
@@ -961,7 +1154,6 @@ function HomePage() {
         <div className="container max-w-5xl">
           {/* Centered Header */}
           <div className="text-center max-w-3xl mx-auto mb-10">
-            <Badge variant="blue" className="mb-3">Message de la Chancellerie</Badge>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
               Bienvenue sur le portail officiel de l'Ambassade
             </h2>
@@ -1032,7 +1224,6 @@ function HomePage() {
       <section className="py-14 bg-white dark:bg-[#161717] border-y border-[#f6f5f4] dark:border-[#2d2e2e]">
         <div className="container">
           <div className="text-center max-w-xl mx-auto mb-10">
-            <Badge variant="gold" className="mb-2">Hautes Autorités</Badge>
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Dirigeants et Représentation</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Haute direction de la République Démocratique du Congo et diplomatie.</p>
           </div>
@@ -1056,7 +1247,6 @@ function HomePage() {
         <div className="container">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
             <div>
-              <Badge variant="blue" className="mb-2">Grand public</Badge>
               <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Documents de l'Ambassade</h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Retrouvez les principales catégories de documents et pièces à préparer avant votre rendez-vous consulaire à Bujumbura.</p>
             </div>
@@ -1081,7 +1271,6 @@ function HomePage() {
         <div className="container">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10 gap-4">
             <div>
-              <Badge variant="gold" className="mb-2">Actualités & Vie consulaire</Badge>
               <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Dernières Nouvelles</h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Retrouvez toutes les dépêches, informations et actualités officielles diffusées par la Chancellerie.</p>
             </div>
@@ -1110,7 +1299,7 @@ function HomePage() {
                         {item.source}
                       </span>
                       {item.category && (
-                        <Badge variant="blue" className="text-[10px] py-0 px-1.5 font-medium">{item.category}</Badge>
+                        <span className="text-[10px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded-md">{item.category}</span>
                       )}
                     </div>
                     <h3 className="font-bold text-base text-slate-900 dark:text-white line-clamp-2">
@@ -1136,28 +1325,43 @@ function HomePage() {
         <div className="container">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
             <div>
-              <Badge variant="blue" className="mb-2">Informations officielles</Badge>
               <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Communiqués Officiels</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Avis, annonces et informations publiés par l'Ambassade.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Avis, annonces et notes d'information diffusés par l'Ambassade de la RDC.</p>
             </div>
+            <a href="/actualites">
+              <Button variant="outline" className="gap-2 shrink-0 border-[#e2e0dc] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6]">
+                <span>Tous les communiqués</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </a>
           </div>
 
-          <Card className="overflow-hidden mb-8 border-[#f6f5f4] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] shadow-lg">
+          <Card className="overflow-hidden mb-8 border-[#f6f5f4] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] shadow-sm hover:shadow-md transition-shadow">
             <div className="grid grid-cols-1 lg:grid-cols-12">
               <div
-                className="lg:col-span-5 h-64 lg:h-auto bg-cover bg-center min-h-[250px]"
+                className="lg:col-span-5 h-64 lg:h-auto bg-cover bg-center min-h-[260px] relative"
                 style={{ backgroundImage: `url("${featuredCommunique.image || passportOne}")` }}
-              />
+              >
+                <div className="absolute top-3 left-3 bg-blue-900/90 text-white text-[11px] font-bold px-3 py-1 rounded-md backdrop-blur-xs flex items-center gap-1.5">
+                  <Bell className="h-3.5 w-3.5 text-amber-400" />
+                  <span>Dernier communiqué</span>
+                </div>
+              </div>
               <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Badge variant="gold">{featuredCommunique.category}</Badge>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{featuredCommunique.date}</span>
+                  <div className="flex items-center gap-3 mb-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    <span className="px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 font-semibold border border-amber-200 dark:border-amber-900/50">
+                      {featuredCommunique.category}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <CalendarDays className="h-3.5 w-3.5 text-slate-400" />
+                      <span>{featuredCommunique.date}</span>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white leading-snug">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-snug">
                     {featuredCommunique.title}
                   </h3>
-                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     {featuredCommunique.excerpt}
                   </p>
                 </div>
@@ -1171,15 +1375,20 @@ function HomePage() {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-xl bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
                     <DialogHeader>
-                      <Badge variant="gold" className="w-fit mb-2">{featuredCommunique.category}</Badge>
+                      <span className="w-fit mb-2 text-xs font-semibold px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50">
+                        {featuredCommunique.category}
+                      </span>
                       <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white">{featuredCommunique.title}</DialogTitle>
                       <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">{featuredCommunique.date}</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                       <p>{featuredCommunique.excerpt}</p>
-                      <p className="text-xs text-slate-500 italic p-3 rounded-lg bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
-                        Document certifié conforme par la Chancellerie de l'Ambassade de la République Démocratique du Congo à Bujumbura.
-                      </p>
+                      <div className="p-4 rounded-xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] flex items-center gap-3">
+                        <FileCheck className="h-5 w-5 text-blue-600 shrink-0" />
+                        <p className="text-xs text-slate-500 dark:text-slate-400 italic">
+                          Document officiel certifié conforme par la Chancellerie de l'Ambassade de la République Démocratique du Congo à Bujumbura.
+                        </p>
+                      </div>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -1187,23 +1396,28 @@ function HomePage() {
             </div>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {displayedCommuniques.slice(1, 4).map((item, index) => (
-              <Card key={item.id ?? item.title} className="p-5 border-[#f6f5f4] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="outline" className="text-[10px]">{item.category}</Badge>
-                    <span className="text-[11px] text-slate-400 font-medium">{item.date}</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {displayedCommuniques.slice(1, 4).map((item) => (
+              <Card key={item.id ?? item.title} className="p-5 border-[#f6f5f4] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
+                      {item.category}
+                    </span>
+                    <span className="text-slate-400 font-medium flex items-center gap-1 text-[11px]">
+                      <CalendarDays className="h-3 w-3" />
+                      {item.date}
+                    </span>
                   </div>
                   <h4 className="font-bold text-sm text-slate-900 dark:text-white line-clamp-2">{item.title}</h4>
-                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 line-clamp-3">{item.excerpt}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">{item.excerpt}</p>
                 </div>
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <button className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 cursor-pointer pt-2">
-                      <span>Consulter</span>
-                      <ArrowRight className="h-3 w-3" />
+                    <button className="text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 inline-flex items-center gap-1.5 cursor-pointer pt-3 group">
+                      <span>Consulter le communiqué</span>
+                      <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </DialogTrigger>
                   <DialogContent className="bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
@@ -1211,7 +1425,12 @@ function HomePage() {
                       <DialogTitle className="text-slate-900 dark:text-white">{item.title}</DialogTitle>
                       <DialogDescription className="text-slate-500 dark:text-slate-400">{item.date} • {item.category}</DialogDescription>
                     </DialogHeader>
-                    <p className="text-sm py-4 text-slate-700 dark:text-slate-300">{item.excerpt}</p>
+                    <div className="space-y-4 py-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                      <p>{item.excerpt}</p>
+                      <div className="p-3.5 rounded-xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] text-xs text-slate-500">
+                        Chancellerie de l'Ambassade de la RDC à Bujumbura.
+                      </div>
+                    </div>
                   </DialogContent>
                 </Dialog>
               </Card>
@@ -1223,36 +1442,107 @@ function HomePage() {
       {/* Discover RDC Section - Adaptive Theme */}
       <section className="py-16 bg-white dark:bg-[#161717] border-t border-[#f6f5f4] dark:border-[#2d2e2e]" id="rdc">
         <div className="container">
-          <div className="max-w-3xl mb-12">
-            <Badge variant="gold" className="mb-3">République Démocratique du Congo</Badge>
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Découvrir le Cœur de l'Afrique</h2>
-            <p className="mt-3 text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
-              La RDC est un pays continent au cœur de l'Afrique, marqué par la majesté du Fleuve Congo, la richesse de son patrimoine culturel, la diversité de ses 26 provinces et le dynamisme de sa population.
-            </p>
-            <div className="grid grid-cols-3 gap-4 mt-6 p-4 rounded-2xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] text-center">
-              <div>
-                <strong className="text-2xl font-extrabold text-blue-900 dark:text-blue-400">26</strong>
-                <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Provinces</span>
-              </div>
-              <div>
-                <strong className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">9</strong>
-                <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Pays voisins</span>
-              </div>
-              <div>
-                <strong className="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">80M+</strong>
-                <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Hectares d'espaces préservés</span>
-              </div>
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-10">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">Découvrir le Cœur de l'Afrique</h2>
+              <p className="mt-3 text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
+                La RDC est un pays continent au cœur de l'Afrique, marqué par la majesté du Fleuve Congo, la richesse de son patrimoine culturel, la diversité de ses 26 provinces et le dynamisme de sa population.
+              </p>
+            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="default" className="gap-2 shrink-0 cursor-pointer bg-blue-800 hover:bg-blue-900 text-white">
+                  <span>Voir plus de détails</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-2xl bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white">Aperçu Général de la République Démocratique du Congo</DialogTitle>
+                  <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">Patrimoine naturel, culturel et géographique d'Afrique Centrale</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                  <p>
+                    Deuxième plus grand pays d'Afrique par sa superficie (2 345 409 km²), la RDC compte 26 provinces aux identités riches et diverses. Traversée par l'Équateur, elle possède la deuxième plus grande forêt tropicale humide au monde après l'Amazonie.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <div className="p-3.5 rounded-xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
+                      <strong className="block font-bold text-blue-900 dark:text-amber-300 mb-1">Capitale & Grandes Villes</strong>
+                      <p className="text-xs">Kinshasa, Lubumbashi, Goma, Kisangani, Bukavu, Mbuji-Mayi, Matadi.</p>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
+                      <strong className="block font-bold text-blue-900 dark:text-amber-300 mb-1">Langues Officielle & Nationales</strong>
+                      <p className="text-xs">Français (officiel), Lingala, Swahili, Tshiluba, Kikongo.</p>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mb-10 p-4 rounded-2xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] text-center">
+            <div>
+              <strong className="text-2xl font-extrabold text-blue-900 dark:text-blue-400">26</strong>
+              <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Provinces</span>
+            </div>
+            <div>
+              <strong className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">9</strong>
+              <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Pays voisins</span>
+            </div>
+            <div>
+              <strong className="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">80M+</strong>
+              <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">Hectares d'espaces préservés</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {discover.map((item) => (
-              <Card key={item.title} className="bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-white overflow-hidden group hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all shadow-xs">
-                <div className="h-48 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: `url("${item.image}")` }} />
-                <CardContent className="p-5">
-                  <h3 className="font-bold text-base text-blue-950 dark:text-amber-300 group-hover:text-blue-700 dark:group-hover:text-amber-200 transition-colors">{item.title}</h3>
-                  <p className="mt-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">{item.description}</p>
-                </CardContent>
+              <Card key={item.title} className="bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-white overflow-hidden group hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="h-48 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: `url("${item.image}")` }} />
+                  <CardContent className="p-5">
+                    <h3 className="font-bold text-base text-blue-950 dark:text-amber-300 group-hover:text-blue-700 dark:group-hover:text-amber-200 transition-colors">{item.title}</h3>
+                    <p className="mt-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">{item.description}</p>
+                  </CardContent>
+                </div>
+
+                <div className="px-5 pb-5 pt-1">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="w-full text-xs font-semibold border-[#e2e0dc] dark:border-[#2d2e2e] bg-white dark:bg-[#161717] hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-800 dark:text-amber-300 gap-1.5 cursor-pointer">
+                        <span>Voir plus</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-lg bg-white dark:bg-[#161717] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                          <span>{item.title}</span>
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">Découvrez le patrimoine congolais</DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-2">
+                        <div className="h-48 w-full rounded-xl bg-cover bg-center shadow-xs" style={{ backgroundImage: `url("${item.image}")` }} />
+                        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                          {item.details || item.description}
+                        </p>
+                        {item.highlights && item.highlights.length > 0 && (
+                          <div className="space-y-2 pt-2 border-t border-[#f6f5f4] dark:border-[#2d2e2e]">
+                            <strong className="text-xs font-bold text-blue-900 dark:text-amber-300 block uppercase tracking-wider">Points clés :</strong>
+                            <ul className="space-y-1.5">
+                              {item.highlights.map((point) => (
+                                <li key={point} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-amber-400 shrink-0" />
+                                  <span>{point}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </Card>
             ))}
           </div>
@@ -1368,16 +1658,16 @@ const requerantFieldGroups = [
 
 function CommonRequerantFields({ values, onChange }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {requerantFieldGroups.map((group) => (
-        <Card key={group.title} className="p-5 sm:p-6 border-0 bg-[#f7f5f3] dark:bg-[#1d1f1f] rounded-2xl shadow-none">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4 pb-2 border-b border-[#e2e0dc] dark:border-[#2d2e2e]">
+        <div key={group.title} className="p-3 sm:p-6 border border-slate-200/80 dark:border-slate-800/80 sm:border-0 bg-slate-50/70 sm:bg-[#f7f5f3] dark:bg-[#151616] dark:sm:bg-[#1d1f1f] rounded-xl sm:rounded-2xl">
+          <h3 className="text-xs sm:text-base font-extrabold text-blue-900 dark:text-amber-300 mb-2.5 sm:mb-4 pb-1.5 border-b border-slate-200 dark:border-slate-800 uppercase sm:normal-case tracking-wider sm:tracking-normal">
             {group.title}
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {group.fields.map((field) => (
               <div key={field.name} className={field.wide ? "sm:col-span-2" : ""}>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                <label className="block text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   {field.label}
                   {field.required && <span className="text-red-500 ml-0.5">*</span>}
                 </label>
@@ -1387,7 +1677,7 @@ function CommonRequerantFields({ values, onChange }) {
                     value={values[field.name] || ""}
                     onChange={(e) => onChange(field.name, e.target.value)}
                     required={field.required}
-                    className="w-full rounded-xl border-0 bg-white px-3 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-blue-600 dark:bg-[#161717] dark:text-slate-100 shadow-xs"
+                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#181919] px-3 h-11 sm:h-10 text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-none appearance-none"
                   >
                     <option value="">Sélectionner</option>
                     {field.options?.map((opt) => (
@@ -1400,7 +1690,7 @@ function CommonRequerantFields({ values, onChange }) {
                     value={values[field.name] || ""}
                     onChange={(e) => onChange(field.name, e.target.value)}
                     required={field.required}
-                    className="text-xs border-0 bg-white dark:bg-[#161717] shadow-xs"
+                    className="text-xs sm:text-sm h-11 sm:h-10 border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#181919] text-slate-900 dark:text-slate-100 shadow-none rounded-xl"
                   />
                 ) : (
                   <Input
@@ -1409,13 +1699,13 @@ function CommonRequerantFields({ values, onChange }) {
                     value={values[field.name] ?? ""}
                     onChange={(event) => onChange(field.name, event.target.value)}
                     required={field.required}
-                    className="text-xs border-0 bg-white dark:bg-[#161717] shadow-xs"
+                    className="text-xs sm:text-sm h-11 sm:h-10 border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#181919] text-slate-900 dark:text-slate-100 shadow-none rounded-xl"
                   />
                 )}
               </div>
             ))}
           </div>
-        </Card>
+        </div>
       ))}
     </div>
   );
@@ -1425,18 +1715,18 @@ function DynamicDemandeFields({ champs, values, onChange }) {
   const activeChamps = React.useMemo(() => [...champs].filter((champ) => champ.actif).sort((a, b) => a.ordre - b.ordre), [champs]);
 
   if (!activeChamps.length) {
-    return <div className="p-4 text-xs text-slate-500 italic bg-[#f7f5f3] dark:bg-[#1d1f1f] rounded-xl">Aucun champ spécifique requis pour ce type de demande.</div>;
+    return <div className="p-3.5 text-xs text-slate-500 italic bg-slate-50 dark:bg-[#181919] rounded-xl border border-slate-200 dark:border-slate-800">Aucun champ spécifique requis pour ce type de demande.</div>;
   }
 
   return (
-    <Card className="p-5 sm:p-6 border-0 bg-[#f7f5f3] dark:bg-[#1d1f1f] rounded-2xl shadow-none">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="p-3 sm:p-6 border border-slate-200/80 dark:border-slate-800/80 sm:border-0 bg-slate-50/70 sm:bg-[#f7f5f3] dark:bg-[#151616] dark:sm:bg-[#1d1f1f] rounded-xl sm:rounded-2xl shadow-none">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {activeChamps.map((champ) => {
           const key = champ.id || champ.code;
           const value = values[champ.code] ?? champ.valeur_defaut ?? "";
           return (
             <div key={key}>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                 {champ.libelle}
                 {champ.obligatoire && <span className="text-red-500 ml-0.5">*</span>}
               </label>
@@ -1446,14 +1736,14 @@ function DynamicDemandeFields({ champs, values, onChange }) {
                 value={value}
                 onChange={(e) => onChange(champ.code, e.target.value)}
                 required={champ.obligatoire}
-                className="text-xs border-0 bg-white dark:bg-[#161717] shadow-xs"
+                className="text-xs sm:text-sm h-11 sm:h-10 border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#181919] text-slate-900 dark:text-slate-100 shadow-none rounded-xl"
               />
               {champ.description && <small className="text-[10px] text-slate-400 mt-1 block">{champ.description}</small>}
             </div>
           );
         })}
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -1461,7 +1751,7 @@ function DocumentUploadList({ documents: requiredDocuments }) {
   const [selectedFiles, setSelectedFiles] = React.useState({});
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {requiredDocuments.map((item) => {
         const documentType = item.type_document_id ?? {};
         const key = item.id ?? documentType.code;
@@ -1469,10 +1759,10 @@ function DocumentUploadList({ documents: requiredDocuments }) {
         const fileLabel = files.length ? files.map((file) => file.name).join(", ") : "PDF, JPG ou PNG";
 
         return (
-          <label key={key} className="flex items-center justify-between p-4 rounded-2xl border-0 bg-[#f7f5f3] dark:bg-[#1d1f1f] hover:bg-[#eae8e5] dark:hover:bg-[#282a2a] cursor-pointer transition-all shadow-xs">
+          <label key={key} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#181919] sm:bg-[#f7f5f3] sm:dark:bg-[#1d1f1f] hover:border-blue-400 cursor-pointer transition-all shadow-none gap-2 sm:gap-0">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                <FileText className="h-5 w-5" />
+              <div className="h-9 w-9 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <FileText className="h-4.5 w-4.5" />
               </div>
               <div>
                 <span className="font-semibold text-xs text-slate-900 dark:text-white block">{documentType.nom}</span>
@@ -1483,9 +1773,9 @@ function DocumentUploadList({ documents: requiredDocuments }) {
               </div>
             </div>
 
-            <div className="text-right">
-              <span className="text-xs text-blue-600 font-medium block truncate max-w-[150px]">{fileLabel}</span>
-              <Button type="button" variant="outline" size="sm" className="mt-1 h-7 text-xs gap-1 border-0 bg-white dark:bg-[#161717]">
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center pt-2 sm:pt-0 border-t sm:border-0 border-slate-100 dark:border-slate-800">
+              <span className="text-[11px] text-blue-600 dark:text-blue-400 font-medium truncate max-w-[150px] sm:max-w-[120px]">{fileLabel}</span>
+              <Button type="button" variant="outline" size="sm" className="h-8 text-xs gap-1 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-none rounded-lg">
                 {files.length ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <UploadCloud className="h-3.5 w-3.5" />}
                 <span>{files.length ? "Remplacer" : "Joindre"}</span>
               </Button>
@@ -1567,30 +1857,22 @@ function RequestsPage() {
   };
 
   return (
-    <main className="site-shell">
-      <section className="topbar">
-        <div className="container topbar-inner">
-          <div className="contact-line">
-            <span><MapPin size={16} strokeWidth={2.4} aria-hidden="true" />Bujumbura, Burundi</span>
-            <span><Mail size={16} strokeWidth={2.4} aria-hidden="true" />contact@ambardcbujumbura.cd</span>
-          </div>
-        </div>
-      </section>
-
+    <main className="site-shell bg-white dark:bg-[#161717] min-h-screen">
+      <TopBar />
       <SiteHeader />
 
-      <section className="py-10 bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
-        <div className="container">
+      <section className="py-6 sm:py-10 bg-white dark:bg-[#161717] text-slate-900 dark:text-[#fafad6] border-b border-[#f6f5f4] dark:border-[#2d2e2e]">
+        <div className="container px-4">
           <Badge variant="blue" className="mb-2">Formulaire consulaire</Badge>
-          <h1 className="text-3xl font-bold">{requestTitle}</h1>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 max-w-xl">{requestDescription}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">{requestTitle}</h1>
+          <p className="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl">{requestDescription}</p>
         </div>
       </section>
 
-      <section className="py-12 bg-[#f7f5f3] dark:bg-[#1d1f1f]">
-        <div className="container max-w-4xl">
-          <Card className="p-6 sm:p-8 border-0 shadow-sm bg-white dark:bg-[#161717] rounded-3xl">
-            <div className="flex items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 mb-6">
+      <section className="py-2 sm:py-12 bg-white sm:bg-[#f7f5f3] dark:bg-[#161717] dark:sm:bg-[#1d1f1f]">
+        <div className="container max-w-4xl px-2 sm:px-4">
+          <div className="p-2 sm:p-8 border-0 sm:border border-slate-200 dark:border-slate-800 shadow-none sm:shadow-sm bg-white dark:bg-[#161717] rounded-none sm:rounded-3xl">
+            <div className="flex items-center justify-between pb-3 sm:pb-6 border-b border-slate-200 dark:border-slate-800 mb-3 sm:mb-6 overflow-x-auto gap-1.5 sm:gap-2">
               {[
                 { title: "Identité requérant", step: 0 },
                 { title: "Champs spécifiques", step: 1 },
@@ -1598,36 +1880,37 @@ function RequestsPage() {
               ].map((s) => (
                 <button
                   key={s.step}
+                  type="button"
                   onClick={() => setCurrentStep(s.step)}
-                  className={`flex items-center gap-2 text-xs font-semibold p-2 rounded-lg cursor-pointer ${
+                  className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-2 rounded-xl cursor-pointer transition-all shrink-0 ${
                     currentStep === s.step
-                      ? "bg-blue-600 text-white"
+                      ? "bg-blue-800 text-white dark:bg-amber-400 dark:text-slate-950 font-bold shadow-xs"
                       : currentStep > s.step
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-slate-400"
+                      ? "text-blue-700 dark:text-amber-400 bg-blue-50 dark:bg-blue-950/40"
+                      : "text-slate-500 bg-slate-100 dark:bg-slate-800/40"
                   }`}
                 >
-                  <span className="h-5 w-5 rounded-full border flex items-center justify-center text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full border border-current flex items-center justify-center text-[10px] font-extrabold shrink-0">
                     {s.step + 1}
                   </span>
-                  <span className="hidden sm:inline">{s.title}</span>
+                  <span className="text-[11px] sm:text-xs">{s.title}</span>
                 </button>
               ))}
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {currentStep === 0 && <CommonRequerantFields values={requerantValues} onChange={updateRequerant} />}
               {currentStep === 1 && <DynamicDemandeFields champs={dynamicChamps} values={dynamicValues} onChange={updateDynamic} />}
               {currentStep === 2 && (
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <DocumentUploadList documents={requiredDocuments} />
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border">
-                    <label className="flex items-center gap-2 text-xs font-medium cursor-pointer">
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                    <label className="flex items-center gap-2.5 text-xs font-medium cursor-pointer text-slate-800 dark:text-slate-200">
                       <input
                         type="checkbox"
                         checked={isConfirmed}
                         onChange={(e) => setIsConfirmed(e.target.checked)}
-                        className="rounded border-slate-300"
+                        className="rounded border-slate-300 text-blue-600 h-4 w-4"
                       />
                       <span>Je certifie l'exactitude des renseignements fournis.</span>
                     </label>
@@ -1636,30 +1919,55 @@ function RequestsPage() {
               )}
 
               {submitState.message && (
-                <div className={`p-4 rounded-xl text-xs font-medium ${submitState.status === "error" ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"}`}>
+                <div className={`p-3.5 rounded-xl text-xs font-medium ${submitState.status === "error" ? "bg-red-50 text-red-700 border border-red-200" : "bg-green-50 text-green-700 border border-green-200"}`}>
                   {submitState.message}
                 </div>
               )}
 
-              <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                 {currentStep > 0 ? (
-                  <Button type="button" variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    type="button"
+                    onClick={() => setCurrentStep((s) => s - 1)}
+                    className="w-full sm:w-auto h-12 text-xs sm:text-sm px-6 font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 cursor-pointer transition-all"
+                  >
                     Précédent
-                  </Button>
-                ) : <div />}
+                  </motion.button>
+                ) : <div className="hidden sm:block" />}
 
                 {currentStep < 2 ? (
-                  <Button type="button" variant="default" onClick={() => setCurrentStep((s) => s + 1)}>
-                    Continuer
-                  </Button>
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.01 }}
+                    type="button"
+                    onClick={() => setCurrentStep((s) => s + 1)}
+                    className="w-full sm:w-auto h-12 text-sm px-8 font-extrabold rounded-xl bg-blue-800 hover:bg-blue-900 text-white shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>Continuer</span>
+                    <ChevronRight size={18} />
+                  </motion.button>
                 ) : (
-                  <Button type="submit" variant="gold" disabled={!isConfirmed || submitState.status === "loading"}>
-                    {submitState.status === "loading" ? "Envoi..." : "Soumettre la demande"}
-                  </Button>
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.01 }}
+                    type="submit"
+                    disabled={!isConfirmed || submitState.status === "loading"}
+                    className="w-full sm:w-auto h-12 text-sm sm:text-base px-8 font-extrabold rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitState.status === "loading" ? (
+                      <>
+                        <span className="animate-spin rounded-full h-4 w-4 border-2 border-slate-950 border-t-transparent" />
+                        <span>Envoi en cours...</span>
+                      </>
+                    ) : (
+                      <span>Soumettre la demande</span>
+                    )}
+                  </motion.button>
                 )}
               </div>
             </form>
-          </Card>
+          </div>
         </div>
       </section>
 
@@ -1748,50 +2056,60 @@ function ContactPage() {
         </div>
       </section>
 
-      <section className="py-12 bg-[#f7f5f3] dark:bg-[#1d1f1f] min-h-[60vh]">
-        <div className="container grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Card className="p-6 bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
-            <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">Envoyez-nous un message</h3>
-            <form onSubmit={(e) => { e.preventDefault(); toast.success("Message envoyé à l'Ambassade."); }} className="space-y-4">
+      <section className="py-6 sm:py-12 bg-white sm:bg-[#f7f5f3] dark:bg-[#161717] dark:sm:bg-[#1d1f1f] min-h-[60vh]">
+        <div className="container grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 px-4">
+          <Card className="p-4 sm:p-6 bg-white dark:bg-[#161717] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-[#fafad6] shadow-none rounded-2xl">
+            <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-slate-900 dark:text-white">Envoyez-nous un message</h3>
+            <form onSubmit={(e) => { e.preventDefault(); toast.success("Message envoyé à l'Ambassade."); }} className="space-y-3.5">
               <div>
                 <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Votre email</label>
-                <Input type="email" placeholder="nom@exemple.com" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+                <Input type="email" placeholder="nom@exemple.com" required className="text-xs h-10 bg-white dark:bg-[#181919] border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-[#fafad6] shadow-none rounded-xl" />
               </div>
               <div>
                 <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Sujet</label>
-                <Input type="text" placeholder="Sujet de votre message" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+                <Input type="text" placeholder="Sujet de votre message" required className="text-xs h-10 bg-white dark:bg-[#181919] border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-[#fafad6] shadow-none rounded-xl" />
               </div>
               <div>
                 <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Message</label>
-                <textarea rows={4} className="w-full rounded-xl border border-[#f6f5f4] dark:border-[#2d2e2e] bg-[#f7f5f3] dark:bg-[#1d1f1f] text-slate-900 dark:text-[#fafad6] p-3 text-xs focus:ring-2 focus:ring-blue-600" required />
+                <textarea rows={4} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#181919] text-slate-900 dark:text-[#fafad6] p-3 text-xs focus:ring-2 focus:ring-blue-600 outline-none shadow-none" required />
               </div>
-              <Button type="submit" variant="default" className="w-full">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.01 }}
+                type="submit"
+                className="w-full h-12 text-sm font-extrabold rounded-xl bg-blue-800 hover:bg-blue-900 text-white shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
+              >
                 Envoyer le message
-              </Button>
+              </motion.button>
             </form>
           </Card>
 
-          <Card className="p-6 bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]">
-            <h3 className="text-lg font-bold mb-2 text-slate-900 dark:text-white">Audience avec l'Ambassadeur</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+          <Card className="p-4 sm:p-6 bg-white dark:bg-[#161717] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-[#fafad6] shadow-none rounded-2xl">
+            <h3 className="text-base sm:text-lg font-bold mb-1.5 text-slate-900 dark:text-white">Audience avec l'Ambassadeur</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3.5 leading-relaxed">
               Demandez une rencontre officielle pour questions diplomatiques ou affaires communautaires.
             </p>
-            <form onSubmit={(e) => { e.preventDefault(); toast.success("Demande d'audience soumise."); }} className="space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); toast.success("Demande d'audience soumise."); }} className="space-y-3.5">
               <div>
                 <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Nom Complet</label>
-                <Input type="text" placeholder="Nom et prénom" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+                <Input type="text" placeholder="Nom et prénom" required className="text-xs h-10 bg-white dark:bg-[#181919] border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-[#fafad6] shadow-none rounded-xl" />
               </div>
               <div>
                 <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Email</label>
-                <Input type="email" placeholder="nom@exemple.com" required className="text-xs bg-[#f7f5f3] dark:bg-[#1d1f1f] border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6]" />
+                <Input type="email" placeholder="nom@exemple.com" required className="text-xs h-10 bg-white dark:bg-[#181919] border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-[#fafad6] shadow-none rounded-xl" />
               </div>
               <div>
                 <label className="text-xs font-semibold mb-1 block text-slate-700 dark:text-slate-300">Objet de la Rencontre</label>
-                <textarea rows={4} className="w-full rounded-xl border border-[#f6f5f4] dark:border-[#2d2e2e] bg-[#f7f5f3] dark:bg-[#1d1f1f] text-slate-900 dark:text-[#fafad6] p-3 text-xs focus:ring-2 focus:ring-blue-600" required />
+                <textarea rows={4} className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#181919] text-slate-900 dark:text-[#fafad6] p-3 text-xs focus:ring-2 focus:ring-blue-600 outline-none shadow-none" required />
               </div>
-              <Button type="submit" variant="gold" className="w-full">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.01 }}
+                type="submit"
+                className="w-full h-12 text-sm font-extrabold rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
+              >
                 Soumettre la demande d'audience
-              </Button>
+              </motion.button>
             </form>
           </Card>
         </div>

@@ -5,16 +5,22 @@ import { Button } from "../components/ui/button.jsx";
 import { MapPin, Mail, Phone, Globe, Clock, ShieldCheck, ArrowRight, UserCheck, Landmark, Building2, Award } from "lucide-react";
 import { TopBar } from "../App.jsx";
 
+import thereseKayikwambaImg from "../assets/images/therese_kayikwamba_jpg_1785441674768.jpg";
+import crispinMbaduImg from "../assets/images/crispin_mbadu_jpg_1785441686017.jpg";
+import noellaAyeganagatoImg from "../assets/images/noella_ayeganagato_jpg_1785441695918.jpg";
+import ambassadorWillyMulumbaImg from "../assets/images/ambassador_willy_mulumba_1785442280044.jpg";
+
 const presidentImage = "/images/president.webp";
 const presidentTwo = "/images/president_2.jpg";
 const firstLadyImage = "/images/premiere_dame_2.jpg";
-const firstLadyTwo = "/images/premiere_dame_2.jpg";
 
 const diplomaticLeaders = [
   { name: "S.E.M. Félix Antoine TSHISEKEDI TSHILOMBO", role: "Président de la République Démocratique du Congo, Chef de l'État", image: presidentImage },
-  { name: "S.E. Judith SUMINWA TULUKA", role: "Première Ministre de la RDC", image: firstLadyImage },
-  { name: "S.E. Thérèse KAYIKWAMBA WAGNER", role: "Ministre d'État, Ministre des Affaires Étrangères", image: firstLadyTwo },
-  { name: "S.E. Crispin MBADU PHANZU", role: "Ministre délégué en charge de la Diaspora", image: presidentTwo },
+  { name: "S.E. Judith SUMINWA TULUKA", role: "Première Ministre de la République Démocratique du Congo", image: firstLadyImage },
+  { name: "S.E. Thérèse KAYIKWAMBA WAGNER", role: "Ministre d'État, Ministre des Affaires Étrangères", image: thereseKayikwambaImg },
+  { name: "S.E. Crispin MBADU PHANZU", role: "Ministre délégué en charge de la Diaspora", image: crispinMbaduImg },
+  { name: "S.E. Noëlla AYEGANAGATO NAKWIPONE", role: "Vice-Ministre des Affaires Étrangères", image: noellaAyeganagatoImg },
+  { name: "S.E. Willy MULUMBA", role: "Ambassadeur Extraordinaire et Plénipotentiaire de la RDC au Burundi", image: ambassadorWillyMulumbaImg },
 ];
 
 export function AmbassadePage({ SiteHeader, SiteFooter }) {

@@ -126,7 +126,7 @@ export function DocumentCard({ doc }) {
   if (!formattedFrais) formattedFrais = "$30 à $100";
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all flex flex-col justify-between group">
+    <div className="bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all flex flex-col justify-between group">
       <div>
         {/* Top Header Row */}
         <div className="flex items-start gap-3.5 mb-3">
@@ -152,7 +152,7 @@ export function DocumentCard({ doc }) {
         <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300 min-h-[150px] mb-6">
           {pieces.map((piece, index) => (
             <li key={index} className="flex items-start gap-2 leading-relaxed">
-              <span className="text-blue-600 dark:text-blue-400 font-bold text-sm leading-none">•</span>
+              <span className="text-blue-600 dark:text-amber-400 font-bold text-sm leading-none">•</span>
               <span className="text-slate-700 dark:text-slate-300 font-normal">{piece}</span>
             </li>
           ))}
@@ -161,21 +161,21 @@ export function DocumentCard({ doc }) {
 
       <div>
         {/* Info Rows */}
-        <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800 mb-6">
+        <div className="space-y-2 pt-4 border-t border-[#f6f5f4] dark:border-[#2d2e2e] mb-6">
           <div className="flex items-center justify-between text-xs">
             <span className="text-slate-500 dark:text-slate-400 font-medium">Délai de Traitement:</span>
             <span className="text-slate-900 dark:text-white font-bold">{delai}</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-slate-500 dark:text-slate-400 font-medium">Frais Consulaires:</span>
-            <span className="text-blue-700 dark:text-blue-400 font-bold">{formattedFrais}</span>
+            <span className="text-blue-700 dark:text-amber-400 font-bold">{formattedFrais}</span>
           </div>
         </div>
 
         {/* Actions Button Bar */}
         <div className="flex items-center gap-2.5">
           <a href={`/demandes?type=${docId}`} className="flex-1">
-            <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl text-xs text-center transition-colors shadow-sm cursor-pointer">
+            <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-amber-400 dark:text-slate-950 dark:hover:bg-amber-500 text-white font-bold py-3 px-4 rounded-xl text-xs text-center transition-colors shadow-sm cursor-pointer">
               Procéder à la demande
             </button>
           </a>
@@ -183,17 +183,17 @@ export function DocumentCard({ doc }) {
           <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
             <DialogTrigger asChild>
               <button
-                className="doc-download-btn bg-slate-100 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 p-3 rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-sm"
+                className="doc-download-btn bg-[#f7f5f3] hover:bg-blue-50 dark:bg-[#1d1f1f] dark:hover:bg-[#2d2e2e] text-slate-800 dark:text-slate-100 p-3 rounded-xl border border-[#f6f5f4] dark:border-[#2d2e2e] transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-sm"
                 aria-label="Détails du document et téléchargement"
                 title="Voir la fiche et les pièces à fournir"
               >
                 <Download className="h-4 w-4 text-blue-700 dark:text-amber-400" />
               </button>
             </DialogTrigger>
-            <DialogContent className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 sm:max-w-lg">
+            <DialogContent className="bg-white dark:bg-[#161717] border border-[#f6f5f4] dark:border-[#2d2e2e] text-slate-900 dark:text-[#fafad6] sm:max-w-lg">
               <DialogHeader>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2.5 rounded-xl bg-blue-600 text-white">
+                  <div className="p-2.5 rounded-xl bg-blue-800 dark:bg-amber-400 text-white dark:text-slate-950">
                     <IconComponent className="h-5 w-5" />
                   </div>
                   <div>
@@ -204,28 +204,28 @@ export function DocumentCard({ doc }) {
               </DialogHeader>
 
               <div className="space-y-4 py-3 text-xs text-slate-700 dark:text-slate-300">
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
-                  <span className="text-[11px] font-semibold text-blue-800 dark:text-blue-400 tracking-wider uppercase block">
+                <div className="p-4 rounded-xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e] space-y-2">
+                  <span className="text-[11px] font-semibold text-blue-800 dark:text-amber-400 tracking-wider uppercase block">
                     Liste complète des pièces à fournir
                   </span>
                   <ul className="space-y-2 pt-1">
                     {pieces.map((p, i) => (
                       <li key={i} className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-amber-400" />
                         <span>{p}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[#f7f5f3] dark:bg-[#1d1f1f] border border-[#f6f5f4] dark:border-[#2d2e2e]">
                   <div>
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">Délai estimé</span>
                     <strong className="text-sm font-bold text-slate-900 dark:text-white">{delai}</strong>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">Tarif consulaire</span>
-                    <strong className="text-sm font-bold text-blue-700 dark:text-blue-400">{formattedFrais}</strong>
+                    <strong className="text-sm font-bold text-blue-700 dark:text-amber-400">{formattedFrais}</strong>
                   </div>
                 </div>
 
@@ -235,7 +235,7 @@ export function DocumentCard({ doc }) {
 
                 <div className="pt-2">
                   <a href={`/demandes?type=${docId}`}>
-                    <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-xl text-xs transition-colors cursor-pointer">
+                    <button className="w-full bg-blue-800 hover:bg-blue-900 dark:bg-amber-400 dark:text-slate-950 dark:hover:bg-amber-500 text-white font-semibold py-3 px-4 rounded-xl text-xs transition-colors cursor-pointer">
                       Démarrer ma démarche en ligne
                     </button>
                   </a>

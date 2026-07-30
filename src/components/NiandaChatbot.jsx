@@ -120,6 +120,15 @@ export function NiandaChatbot() {
     }
   }, [messages, isOpen, isMinimized]);
 
+  useEffect(() => {
+    const handleOpenNianda = () => {
+      setIsOpen(true);
+      setIsMinimized(false);
+    };
+    window.addEventListener("open-nianda", handleOpenNianda);
+    return () => window.removeEventListener("open-nianda", handleOpenNianda);
+  }, []);
+
   const handleSend = (textToSend) => {
     const text = textToSend || input;
     if (!text.trim()) return;
